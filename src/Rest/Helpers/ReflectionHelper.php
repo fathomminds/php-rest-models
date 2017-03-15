@@ -1,0 +1,14 @@
+<?php
+namespace Fathomminds\Clurexid\Rest\Helpers;
+
+use ReflectionClass;
+
+class ReflectionHelper
+{
+    public function createInstance($className, $params = [])
+    {
+        $class = new ReflectionClass($className);
+        $instance = $class->newInstanceArgs($params);
+        return $instance;
+    }
+}

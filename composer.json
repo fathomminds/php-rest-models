@@ -1,0 +1,29 @@
+{
+    "name": "fathomminds/clusterpoint-lumen-models",
+    "description": "REST object and model management in Lumen PHP framework for Clusterpoint database",
+    "keywords": ["lumen", "clusterpoint", "rest", "api", "models", "laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Csaba Petrás",
+            "email": "csaba.petras@fathomminds.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0",
+        "clusterpoint/php-client-api-v4": "^4.0",
+        "vlucas/phpdotenv": "~2.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0",
+        "mockery/mockery": "~0.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fathomminds\\Clurexid\\Rest\\": "src\\Rest",
+            "Fathomminds\\Clurexid\\Rest\\Tests\\": "tests",
+            "Fathomminds\\Clurexid\\Rest\\Examples\\": "examples"
+        }
+    }
+}
