@@ -14,7 +14,6 @@ abstract class RestModel implements IRestModel
 
     public function __construct($restObject)
     {
-        $reflectionHelper = new ReflectionHelper;
         $this->restObject = $restObject;
     }
 
