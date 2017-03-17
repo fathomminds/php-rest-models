@@ -22,7 +22,15 @@ class RestObject extends CoreRestObject
         }
         $query = $this->getUniqueFieldQuery($query, $uniqueFields);
         $res = $query->limit(1)->get();
-        $this->failOnUniqueFieldViolation($res, $uniqueFields);
+        if ((int)$res->hits() > 0) {
+            throw new DetailedException(
+                'Unique constraint violation',
+                [
+                    'resourceName' => $this->resourceName,
+                    'confilct' => $res[0],
+                ]
+            );
+        }
     }
 
     private function getUniqueFieldQuery($query = null, $uniqueFields = null)
@@ -37,29 +45,5 @@ class RestObject extends CoreRestObject
             }
         });
         return $query;
-    }
-
-    private function failOnUniqueFieldViolation($clusterpointResult, $uniqueFields)
-    {
-        if ($clusterpointResult->hits() === '0') { // Hits returned as string by CP
-            return;
-        }
-        $doc = $clusterpointResult[0]; // limit 1 is applied in validateUniqueFields()
-        $confilcts = [];
-        foreach ($uniqueFields as $fieldName) {
-            if (property_exists($this->resource, $fieldName) &&
-                property_exists($doc, $fieldName) &&
-                $this->resource->{$fieldName} === $doc->{$fieldName}
-            ) {
-                $confilcts[] = $fieldName;
-            }
-            throw new DetailedException(
-                'Unique constraint violation',
-                [
-                    'resourceName' => $this->resourceName,
-                    'confilcts' => $confilcts,
-                ]
-            );
-        }
     }
 }
