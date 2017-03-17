@@ -169,7 +169,7 @@ class RestModelTest extends TestCase
     {
         $resource = new \StdClass;
         $resource->_id = 'ID';
-        $model = new FooModel;
+        $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
         $this->expectException(DetailedException::class);
         $model->validate();
@@ -180,7 +180,7 @@ class RestModelTest extends TestCase
         $resource = new \StdClass;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $model = new FooModel;
+        $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
         $model->validate();
         $this->assertEquals('ID', $model->getProperty('_id'));
@@ -192,7 +192,7 @@ class RestModelTest extends TestCase
         $resource = new \StdClass;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $model = new FooModel;
+        $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
         $model->setProperty('title', 'OTHER');
         $this->assertEquals('OTHER', $model->getProperty('title'));
@@ -203,7 +203,7 @@ class RestModelTest extends TestCase
         $resource = new \StdClass;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $model = new FooModel;
+        $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
         $array = $model->toArray();
         $this->assertArrayHasKey('_id', $array);
