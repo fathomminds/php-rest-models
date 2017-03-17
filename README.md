@@ -24,7 +24,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Configuration ##
 
 * Use with Clusterpoint
-* Use with DynamoDB
+* ~~Use with DynamoDB~~
 
 ## Contribution ##
 
