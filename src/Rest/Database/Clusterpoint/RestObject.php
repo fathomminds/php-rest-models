@@ -16,9 +16,7 @@ class RestObject extends CoreRestObject
             return;
         }
         $query = null;
-        $hasPrimaryKey = false;
         if (property_exists($this->resource, $this->primaryKey)) {
-            $hasPrimarKey = true;
             $query = $this->getCollection();
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
