@@ -5,11 +5,11 @@ use Fathomminds\Clurexid\Rest\Examples\Models\Objects\FooObject;
 use Fathomminds\Clurexid\Rest\Examples\Models\FooModel;
 use Fathomminds\Clurexid\Rest\Exceptions\DetailedException;
 
-class RestObjectTest extends TestCase
+class RestModelTest extends TestCase
 {
     public function testCreateFromObject()
     {
-        $foo = new FooModel;
+        $foo = $this->mockModel(FooModel::class, FooObject::class);
         $obj = new \StdClass;
         $obj->_id = 'ID';
         $obj->title = 'TITLE';
@@ -20,7 +20,7 @@ class RestObjectTest extends TestCase
 
     public function testGetResource()
     {
-        $foo = new FooModel;
+        $foo = $this->mockModel(FooModel::class, FooObject::class);
         $obj = new \StdClass;
         $obj->_id = 'ID';
         $obj->title = 'TITLE';
