@@ -2,6 +2,7 @@
 namespace Fathomminds\Clurexid\Rest\Tests;
 
 use Fathomminds\Clurexid\Rest\Examples\Models\Schema\FooSchema;
+use Fathomminds\Clurexid\Rest\Examples\Models\Objects\FooObject;
 use Fathomminds\Clurexid\Rest\Examples\Models\FooModel;
 use Fathomminds\Clurexid\Rest\Exceptions\DetailedException;
 
@@ -9,7 +10,7 @@ class SchemaValidatorTest extends TestCase
 {
     public function testIncorrectSchemaException()
     {
-        $foo = new FooModel();
+        $foo = $this->mockModel(FooModel::class, FooObject::class);
         $this->expectException(DetailedException::class);
         $foo->validate();
     }
@@ -17,7 +18,7 @@ class SchemaValidatorTest extends TestCase
     public function testMissingRequiredField()
     {
         try {
-            $foo = new FooModel();
+            $foo = $this->mockModel(FooModel::class, FooObject::class);
             $foo->validate();
         } catch (DetailedException $ex) {
             $error = $ex->getMessage();
@@ -34,7 +35,7 @@ class SchemaValidatorTest extends TestCase
     public function testCorrectSchema()
     {
         try {
-            $foo = new FooModel();
+            $foo = $this->mockModel(FooModel::class, FooObject::class);
             $foo->setProperty('title', 'REQUIRED');
             $foo->validate();
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
