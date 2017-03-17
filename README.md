@@ -1,4 +1,4 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/quality-score.png?b=master&s=815eeac557c3f9f618b3eae4c18875aea4bbd178)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/quality-score.png?b=master&s=815eeac557c3f9f618b3eae4c18875aea4bbd178)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/coverage.png?b=master&s=3c2853b29fb2d31cab3f858963ba1f4ff073fdd8)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/?branch=master) [![Build Status](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/build.png?b=master&s=65abd3cee7e10d606760fe3674b8fe9a04099e65)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/build-status/master)
 
 # PHP REST MODELS #
 
