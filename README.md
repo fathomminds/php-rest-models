@@ -15,6 +15,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 * Composer
 * Use with Clusterpoint: [Clusterpoint V4 PHP client](https://github.com/clusterpoint/php-client-api)
 * Use with DynamoDB: [AWS SDK for PHP](https://github.com/aws/aws-sdk-php)
+* For generating code coverage report: [Xdebug PHP extension](https://xdebug.org)
 
 ## Install ##
 
