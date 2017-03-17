@@ -25,6 +25,10 @@ class Resource implements IResource
 
     public function get($resourceId = null)
     {
+        if ($resourceId !== null) {
+            return $this->getOne($resourceId);
+        }
+        return $this->getAll();
         try {
             $res = $resourceId === null ? $this->collection->get() : $this->collection->find($resourceId);
             $this->failOnError($res);
@@ -32,6 +36,20 @@ class Resource implements IResource
         } catch (Exception $ex) {
             throw new DetailedException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
+    }
+
+    protected function getOne($resourceId)
+    {
+        $res = $this->collection->find($resourceId);
+        $this->failOnError($res);
+        return $this->toObject($res);
+    }
+
+    protected function getAll()
+    {
+        $res = $this->collection->get();
+        $this->failOnError($res);
+        return $this->toObjectArray($res);
     }
 
     public function post($newResource)
@@ -79,23 +97,33 @@ class Resource implements IResource
         }
         throw new DetailedException(
             'Database operation failed',
-            $res->error()
+            [
+                'error' => $res->error(),
+                'res' => $res,
+            ]
         );
     }
 
-    protected function toObject($cpResponse, $emptyType = 'object')
+    protected function extractResult($cpResponse)
     {
         $res = json_decode($cpResponse->rawResponse());
         if (!property_exists($res, 'results')) {
             return null;
         }
-        $res = $res->results;
+        return $res->results;
+    }
+
+    protected function toObject($cpResponse)
+    {
+        $res = $this->extractResult($cpResponse);
         if (count($res) === 1) {
-            $res = $res[0];
+            return $res[0];
         }
-        if (count($res) === 0) {
-            $res = $emptyType === 'array' ? [] : new StdClass;
-        }
-        return $res;
+        return new \StdClass;
+    }
+
+    protected function toObjectArray($cpResponse)
+    {
+        return $this->extractResult($cpResponse);
     }
 }
