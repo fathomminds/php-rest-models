@@ -7,7 +7,7 @@ use Fathomminds\Clurexid\Rest\Helpers\ReflectionHelper;
 use Fathomminds\Clurexid\Rest\Contracts\IRestObject;
 use Fathomminds\Clurexid\Rest\Database\Clusterpoint\Database;
 
-class RestObject implements IRestObject
+abstract class RestObject implements IRestObject
 {
     protected $resourceName;
     protected $primaryKey;

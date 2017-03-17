@@ -7,7 +7,7 @@ use Fathomminds\Clurexid\Rest\Exceptions\DetailedException;
 use Fathomminds\Clurexid\Rest\Objects\RestObject;
 use Fathomminds\Clurexid\Rest\Contracts\IRestModel;
 
-class RestModel implements IRestModel
+abstract class RestModel implements IRestModel
 {
     protected $restObjectClass;
     protected $restObject;
