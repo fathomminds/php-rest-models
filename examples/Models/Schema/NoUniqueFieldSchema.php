@@ -3,9 +3,8 @@ namespace Fathomminds\Clurexid\Rest\Examples\Models\Schema;
 
 use Fathomminds\Clurexid\Rest\Schema\SchemaValidator;
 use Fathomminds\Clurexid\Rest\Schema\TypeValidators\StringValidator;
-use Fathomminds\Clurexid\Rest\Examples\Models\Schema\TypeValidators\PhoneNumberValidator;
 
-class BarSchema extends SchemaValidator
+class NoUniqueFieldSchema extends SchemaValidator
 {
     protected $fields = [
         '_id' => [
@@ -13,9 +12,9 @@ class BarSchema extends SchemaValidator
                 'class' => StringValidator::class,
             ]
         ],
-        'mobile' => [
+        'multi' => [
             'validator' => [
-                'class' => PhoneNumberValidator::class,
+                'class' => StringValidator::class,
             ]
         ]
     ];

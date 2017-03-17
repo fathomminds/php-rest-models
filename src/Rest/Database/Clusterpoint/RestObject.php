@@ -9,9 +9,14 @@ class RestObject extends CoreRestObject
     protected $primaryKey = '_id';
     protected $databaseClass = Database::class;
 
+    public function getUniqueFields()
+    {
+        return $this->schema->getUniqueFields();
+    }
+
     public function validateUniqueFields()
     {
-        $uniqueFields = $this->schema->getUniqueFields();
+        $uniqueFields = $this->getUniqueFields();
         if (empty($uniqueFields)) {
             return;
         }

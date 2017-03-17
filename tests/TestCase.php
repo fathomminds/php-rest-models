@@ -41,6 +41,14 @@ abstract class TestCase extends PHPUnitTestCase
     public function mockModel($modelClassName = null, $objectClassName = null)
     {
         $ReflectionHelper = new ReflectionHelper;
+        $object = $this->mockObject($objectClassName);
+        $model = $ReflectionHelper->createInstance($modelClassName, [$object]);
+        return $model;
+    }
+
+    public function mockObject($objectClassName)
+    {
+        $ReflectionHelper = new ReflectionHelper;
         $object = $ReflectionHelper->createInstance(
             $objectClassName,
             [
@@ -49,7 +57,6 @@ abstract class TestCase extends PHPUnitTestCase
               new Database($this->mockClient)
             ]
         );
-        $model = $ReflectionHelper->createInstance($modelClassName, [$object]);
-        return $model;
+        return $object;
     }
 }
