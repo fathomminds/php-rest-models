@@ -1,5 +1,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/quality-score.png?b=master&s=815eeac557c3f9f618b3eae4c18875aea4bbd178)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/?branch=master)
 
+[![Code Coverage](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/coverage.png?b=master&s=3c2853b29fb2d31cab3f858963ba1f4ff073fdd8)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/?branch=master)
+
 # PHP REST MODELS #
 
 Framework independent PHP REST models with schema validation and multiple database engine support.
