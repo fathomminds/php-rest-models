@@ -34,6 +34,16 @@ Framework independent PHP REST models with schema validation and multiple databa
 * Don't forget to write unit tests
 * [Pull Request best practices](http://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests)
 
+## Running tests ##
+
+Clone the repository and install dependencies:
+
+`composer install`
+
+Run PHPUnit
+
+`phpunit`
+
 ## License ##
 
 Licensed under the MIT license. See [LICENSE](./LICENSE)
