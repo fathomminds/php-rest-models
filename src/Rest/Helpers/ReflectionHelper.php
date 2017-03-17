@@ -11,4 +11,11 @@ class ReflectionHelper
         $instance = $class->newInstanceArgs($params);
         return $instance;
     }
+
+    public function createMethod($className, $methodName)
+    {
+        $class = new ReflectionClass($className);
+        $method = $class->getMethod($methodName);
+        return $method;
+    }
 }

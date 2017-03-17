@@ -4,7 +4,7 @@ namespace Fathomminds\Clurexid\Rest\Schema\TypeValidators;
 use Fathomminds\Clurexid\Rest\Contracts\ITypeValidator;
 use Fathomminds\Clurexid\Rest\Exceptions\DetailedException;
 
-class StdTypeValidator implements ITypeValidator
+abstract class StdTypeValidator implements ITypeValidator
 {
     protected $validType;
 

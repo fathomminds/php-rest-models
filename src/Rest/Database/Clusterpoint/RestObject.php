@@ -36,6 +36,7 @@ class RestObject extends CoreRestObject
 
     private function getUniqueFieldQuery($query, $uniqueFields)
     {
+        // @codeCoverageIgnoreStart
         $query->where(function ($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
                 if (property_exists($this->resource, $fieldName)) {
@@ -43,6 +44,7 @@ class RestObject extends CoreRestObject
                 }
             }
         });
+        // @codeCoverageIgnoreEnd
         return $query;
     }
 }

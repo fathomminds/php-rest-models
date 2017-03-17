@@ -42,6 +42,20 @@ class RestModelTest extends TestCase
         $model->one('ID');
     }
 
+    public function testOneResourceIncorrectDBResponse()
+    {
+        $dbResult = [
+            'noResultsKey' => []
+        ];
+        $this->mockDatabase
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($this->mockResponse($dbResult));
+        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $this->expectException(DetailedException::class);
+        $model->one('ID');
+    }
+
     public function testOneResourceExtists()
     {
         $resource = new \StdClass();
@@ -198,6 +212,17 @@ class RestModelTest extends TestCase
         $this->assertEquals('OTHER', $model->getProperty('title'));
     }
 
+    public function testGettingNonExistentProperty()
+    {
+        $resource = new \StdClass;
+        $resource->_id = 'ID';
+        $resource->title = 'TITLE';
+        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $model->createFromObject($resource);
+        $prop = $model->getProperty('NO');
+        $this->assertEquals(null, $prop);
+    }
+
     public function testToArray()
     {
         $resource = new \StdClass;
@@ -277,5 +302,53 @@ class RestModelTest extends TestCase
         $model->createFromObject($resource);
         $this->expectException(DetailedException::class);
         $model->validateUniqueFields();
+    }
+
+    public function testPostWithDatabaseFailure()
+    {
+        $resource = new \StdClass;
+        $resource->title = 'TITLE';
+        $createdResource = new \StdClass;
+        $createdResource->_id = 'NEW';
+        $createdResource->title = 'TITLE';
+        $dbResult = [
+            'results' => [
+                $createdResource,
+            ]
+        ];
+        $this->mockDatabase
+            ->shouldReceive('insertOne')
+            ->once()
+            ->andReturn($this->mockResponse($dbResult, ['ERROR']));
+        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $model->createFromObject($resource);
+        try {
+            $model->save();
+        } catch (DetailedException $ex) {
+            $this->assertEquals('Database operation failed', $ex->getMessage());
+        }
+    }
+
+    public function testPutWithDatabaseFailure()
+    {
+        $resource = new \StdClass;
+        $resource->_id = 'ID';
+        $resource->title = 'TITLE';
+        $dbResult = [
+            'results' => [
+                $resource,
+            ]
+        ];
+        $this->mockDatabase
+            ->shouldReceive('update')
+            ->once()
+            ->andReturn($this->mockResponse($dbResult, ['ERROR']));
+        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $model->createFromObject($resource);
+        try {
+            $model->save();
+        } catch (DetailedException $ex) {
+            $this->assertEquals('Database operation failed', $ex->getMessage());
+        }
     }
 }

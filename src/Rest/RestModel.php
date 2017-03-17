@@ -12,12 +12,10 @@ abstract class RestModel implements IRestModel
     protected $restObjectClass;
     protected $restObject;
 
-    public function __construct($restObject = null)
+    public function __construct($restObject)
     {
         $reflectionHelper = new ReflectionHelper;
-        $this->restObject = $restObject === null ?
-          $reflectionHelper->createInstance($this->restObjectClass) :
-          $restObject;
+        $this->restObject = $restObject;
     }
 
     public function createFromObject(StdClass $obj)
