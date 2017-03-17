@@ -29,13 +29,6 @@ class Resource implements IResource
             return $this->getOne($resourceId);
         }
         return $this->getAll();
-        try {
-            $res = $resourceId === null ? $this->collection->get() : $this->collection->find($resourceId);
-            $this->failOnError($res);
-            return $this->toObject($res, $resourceId === null ? 'array' : 'object');
-        } catch (Exception $ex) {
-            throw new DetailedException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
-        }
     }
 
     protected function getOne($resourceId)
