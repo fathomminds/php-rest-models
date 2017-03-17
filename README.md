@@ -9,6 +9,13 @@ Framework independent PHP REST models with schema validation and multiple databa
 * [Clusterpoint](https://www.clusterpoint.com)
 * [DynamoDB](https://aws.amazon.com/dynamodb)
 
+## Requirements ##
+
+* PHP 7+
+* Composer
+* Use with Clusterpoint: [Clusterpoint V4 PHP client](https://github.com/clusterpoint/php-client-api)
+* Use with DynamoDB: [AWS SDK for PHP](https://github.com/aws/aws-sdk-php)
+
 ## Install ##
 
 `composer require fathomminds/php-rest-models`
