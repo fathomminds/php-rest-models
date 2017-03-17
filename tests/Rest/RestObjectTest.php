@@ -12,7 +12,7 @@ class RestObjectTest extends TestCase
         $input->_id = 'ID';
         $input->multi = 'MULTI';
         $object = $object->createFromObject($input);
-        $object->validate(); // Trigger early return in RestObject::validateUniqueFields
+        $object->validateUniqueFields(); // Trigger early return in RestObject::validateUniqueFields
         $this->assertCount(0, $object->getUniqueFields());
     }
 }
