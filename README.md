@@ -1,0 +1,32 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/badges/quality-score.png?b=master&s=815eeac557c3f9f618b3eae4c18875aea4bbd178)](https://scrutinizer-ci.com/b/fathomminds/php-rest-models/?branch=master)
+
+# PHP REST MODELS #
+
+Framework independent PHP REST models with schema validation and multiple database engine support.
+
+## Database engines supported ##
+
+* [Clusterpoint](https://www.clusterpoint.com)
+* [DynamoDB](https://aws.amazon.com/dynamodb)
+
+## Install ##
+
+`composer require fathomminds/php-rest-models`
+
+## Configuration ##
+
+* Use with Clusterpoint
+* Use with DynamoDB
+
+## Contribution ##
+
+* Fork the repository
+* Make modifications in the code
+* Create a pull request targeting develop branch
+* Provide a meaningful description what the changes do and why they are needed
+* Don't forget to write unit tests
+* [Pull Request best practices](http://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests)
+
+## License ##
+
+Licensed under the MIT license. See [LICENSE](./LICENSE)
