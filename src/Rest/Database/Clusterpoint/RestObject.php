@@ -20,9 +20,8 @@ class RestObject extends CoreRestObject
         if (empty($uniqueFields)) {
             return;
         }
-        $query = null;
+        $query = $this->getCollection();
         if (property_exists($this->resource, $this->primaryKey)) {
-            $query = $this->getCollection();
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
         $query = $this->getUniqueFieldQuery($query, $uniqueFields);
@@ -30,18 +29,13 @@ class RestObject extends CoreRestObject
         if ((int)$res->hits() > 0) {
             throw new DetailedException(
                 'Unique constraint violation',
-                [
-                    'resourceName' => $this->resourceName,
-                    'confilct' => $res[0],
-                ]
+                ['resourceName' => $this->resourceName,'confilct' => $res[0]]
             );
         }
     }
 
-    private function getUniqueFieldQuery($query = null, $uniqueFields = null)
+    private function getUniqueFieldQuery($query, $uniqueFields)
     {
-        $uniqueFields = $uniqueFields === null ? $this->schema->getUniqueFields() : $uniqueFields;
-        $query = $query === null ? $this->getCollection() : $query;
         $query->where(function ($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
                 if (property_exists($this->resource, $fieldName)) {
