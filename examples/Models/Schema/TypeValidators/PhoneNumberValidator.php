@@ -2,7 +2,7 @@
 namespace Fathomminds\Rest\Examples\Models\Schema\TypeValidators;
 
 use Fathomminds\Rest\Schema\TypeValidators\StdTypeValidator;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class PhoneNumberValidator extends StdTypeValidator
 {
@@ -11,7 +11,7 @@ class PhoneNumberValidator extends StdTypeValidator
     public function validate($value)
     {
         $this->validateType($value);
-        throw new DetailedException(
+        throw new RestException(
             'Something is wrong...'
         );
     }

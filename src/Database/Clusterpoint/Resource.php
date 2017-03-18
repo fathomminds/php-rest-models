@@ -3,7 +3,7 @@ namespace Fathomminds\Rest\Database\Clusterpoint;
 
 use Clusterpoint\Client;
 use Fathomminds\Rest\Database\Clusterpoint\Connection;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Contracts\IResource;
 
 class Resource implements IResource
@@ -50,7 +50,7 @@ class Resource implements IResource
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
-            throw new DetailedException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
     }
 
@@ -61,7 +61,7 @@ class Resource implements IResource
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
-            throw new DetailedException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
     }
 
@@ -72,7 +72,7 @@ class Resource implements IResource
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
-            throw new DetailedException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
     }
 
@@ -86,7 +86,7 @@ class Resource implements IResource
         if (empty($res->error())) {
             return;
         }
-        throw new DetailedException(
+        throw new RestException(
             'Database operation failed',
             [
                 'error' => $res->error(),

@@ -1,7 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Schema\TypeValidators;
 
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class ArrayValidator extends StdTypeValidator
 {
@@ -32,7 +32,7 @@ class ArrayValidator extends StdTypeValidator
             unset($details['itemErrors']);
         }
         if (!empty($details)) {
-            throw new DetailedException(
+            throw new RestException(
                 'Array validation failed',
                 $details
             );
@@ -45,7 +45,7 @@ class ArrayValidator extends StdTypeValidator
         foreach (array_keys($value) as $key) {
             try {
                 $this->keyValidator->validate($key);
-            } catch (DetailedException $ex) {
+            } catch (RestException $ex) {
                 $errors[] = [
                     'validation' => 'key',
                     'key' => $key,
@@ -62,7 +62,7 @@ class ArrayValidator extends StdTypeValidator
         foreach ($value as $key => $item) {
             try {
                 $this->itemValidator->validate($item);
-            } catch (DetailedException $ex) {
+            } catch (RestException $ex) {
                 $errorItem = [];
                 $errorItem['validation'] = 'item';
                 $errorItem['key'] = $key;

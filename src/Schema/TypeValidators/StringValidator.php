@@ -1,7 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Schema\TypeValidators;
 
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class StringValidator extends StdTypeValidator
 {
@@ -22,7 +22,7 @@ class StringValidator extends StdTypeValidator
     public function validateLength($value)
     {
         if ($this->maxLength > 0 && strlen($value) > $this->maxLength) {
-            throw new DetailedException(
+            throw new RestException(
                 'Maximum length error',
                 [
                     'length' => strlen($value),

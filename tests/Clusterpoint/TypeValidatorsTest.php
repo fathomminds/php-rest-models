@@ -10,7 +10,7 @@ use Fathomminds\Rest\Schema\TypeValidators\NumberTypeValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ObjectValidator;
 use Fathomminds\Rest\Schema\TypeValidators\StdTypeValidator;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 
 class TypeValidatorsTest extends TestCase
@@ -23,7 +23,7 @@ class TypeValidatorsTest extends TestCase
         try {
             $method->invokeArgs(new ValidatorFactory, [['validator'=>['class'=>'INVALID']]]);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Class INVALID does not exist', $ex->getMessage());
         }
     }
@@ -34,7 +34,7 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate(null);
             $this->assertEquals(1, 1); //Should always reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->fail(); //Should not throw exception
         }
     }
@@ -57,7 +57,7 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate(['string'=>'string']);
             $this->assertEquals(1, 1); //Should always reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->fail(); //Should not throw exception
         }
     }
@@ -80,7 +80,7 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate([1=>'string']);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Array validation failed', $ex->getMessage());
             $this->assertArrayHasKey('keyErrors', $ex->getDetails());
         }
@@ -104,7 +104,7 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate(['string'=>1]);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Array validation failed', $ex->getMessage());
             $this->assertArrayHasKey('itemErrors', $ex->getDetails());
         }
@@ -116,13 +116,13 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate(1.1);
             $this->assertEquals(1, 1); //Should always reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->fail();
         }
         try {
             $validator->validate(1);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Type mismatch', $ex->getMessage());
             $this->assertArrayHasKey('incorrectType', $ex->getDetails());
             $this->assertEquals('integer', $ex->getDetails()['incorrectType']);
@@ -141,13 +141,13 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate(-1);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Minimum value error', $ex->getMessage());
         }
         try {
             $validator->validate(11);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Maximum value error', $ex->getMessage());
         }
     }
@@ -158,13 +158,13 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate(-1);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Type mismatch', $ex->getMessage());
         }
         try {
             $validator->validate(new \StdClass);
             $this->assertEquals(1, 1); //Should always reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->fail();
         }
     }
@@ -178,7 +178,7 @@ class TypeValidatorsTest extends TestCase
         try {
             $validator->validate('AB');
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Maximum length error', $ex->getMessage());
         }
     }

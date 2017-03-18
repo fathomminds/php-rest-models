@@ -3,7 +3,7 @@ namespace Fathomminds\Rest\Tests;
 
 use Fathomminds\Rest\Examples\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Models\FooModel;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class RestModelTest extends TestCase
 {
@@ -38,7 +38,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $model->one('ID');
     }
 
@@ -52,7 +52,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $model->one('ID');
     }
 
@@ -98,7 +98,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $list = $model->save();
     }
 
@@ -158,7 +158,7 @@ class RestModelTest extends TestCase
             ->andReturn($this->mockResponse($dbResult, ['Assume DB failure']));
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $deletedId = $model->delete();
     }
 
@@ -185,7 +185,7 @@ class RestModelTest extends TestCase
         $resource->_id = 'ID';
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $model->validate();
     }
 
@@ -300,7 +300,7 @@ class RestModelTest extends TestCase
             ->andReturn($mockResponse);
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $model->validateUniqueFields();
     }
 
@@ -324,7 +324,7 @@ class RestModelTest extends TestCase
         $model->createFromObject($resource);
         try {
             $model->save();
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }
     }
@@ -347,7 +347,7 @@ class RestModelTest extends TestCase
         $model->createFromObject($resource);
         try {
             $model->save();
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }
     }

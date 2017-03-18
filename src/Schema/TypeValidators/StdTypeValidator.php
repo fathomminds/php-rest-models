@@ -2,7 +2,7 @@
 namespace Fathomminds\Rest\Schema\TypeValidators;
 
 use Fathomminds\Rest\Contracts\ITypeValidator;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 abstract class StdTypeValidator implements ITypeValidator
 {
@@ -17,7 +17,7 @@ abstract class StdTypeValidator implements ITypeValidator
     {
         $currentType = gettype($value);
         if ($currentType !== $this->validType) {
-            throw new DetailedException(
+            throw new RestException(
                 'Type mismatch',
                 [
                     'incorrectType' => $currentType,

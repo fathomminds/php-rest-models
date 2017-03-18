@@ -6,7 +6,7 @@ use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Examples\Models\Schema\FooSchema;
 use Fathomminds\Rest\Examples\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Models\FooModel;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 
 class SchemaValidatorTest extends TestCase
@@ -14,7 +14,7 @@ class SchemaValidatorTest extends TestCase
     public function testIncorrectSchemaException()
     {
         $foo = $this->mockModel(FooModel::class, FooObject::class);
-        $this->expectException(DetailedException::class);
+        $this->expectException(RestException::class);
         $foo->validate();
     }
 
@@ -23,7 +23,7 @@ class SchemaValidatorTest extends TestCase
         try {
             $foo = $this->mockModel(FooModel::class, FooObject::class);
             $foo->validate();
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $error = $ex->getMessage();
             $details = $ex->getDetails();
             $this->assertEquals('Invalid structure', $error);
@@ -42,7 +42,7 @@ class SchemaValidatorTest extends TestCase
             $foo->setProperty('title', 'REQUIRED');
             $foo->validate();
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->fail(); //Correct structure should not trigger an exception
         }
     }
@@ -54,7 +54,7 @@ class SchemaValidatorTest extends TestCase
             $foo->setProperty('title', 1);
             $foo->validate();
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Invalid structure', $ex->getMessage());
         }
     }
@@ -67,7 +67,7 @@ class SchemaValidatorTest extends TestCase
         try {
             $method->invokeArgs(new FooSchema, ['string']);
             $this->assertEquals(1, 0); //Should not reach this line
-        } catch (DetailedException $ex) {
+        } catch (RestException $ex) {
             $this->assertEquals('Object expected', $ex->getMessage());
         }
     }

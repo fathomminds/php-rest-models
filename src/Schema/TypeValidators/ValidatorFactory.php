@@ -1,7 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Schema\TypeValidators;
 
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class ValidatorFactory
 {
@@ -18,7 +18,7 @@ class ValidatorFactory
         try {
             $validatorClass = new \ReflectionClass($validatorClassName);
         } catch (\Exception $ex) {
-            throw new DetailedException($ex->getMessage());
+            throw new RestException($ex->getMessage());
         }
         return $validatorClass;
     }

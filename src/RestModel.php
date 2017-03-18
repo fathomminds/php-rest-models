@@ -2,7 +2,7 @@
 namespace Fathomminds\Rest;
 
 use Fathomminds\Rest\Helpers\ReflectionHelper;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Objects\RestObject;
 use Fathomminds\Rest\Contracts\IRestModel;
 
@@ -31,7 +31,7 @@ abstract class RestModel implements IRestModel
     {
         $this->restObject->get($resourceId);
         if ($this->restObject->getPrimaryKeyValue() !== $resourceId) {
-            throw new DetailedException(
+            throw new RestException(
                 'Resource does not exist',
                 [
                     'resourceName' => $this->restObject->getResourceName(),

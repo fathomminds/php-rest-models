@@ -1,7 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Schema\TypeValidators;
 
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class NumberTypeValidator extends StdTypeValidator
 {
@@ -24,7 +24,7 @@ class NumberTypeValidator extends StdTypeValidator
     private function validateMin($value)
     {
         if ($this->min !== null && $value < $this->min) {
-            throw new DetailedException(
+            throw new RestException(
                 'Minimum value error',
                 [
                     'value' => $value,
@@ -37,7 +37,7 @@ class NumberTypeValidator extends StdTypeValidator
     private function validateMax($value)
     {
         if ($this->max !== null && $value > $this->max) {
-            throw new DetailedException(
+            throw new RestException(
                 'Maximum value error',
                 [
                     'value' => $value,

@@ -1,7 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Database\Clusterpoint;
 
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Objects\RestObject as CoreRestObject;
 
 class RestObject extends CoreRestObject
@@ -27,7 +27,7 @@ class RestObject extends CoreRestObject
         $query = $this->getUniqueFieldQuery($query, $uniqueFields);
         $res = $query->limit(1)->get();
         if ((int)$res->hits() > 0) {
-            throw new DetailedException(
+            throw new RestException(
                 'Unique constraint violation',
                 ['resourceName' => $this->resourceName, 'confilct' => $res[0]]
             );

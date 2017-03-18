@@ -3,7 +3,7 @@ namespace Fathomminds\Rest\Schema;
 
 use Fathomminds\Rest\Contracts\ISchema;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
-use Fathomminds\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Exceptions\RestException;
 
 class SchemaValidator implements ISchema
 {
@@ -18,7 +18,7 @@ class SchemaValidator implements ISchema
             $this->validateFieldTypes($resource)
         );
         if (!empty($errors)) {
-            throw new DetailedException(
+            throw new RestException(
                 'Invalid structure',
                 [
                     'schema' => get_called_class(),
@@ -31,7 +31,7 @@ class SchemaValidator implements ISchema
     private function expectObject($resource)
     {
         if (gettype($resource) !== 'object') {
-            throw new DetailedException(
+            throw new RestException(
                 'Object expected',
                 [
                     'schema' => static::class,
@@ -72,7 +72,7 @@ class SchemaValidator implements ISchema
             if (property_exists($resource, $fieldName)) {
                 try {
                     $validatorFactory->create($rules)->validate($resource->{$fieldName});
-                } catch (DetailedException $ex) {
+                } catch (RestException $ex) {
                     $errors[$fieldName]['error'] = $ex->getMessage();
                     $errors[$fieldName]['details'] = $ex->getDetails();
                 }
