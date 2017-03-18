@@ -1,9 +1,9 @@
 <?php
-namespace Fathomminds\Clurexid\Rest\Examples\Models\Schema;
+namespace Fathomminds\Rest\Examples\Models\Schema;
 
-use Fathomminds\Clurexid\Rest\Schema\SchemaValidator;
-use Fathomminds\Clurexid\Rest\Schema\TypeValidators\StringValidator;
-use Fathomminds\Clurexid\Rest\Schema\TypeValidators\IntegerValidator;
+use Fathomminds\Rest\Schema\SchemaValidator;
+use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
+use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
 
 class FooSchema extends SchemaValidator
 {

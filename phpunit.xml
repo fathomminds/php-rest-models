@@ -10,8 +10,8 @@
          syntaxCheck="false"
          bootstrap="./bootstrap.php">
     <testsuites>
-        <testsuite name="Test Suite">
-            <directory suffix="Test.php">./tests/Rest</directory>
+        <testsuite name="Clusterpoint Test Suite">
+            <directory suffix="Test.php">./tests/Clusterpoint</directory>
         </testsuite>
     </testsuites>
     <filter>

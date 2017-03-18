@@ -1,8 +1,8 @@
 <?php
-namespace Fathomminds\Clurexid\Rest\Examples\Models\Schema\TypeValidators;
+namespace Fathomminds\Rest\Examples\Models\Schema\TypeValidators;
 
-use Fathomminds\Clurexid\Rest\Schema\TypeValidators\StdTypeValidator;
-use Fathomminds\Clurexid\Rest\Exceptions\DetailedException;
+use Fathomminds\Rest\Schema\TypeValidators\StdTypeValidator;
+use Fathomminds\Rest\Exceptions\DetailedException;
 
 class PhoneNumberValidator extends StdTypeValidator
 {

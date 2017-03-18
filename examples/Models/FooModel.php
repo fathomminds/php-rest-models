@@ -1,8 +1,8 @@
 <?php
-namespace Fathomminds\Clurexid\Rest\Examples\Models;
+namespace Fathomminds\Rest\Examples\Models;
 
-use Fathomminds\Clurexid\Rest\RestModel;
-use Fathomminds\Clurexid\Rest\Examples\Models\Objects\FooObject;
+use Fathomminds\Rest\RestModel;
+use Fathomminds\Rest\Examples\Models\Objects\FooObject;
 
 class FooModel extends RestModel
 {

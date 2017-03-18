@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Clurexid\Rest\Tests;
+namespace Fathomminds\Rest\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Mockery;
@@ -7,8 +7,8 @@ use Clusterpoint\Client;
 use Clusterpoint\Instance\Service;
 use Clusterpoint\Response\Single;
 use Clusterpoint\Response\Batch;
-use Fathomminds\Clurexid\Rest\Database\Clusterpoint\Database;
-use Fathomminds\Clurexid\Rest\Helpers\ReflectionHelper;
+use Fathomminds\Rest\Database\Clusterpoint\Database;
+use Fathomminds\Rest\Helpers\ReflectionHelper;
 
 abstract class TestCase extends PHPUnitTestCase
 {
