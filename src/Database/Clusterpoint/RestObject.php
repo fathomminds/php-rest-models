@@ -29,7 +29,7 @@ class RestObject extends CoreRestObject
         if ((int)$res->hits() > 0) {
             throw new DetailedException(
                 'Unique constraint violation',
-                ['resourceName' => $this->resourceName,'confilct' => $res[0]]
+                ['resourceName' => $this->resourceName, 'confilct' => $res[0]]
             );
         }
     }
