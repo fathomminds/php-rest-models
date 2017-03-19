@@ -11,7 +11,7 @@ abstract class RestModel implements IRestModel
     protected $restObjectClass;
     protected $restObject;
 
-    public function __construct($restObject)
+    public function __construct($restObject = null)
     {
         if ($restObject === null) {
             $reflectionHelper = new ReflectionHelper;
