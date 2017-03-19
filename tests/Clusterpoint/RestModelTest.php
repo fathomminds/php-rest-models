@@ -7,6 +7,17 @@ use Fathomminds\Rest\Exceptions\RestException;
 
 class RestModelTest extends TestCase
 {
+    public function testConstructWithoutParameters()
+    {
+        $foo = new FooModel;
+        $class = new \ReflectionClass($foo);
+        $property = $class->getProperty('restObject');
+        $property->setAccessible(true);
+        $restObject = $property->getValue($foo);
+        $className = get_class($restObject);
+        $this->assertEquals(FooObject::class, $className);
+    }
+
     public function testCreateFromObject()
     {
         $foo = $this->mockModel(FooModel::class, FooObject::class);
