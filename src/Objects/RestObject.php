@@ -42,17 +42,17 @@ abstract class RestObject implements IRestObject
     public function get($resourceId = null)
     {
         if ($resourceId == null) {
-            $resources = $this->database->get($this->resourceName);
+            $resources = $this->database->get($this->resourceName, $this->primaryKey);
             return $resources;
         }
-        $this->resource = $this->database->get($this->resourceName, $resourceId);
+        $this->resource = $this->database->get($this->resourceName, $this->primaryKey, $resourceId);
         return $this->resource;
     }
 
     public function post($newResource)
     {
         $this->schema->validate($newResource);
-        $this->resource = $this->database->post($this->resourceName, $newResource);
+        $this->resource = $this->database->post($this->resourceName, $this->primaryKey, $newResource);
     }
 
     public function put($resourceId, $newResource)
@@ -60,6 +60,7 @@ abstract class RestObject implements IRestObject
         $this->schema->validate($newResource);
         $this->resource = $this->database->put(
             $this->resourceName,
+            $this->primaryKey,
             $resourceId,
             $newResource
         );
@@ -67,7 +68,7 @@ abstract class RestObject implements IRestObject
 
     public function delete($resourceId)
     {
-        $this->database->delete($this->resourceName, $resourceId);
+        $this->database->delete($this->resourceName, $this->primaryKey, $resourceId);
         $this->reset();
     }
 
@@ -113,10 +114,20 @@ abstract class RestObject implements IRestObject
         return null;
     }
 
+    public function getUniqueFields()
+    {
+        return $this->schema->getUniqueFields();
+    }
+
     abstract public function validateUniqueFields();
 
-    protected function getCollection()
+    protected function getDatabaseName()
     {
-        return $this->database->getCollection($this->resourceName);
+        return $this->database->getDatabaseName();
+    }
+
+    protected function getClient()
+    {
+        return $this->database->getClient();
     }
 }

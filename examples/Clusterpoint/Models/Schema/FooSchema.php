@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Rest\Examples\Models\Schema;
+namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Schema;
 
 use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;

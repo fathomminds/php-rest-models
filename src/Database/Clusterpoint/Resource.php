@@ -76,11 +76,6 @@ class Resource implements IResource
         }
     }
 
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
     protected function failOnError($res)
     {
         if (empty($res->error())) {

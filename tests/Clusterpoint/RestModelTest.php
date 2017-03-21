@@ -1,8 +1,8 @@
 <?php
 namespace Fathomminds\Rest\Tests;
 
-use Fathomminds\Rest\Examples\Models\Objects\FooObject;
-use Fathomminds\Rest\Examples\Models\FooModel;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
 
 class RestModelTest extends TestCase

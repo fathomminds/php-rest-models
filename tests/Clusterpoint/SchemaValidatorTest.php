@@ -3,9 +3,9 @@ namespace Fathomminds\Rest\Tests;
 
 use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
-use Fathomminds\Rest\Examples\Models\Schema\FooSchema;
-use Fathomminds\Rest\Examples\Models\Objects\FooObject;
-use Fathomminds\Rest\Examples\Models\FooModel;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 

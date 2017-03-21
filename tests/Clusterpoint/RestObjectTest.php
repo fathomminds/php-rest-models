@@ -1,7 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Tests;
 
-use Fathomminds\Rest\Examples\Models\Objects\NoUniqueFieldObject;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\NoUniqueFieldObject;
 
 class RestObjectTest extends TestCase
 {

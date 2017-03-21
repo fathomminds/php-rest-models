@@ -1,9 +1,10 @@
 <?php
-namespace Fathomminds\Rest\Database\Clusterpoint;
+namespace Fathomminds\Rest\Database\DynamoDb;
 
-use Clusterpoint\Client;
+use Aws\Sdk;
+use Aws\DynamoDb\DynamoDbClient;
 use Fathomminds\Rest\Contracts\IDatabase;
-use Fathomminds\Rest\Database\Clusterpoint\Resource;
+use Fathomminds\Rest\Database\DynameDb\Resource;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 
 class Database implements IDatabase
@@ -11,16 +12,34 @@ class Database implements IDatabase
     protected $client;
     protected $databaseName;
 
-    public function __construct(Client $client = null, $databaseName = null)
+    public function __construct(DynamoDbClient $client = null, $databaseName = null)
     {
-        $this->client = $client === null ? new Client : $client;
-        $this->databaseName = $databaseName === null ? getenv('CLUREXID_CLUSTERPOINT_DATABASE') : $databaseName;
+        $this->client = $client === null ? $this->createClient() : $client;
+        $this->databaseName = $databaseName === null ? $this->getFullDatabaseName() : $databaseName;
+    }
+
+    private function createClient()
+    {
+        $sdk = new Sdk([
+            'region' => getenv('AWS_SDK_REGION'),
+            'version' => getenv('AWS_SDK_VERSION'),
+            'http' => [
+                'verify' => getenv('AWS_SDK_HTTP_VERIFY')
+            ]
+        ]);
+        return $sdk->createDynamoDb();
+    }
+
+    private function getFullDatabaseName()
+    {
+        return getenv('AWS_DYNAMODB_NAMESPACE') . '-' . getenv('AWS_DYNAMODB_DATABASE');
     }
 
     public function get($resourceName, $primaryKey, $resourceId = null)
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->get($resourceId);
@@ -30,6 +49,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->post($newResource);
@@ -39,6 +59,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->put($resourceId, $newResource);
@@ -48,6 +69,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->delete($resourceId);

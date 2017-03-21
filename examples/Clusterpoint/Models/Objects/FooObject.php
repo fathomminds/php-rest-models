@@ -1,8 +1,8 @@
 <?php
-namespace Fathomminds\Rest\Examples\Models\Objects;
+namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Objects;
 
 use Fathomminds\Rest\Database\Clusterpoint\RestObject;
-use Fathomminds\Rest\Examples\Models\Schema\FooSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class FooObject extends RestObject
 {

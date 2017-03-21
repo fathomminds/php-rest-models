@@ -9,18 +9,13 @@ class RestObject extends CoreRestObject
     protected $primaryKey = '_id';
     protected $databaseClass = Database::class;
 
-    public function getUniqueFields()
-    {
-        return $this->schema->getUniqueFields();
-    }
-
     public function validateUniqueFields()
     {
         $uniqueFields = $this->getUniqueFields();
         if (empty($uniqueFields)) {
             return;
         }
-        $query = $this->getCollection();
+        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         if (property_exists($this->resource, $this->primaryKey)) {
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
