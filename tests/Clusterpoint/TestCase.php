@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Rest\Tests;
+namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Mockery;

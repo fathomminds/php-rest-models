@@ -1,7 +1,6 @@
 <?php
 namespace Fathomminds\Rest\Tests\DynamoDb;
 
-use Fathomminds\Rest\Tests\TestCase;
 use Fathomminds\Rest\Database\DynamoDb\Database;
 use Fathomminds\Rest\Database\DynamoDb\Resource;
 

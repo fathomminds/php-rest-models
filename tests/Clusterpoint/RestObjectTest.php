@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Rest\Tests;
+namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\NoUniqueFieldObject;
 
