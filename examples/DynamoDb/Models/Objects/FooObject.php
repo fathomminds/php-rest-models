@@ -8,4 +8,8 @@ class FooObject extends RestObject
 {
     protected $schemaClass = FooSchema::class;
     protected $resourceName = 'todo_items';
+    protected $indexNames = [
+        'title' => 'title-index',
+        'other' => 'other-index',
+    ];
 }

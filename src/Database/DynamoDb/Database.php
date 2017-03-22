@@ -2,9 +2,9 @@
 namespace Fathomminds\Rest\Database\DynamoDb;
 
 use Aws\Sdk;
-use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\DynamoDbClient as Client;
 use Fathomminds\Rest\Contracts\IDatabase;
-use Fathomminds\Rest\Database\DynameDb\Resource;
+use Fathomminds\Rest\Database\DynamoDb\Resource;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 
 class Database implements IDatabase
@@ -12,7 +12,7 @@ class Database implements IDatabase
     protected $client;
     protected $databaseName;
 
-    public function __construct(DynamoDbClient $client = null, $databaseName = null)
+    public function __construct(Client $client = null, $databaseName = null)
     {
         $this->client = $client === null ? $this->createClient() : $client;
         $this->databaseName = $databaseName === null ? $this->getFullDatabaseName() : $databaseName;
@@ -24,7 +24,7 @@ class Database implements IDatabase
             'region' => getenv('AWS_SDK_REGION'),
             'version' => getenv('AWS_SDK_VERSION'),
             'http' => [
-                'verify' => getenv('AWS_SDK_HTTP_VERIFY')
+                'verify' => getenv('AWS_SDK_HTTP_VERIFY') === 'false' ? false : getenv('AWS_SDK_HTTP_VERIFY'),
             ]
         ]);
         return $sdk->createDynamoDb();

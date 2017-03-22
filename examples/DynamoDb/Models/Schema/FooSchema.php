@@ -23,6 +23,25 @@ class FooSchema extends SchemaValidator
                 ],
             ],
         ],
+        'other' => [
+            'unique' => true,
+            'required' => true,
+            'validator' => [
+                'class' => StringValidator::class,
+                'params' => [
+                    'maxLength' => 100,
+                ],
+            ],
+        ],
+        'noindex' => [
+            'unique' => true,
+            'validator' => [
+                'class' => StringValidator::class,
+                'params' => [
+                    'maxLength' => 100,
+                ],
+            ],
+        ],
         'status' => [
             'validator' => [
                 'class' => IntegerValidator::class,

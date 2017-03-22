@@ -13,7 +13,7 @@
         <testsuite name="DynamoDb Test Suite">
             <directory suffix="Test.php">./tests/DynamoDb</directory>
         </testsuite>
-        <testsuite name="CP Test Suite">
+        <testsuite name="Clusterpoint Test Suite">
             <directory suffix="Test.php">./tests/Clusterpoint</directory>
         </testsuite>
     </testsuites>

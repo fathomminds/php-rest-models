@@ -2,7 +2,7 @@
 namespace Fathomminds\Rest\Database\DynamoDb;
 
 use Aws\Sdk;
-use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\DynamoDbClient as Client;
 use Aws\DynamoDb\Marshaler;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Contracts\IResource;
@@ -75,7 +75,7 @@ class Resource implements IResource
     {
         $query = $this->createScanQuery();
         $res = $this->client->scan($query);
-        return $res['Items'];
+        return $this->unmarshalBatch($res['Items']);
     }
 
     protected function createScanQuery()
@@ -96,16 +96,16 @@ class Resource implements IResource
             if ($ex->getAwsErrorCode() === 'ConditionalCheckFailedException') {
                 return $this->retryPost($newResource, $this->retryCount);
             }
-            throw new RestException($ex->getMessage(), ['exception'=>$ex]);
+            throw new RestException($ex->getMessage(), ['exception' => $ex, 'retryCount' => $this->retryCount]);
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['exception'=>$ex]);
+            throw new RestException($ex->getMessage(), ['exception' => $ex, 'retryCount' => $this->retryCount]);
         }
     }
 
     protected function retryPost($newResource, $counter)
     {
         $this->retryCount += 1;
-        if ($counter > 5) {
+        if ($counter > 4) {
             $this->retryCount = 0;
             throw new RestException('Creating new resource failed', [
                 'retryCount' => $counter,
@@ -119,11 +119,12 @@ class Resource implements IResource
     protected function createPostQuery($newResource)
     {
         $createResource = $newResource;
-        $createResource->id = (new Uuid)->generate();
+        $createResource->{$this->primaryKey} = (new Uuid)->generate();
         $query = [
             'TableName' => $this->fullTableName,
             'Item' => $this->marshalItem($newResource),
-            'ConditionExpression' => 'attribute_not_exists('.$this->primaryKey.')',
+            'ConditionExpression' => 'attribute_not_exists(#pk)',
+            "ExpressionAttributeNames" => ["#pk" => $this->primaryKey],
         ];
         return $query;
     }
@@ -145,7 +146,8 @@ class Resource implements IResource
         $query = [
             'TableName' => $this->fullTableName,
             'Item' => $this->marshalItem($newResource),
-            'ConditionExpression' => 'attribute_exists('.$this->primaryKey.')',
+            'ConditionExpression' => 'attribute_exists(#pk)',
+            "ExpressionAttributeNames" => ["#pk" => $this->primaryKey],
         ];
         return $query;
     }
@@ -175,8 +177,23 @@ class Resource implements IResource
         return $this->marshaler->marshalItem($resource);
     }
 
-    protected function unmarshalItem($item)
+    protected function unmarshalItem($item, $mapAsObject = true)
     {
-        return $this->marshaler->unmarshalItem($item);
+        if ($item === null) {
+            return new \StdClass;
+        }
+        return $this->marshaler->unmarshalItem($item, $mapAsObject);
+    }
+
+    protected function unmarshalBatch($itemList, $mapAsObject = true)
+    {
+        if ($itemList === null) {
+            return [];
+        }
+        $list = [];
+        foreach ($itemList as $item) {
+            $list[] = $this->unmarshalItem($item, $mapAsObject);
+        }
+        return $list;
     }
 }
