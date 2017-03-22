@@ -7,7 +7,8 @@ interface IRestModel
     public function getResource();
     public function one($resourceId);
     public function all();
-    public function save();
+    public function create();
+    public function update();
     public function delete();
     public function validate();
     public function toArray();

@@ -52,9 +52,16 @@ abstract class RestModel implements IRestModel
         return $list;
     }
 
-    public function save()
+    public function create()
     {
-        return $this->restObject->isNew() ? $this->create() : $this->update();
+        $this->restObject->post($this->getResource());
+        return $this;
+    }
+
+    public function update()
+    {
+        $this->restObject->put($this->restObject->getPrimaryKeyValue(), $this->getResource());
+        return $this;
     }
 
     public function delete()
@@ -83,18 +90,6 @@ abstract class RestModel implements IRestModel
     public function toArray()
     {
         return $this->restObject->toArray();
-    }
-
-    private function create()
-    {
-        $this->restObject->post($this->getResource());
-        return $this;
-    }
-
-    private function update()
-    {
-        $this->restObject->put($this->restObject->getPrimaryKeyValue(), $this->getResource());
-        return $this;
     }
 
     public function validateUniqueFields()

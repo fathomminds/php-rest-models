@@ -99,7 +99,7 @@ class RestModelTest extends TestCase
         $this->assertEquals('array', gettype($list));
     }
 
-    public function testSaveInvalidStructure()
+    public function testCreateInvalidStructure()
     {
         $dbResult = [
             'results' => []
@@ -110,7 +110,7 @@ class RestModelTest extends TestCase
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $this->expectException(RestException::class);
-        $list = $model->save();
+        $list = $model->create();
     }
 
     public function testUpdateValidStructure()
@@ -129,7 +129,7 @@ class RestModelTest extends TestCase
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
-        $model->save();
+        $model->update();
         $this->assertEquals('ID', $model->getProperty('_id'));
     }
 
@@ -151,7 +151,7 @@ class RestModelTest extends TestCase
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
-        $model->save();
+        $model->create();
         $this->assertEquals('NEW', $model->getProperty('_id'));
         $this->assertEquals('TITLE', $model->getProperty('title'));
     }
@@ -334,7 +334,7 @@ class RestModelTest extends TestCase
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
         try {
-            $model->save();
+            $model->create();
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }
@@ -357,7 +357,7 @@ class RestModelTest extends TestCase
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
         try {
-            $model->save();
+            $model->update();
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }

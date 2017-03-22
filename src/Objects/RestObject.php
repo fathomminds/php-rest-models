@@ -101,11 +101,6 @@ abstract class RestObject implements IRestObject
         return $this;
     }
 
-    public function isNew()
-    {
-        return !property_exists($this->resource, $this->primaryKey) || $this->resource->{$this->primaryKey} === null;
-    }
-
     public function getPrimaryKeyValue()
     {
         if (property_exists($this->resource, $this->primaryKey)) {
