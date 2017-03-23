@@ -140,6 +140,7 @@ class RestModelTest extends TestCase
         $createdResource = new \StdClass;
         $createdResource->_id = 'NEW';
         $createdResource->title = 'TITLE';
+        $createdResource->status = 0;
         $dbResult = [
             'results' => [
                 $createdResource,

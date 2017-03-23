@@ -4,6 +4,7 @@ namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Schema;
 use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
+use Fathomminds\Rest\Helpers\Uuid;
 
 class FooSchema extends SchemaValidator
 {
@@ -24,6 +25,7 @@ class FooSchema extends SchemaValidator
             ],
         ],
         'status' => [
+            'default' => 0,
             'validator' => [
                 'class' => IntegerValidator::class,
                 'params' => [
@@ -36,4 +38,11 @@ class FooSchema extends SchemaValidator
             'type' => BarSchema::class,
         ],
     ];
+
+    public function __construct()
+    {
+        $this->setDefault('_id', function () {
+            return (new Uuid)->generate();
+        });
+    }
 }
