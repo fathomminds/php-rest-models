@@ -85,6 +85,19 @@ class Resource implements IResource
         return $query;
     }
 
+    protected function throwAwsPostError($ex)
+    {
+        switch ($ex->getAwsErrorCode()) {
+            case 'ConditionalCheckFailedException':
+                throw new RestException(
+                    'Primary key collision',
+                    ['exception' => $ex]
+                );
+                break;
+        }
+        throw new RestException($ex->getMessage(), ['exception' => $ex]);
+    }
+
     public function post($newResource)
     {
         try {
@@ -92,13 +105,7 @@ class Resource implements IResource
             $this->client->putItem($query);
             return $newResource;
         } catch (DynamoDbException $ex) {
-            if ($ex->getAwsErrorCode() === 'ConditionalCheckFailedException') {
-                throw new RestException(
-                    'Primary key collision',
-                    ['exception' => $ex]
-                );
-            }
-            throw new RestException($ex->getMessage(), ['exception' => $ex]);
+            $this->throwAwsPostError($ex);
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['exception' => $ex]);
         }
@@ -115,6 +122,19 @@ class Resource implements IResource
         return $query;
     }
 
+    protected function throwAwsPutError($ex)
+    {
+        switch ($ex->getAwsErrorCode()) {
+            case 'ConditionalCheckFailedException':
+                throw new RestException(
+                    'Resource does not exist',
+                    ['exception' => $ex]
+                );
+                break;
+        }
+        throw new RestException($ex->getMessage(), ['exception' => $ex]);
+    }
+
     public function put($resourceId, $newResource)
     {
         try {
@@ -123,13 +143,7 @@ class Resource implements IResource
             $res = $this->client->putItem($query);
             return $newResource;
         } catch (DynamoDbException $ex) {
-            if ($ex->getAwsErrorCode() === 'ConditionalCheckFailedException') {
-                throw new RestException(
-                    'Resource does not exist',
-                    ['exception' => $ex]
-                );
-            }
-            throw new RestException($ex->getMessage(), ['exception' => $ex]);
+            $this->throwAwsPutError($ex);
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
