@@ -24,6 +24,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 You must install the Database Engine specific packages in your project. (Left out from dependencies intentionally to allow installing only the required one.)
 
 If you use Clusterpoint: `composer require clusterpoint/php-client-api-v4`
+
 If you use DynamoDb: `composer require aws/aws-sdk-php`
 
 You can use both, in such case you need to install both DB package.
@@ -57,6 +58,8 @@ Test coverage report is logged to folder: `log`
 Run integration tests:
 
 `vendor/bin/phpunit --configuration phpunit-integration-test.xml`
+
+Integration tests will interact with real databases. You need to follow the configuration steps to be able to run these tests. The tests use the FooSchema class for both databases. Please make sure the required objects (tables and indexes) are created before executing integration tests.
 
 ## License ##
 
