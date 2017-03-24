@@ -85,16 +85,16 @@ class Resource implements IResource
         return $query;
     }
 
-    protected function throwAwsPostError($ex)
+    protected function throwAwsPostError($exception)
     {
-        switch ($ex->getAwsErrorCode()) {
+        switch ($exception->getAwsErrorCode()) {
             case 'ConditionalCheckFailedException':
                 throw new RestException(
                     'Primary key collision',
-                    ['exception' => $ex]
+                    ['exception' => $exception]
                 );
         }
-        throw new RestException($ex->getMessage(), ['exception' => $ex]);
+        throw new RestException($exception->getMessage(), ['exception' => $exception]);
     }
 
     public function post($newResource)
@@ -121,16 +121,16 @@ class Resource implements IResource
         return $query;
     }
 
-    protected function throwAwsPutError($ex)
+    protected function throwAwsPutError($exception)
     {
-        switch ($ex->getAwsErrorCode()) {
+        switch ($exception->getAwsErrorCode()) {
             case 'ConditionalCheckFailedException':
                 throw new RestException(
                     'Resource does not exist',
-                    ['exception' => $ex]
+                    ['exception' => $exception]
                 );
         }
-        throw new RestException($ex->getMessage(), ['exception' => $ex]);
+        throw new RestException($exception->getMessage(), ['exception' => $exception]);
     }
 
     public function put($resourceId, $newResource)
