@@ -73,6 +73,7 @@ abstract class RestModel implements IRestModel
 
     public function validate()
     {
+        $this->restObject->validateSchema($this->getResource());
         $this->restObject->validate();
     }
 

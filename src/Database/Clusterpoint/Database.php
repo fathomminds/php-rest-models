@@ -21,6 +21,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->get($resourceId);
@@ -30,6 +31,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->post($newResource);
@@ -39,6 +41,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->put($resourceId, $newResource);
@@ -48,6 +51,7 @@ class Database implements IDatabase
     {
         return (new Resource(
             $resourceName,
+            $primaryKey,
             $this->client,
             $this->databaseName
         ))->delete($resourceId);

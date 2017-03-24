@@ -12,10 +12,12 @@ class Resource implements IResource
     protected $databaseName;
     protected $collection;
     protected $resourceName;
+    protected $primaryKey;
 
-    public function __construct($resourceName, Client $client = null, $databaseName = null)
+    public function __construct($resourceName, $primaryKey, Client $client = null, $databaseName = null)
     {
         $this->resourceName = $resourceName;
+        $this->primaryKey = $primaryKey;
         $this->client = $client === null ? new Client : $client;
         $this->databaseName = $databaseName === null ? getenv('CLUREXID_CLUSTERPOINT_DATABASE') : $databaseName;
         $this->collection = $this->client->database($this->databaseName . '.' . $this->resourceName);

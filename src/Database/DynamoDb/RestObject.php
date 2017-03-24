@@ -41,12 +41,12 @@ class RestObject extends CoreRestObject
         $client = $this->getClient();
         $query = new Scan($client, $this->generateScan($fields));
         while ($res = $query->next()) {
-            if ($res['Count'] !== 0) {
+            if ($res !== null && $res['Count'] !== 0) {
                 throw new RestException(
                     'Unique constraint violation',
                     [
                         'resourceName' => $this->resourceName,
-                        'confilct' => $res['Items'][0],
+                        'confilct' => $res,
                         'mode' => 'scan',
                     ]
                 );
@@ -106,12 +106,12 @@ class RestObject extends CoreRestObject
         $promises = $this->generatePromises($queries);
         $results = PromiseFunctions\unwrap($promises);
         foreach ($results as $result) {
-            if ($result['count'] !== 0) {
+            if ($result !== null && $result['Count'] !== 0) {
                 throw new RestException(
                     'Unique constraint violation',
                     [
                         'resourceName' => $this->resourceName,
-                        'confilct' => $result['conflicts'][0]['Items'][0],
+                        'confilct' => $result,
                         'mode' => 'query',
                     ]
                 );
@@ -148,16 +148,14 @@ class RestObject extends CoreRestObject
         foreach ($queries as $query) {
             $promise = new Promise(
                 function () use (&$promise, $client, $query) {
-                    $count = 0;
-                    $conflicts = [];
                     $q = new Query($client, $query);
                     while ($res = $q->next()) {
-                        $count += $res['Count'];
                         if ($res['Count'] !== 0) {
-                            $conflicts[] = $res;
+                            $promise->resolve($res);
+                            return;
                         }
                     }
-                    $promise->resolve(['count' => $count, 'conflicts' => $conflicts]);
+                    $promise->resolve(null);
                 }
             );
             $promises[] = $promise;

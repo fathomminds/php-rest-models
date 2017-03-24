@@ -52,14 +52,16 @@ abstract class RestObject implements IRestObject
     public function post($newResource)
     {
         $this->setFieldDefaults();
-        $this->schema->validate($newResource);
+        $this->validateSchema($newResource);
+        $this->validate();
         $this->resource = $this->database->post($this->resourceName, $this->primaryKey, $newResource);
     }
 
     public function put($resourceId, $newResource)
     {
         $this->setFieldDefaults();
-        $this->schema->validate($newResource);
+        $this->validateSchema($newResource);
+        $this->validate();
         $this->resource = $this->database->put(
             $this->resourceName,
             $this->primaryKey,
@@ -102,9 +104,14 @@ abstract class RestObject implements IRestObject
         $this->resource->{$fieldName} = $value;
     }
 
+    public function validateSchema($resource)
+    {
+        $this->schema->validate($resource);
+    }
+
     public function validate()
     {
-        $this->schema->validate($this->resource);
+        $this->validateUniqueFields();
     }
 
     public function toArray()

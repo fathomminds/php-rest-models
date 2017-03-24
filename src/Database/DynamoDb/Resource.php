@@ -18,9 +18,8 @@ class Resource implements IResource
     protected $resourceName;
     protected $primaryKey;
     protected $marshaler;
-    protected $retryCount = 0;
 
-    public function __construct($resourceName, $primaryKey = null, Client $client = null, $databaseName = null)
+    public function __construct($resourceName, $primaryKey, Client $client = null, $databaseName = null)
     {
         $this->resourceName = $resourceName;
         $this->primaryKey = $primaryKey;
@@ -94,32 +93,19 @@ class Resource implements IResource
             return $newResource;
         } catch (DynamoDbException $ex) {
             if ($ex->getAwsErrorCode() === 'ConditionalCheckFailedException') {
-                return $this->retryPost($newResource, $this->retryCount);
+                throw new RestException(
+                    'Primary key collision',
+                    ['exception' => $ex]
+                );
             }
-            throw new RestException($ex->getMessage(), ['exception' => $ex, 'retryCount' => $this->retryCount]);
+            throw new RestException($ex->getMessage(), ['exception' => $ex]);
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['exception' => $ex, 'retryCount' => $this->retryCount]);
+            throw new RestException($ex->getMessage(), ['exception' => $ex]);
         }
-    }
-
-    protected function retryPost($newResource, $counter)
-    {
-        $this->retryCount += 1;
-        if ($counter > 4) {
-            $this->retryCount = 0;
-            throw new RestException('Creating new resource failed', [
-                'retryCount' => $counter,
-                'resource' => $newResource,
-            ]);
-        }
-        $this->post($newResource);
-        return $newResource;
     }
 
     protected function createPostQuery($newResource)
     {
-        $createResource = $newResource;
-        $createResource->{$this->primaryKey} = (new Uuid)->generate();
         $query = [
             'TableName' => $this->fullTableName,
             'Item' => $this->marshalItem($newResource),
@@ -136,6 +122,14 @@ class Resource implements IResource
             $query = $this->createPutQuery($newResource);
             $res = $this->client->putItem($query);
             return $newResource;
+        } catch (DynamoDbException $ex) {
+            if ($ex->getAwsErrorCode() === 'ConditionalCheckFailedException') {
+                throw new RestException(
+                    'Resource does not exist',
+                    ['exception' => $ex]
+                );
+            }
+            throw new RestException($ex->getMessage(), ['exception' => $ex]);
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }

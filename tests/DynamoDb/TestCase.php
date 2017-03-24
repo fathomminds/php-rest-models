@@ -2,26 +2,83 @@
 namespace Fathomminds\Rest\Tests\DynamoDb;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
 use Aws\DynamoDb\Marshaler;
+use Mockery;
+use Fathomminds\Rest\Helpers\ReflectionHelper;
+use Fathomminds\Rest\Database\DynamoDb\Database;
 
 abstract class TestCase extends PHPUnitTestCase
 {
-    public function mockResponse($object)
+    public $mockClient;
+
+    public function __construct()
+    {
+        $this->mockClient = Mockery::mock(DynamoDbClient::class);
+    }
+
+    public function mockObject($objectClassName)
+    {
+        $ReflectionHelper = new ReflectionHelper;
+        $object = $ReflectionHelper->createInstance(
+            $objectClassName,
+            [
+              null,
+              null,
+              new Database($this->mockClient)
+            ]
+        );
+        return $object;
+    }
+
+    public function mockModel($modelClassName = null, $objectClassName = null)
+    {
+        $reflectionHelper = new ReflectionHelper;
+        $object = $this->mockObject($objectClassName);
+        $model = $reflectionHelper->createInstance($modelClassName, [$object]);
+        return $model;
+    }
+
+    public function mockResponse($array)
     {
         $marshaler = new Marshaler;
-        $result = new Result(['Item' => $marshaler->marshalItem($object)]);
+        $return = [];
+        foreach ($array as $key => $value) {
+            $return[$key] = $marshaler->marshalItem($value);
+        }
+        $result = new Result($return);
         return $result;
     }
 
-    public function mockBatchResponse($list)
+    public function mockBatchResponse($array)
     {
         $marshaler = new Marshaler;
+        $return = [];
         $items = [];
-        foreach ($list as $item) {
-            $items[] = $marshaler->marshalItem($item);
+        if (isset($array['Items'])) {
+            foreach ($array['Items'] as $item) {
+                $marshaledItem = $marshaler->marshalItem($item);
+                $items[] = $marshaledItem;
+            }
+            unset($array['Items']);
         }
-        $result = new Result(['Items' => $items]);
+        foreach ($array as $key => $value) {
+            switch ($key) {
+                case 'LastEvaluatedKey':
+                    $return[$key] = $marshaler->marshalItem($value);
+                    break;
+                default:
+                    $return[$key] = $value;
+            }
+        }
+        $return['Items'] = $items;
+        $result = new Result($return);
         return $result;
+    }
+
+    public function resource($array)
+    {
+        return json_decode(json_encode($array));
     }
 }

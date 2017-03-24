@@ -1,6 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Mockery;
 use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
@@ -38,12 +39,13 @@ class SchemaValidatorTest extends TestCase
     public function testCorrectSchema()
     {
         try {
-            $foo = $this->mockModel(FooModel::class, FooObject::class);
-            $foo->setProperty('title', 'REQUIRED');
-            $foo->validate();
+            $resource = new \StdClass;
+            $resource->title = 'REQUIRED';
+            $fooSchema = new FooSchema;
+            $fooSchema->validate($resource);
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
         } catch (RestException $ex) {
-            $this->fail(); //Correct structure should not trigger an exception
+            $this->fail(); //Correct structure should not throw an exception
         }
     }
 
@@ -70,5 +72,26 @@ class SchemaValidatorTest extends TestCase
         } catch (RestException $ex) {
             $this->assertEquals('Object expected', $ex->getMessage());
         }
+    }
+
+    public function testSetDefault()
+    {
+        $object = new FooObject;
+        $property = new \ReflectionProperty($object, 'schema');
+        $property->setAccessible(true);
+        $schema = $property->getValue($object);
+        $schema->setDefault('_id', 'DEF');
+        $fields = $schema->getFields();
+        $this->assertEquals('DEF', $fields['_id']['default']);
+    }
+
+    public function testSetDefaultException()
+    {
+        $object = new FooObject;
+        $property = new \ReflectionProperty($object, 'schema');
+        $property->setAccessible(true);
+        $schema = $property->getValue($object);
+        $this->expectException(RestException::class);
+        $schema->setDefault('NOFIELD', 'DEF');
     }
 }

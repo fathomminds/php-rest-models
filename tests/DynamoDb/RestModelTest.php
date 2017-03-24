@@ -11,6 +11,7 @@ use Fathomminds\Rest\Database\DynamoDb\Resource;
 use Fathomminds\Rest\Examples\DynamoDb\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\DynamoDb\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
+use Fathomminds\Rest\Helpers\Uuid;
 
 class DynamoDbTest extends TestCase
 {
@@ -31,7 +32,7 @@ class DynamoDbTest extends TestCase
         $item->title = 'TITLE';
         $client
             ->shouldReceive('getItem')
-            ->andReturn($this->mockResponse($item));
+            ->andReturn($this->mockResponse(['Item' => $item]));
         $database = new Database($client, 'DATABSENAME');
         $res = $database->get('resourcename', 'primarykey', 'id');
         $this->assertEquals('ID', $res->_id);
@@ -42,6 +43,7 @@ class DynamoDbTest extends TestCase
     {
         $client = Mockery::mock(DynamoDbClient::class);
         $item = new \StdClass;
+        $item->_id = (new Uuid)->generate();
         $item->title = 'TITLE';
         $client
             ->shouldReceive('putItem')
@@ -75,6 +77,32 @@ class DynamoDbTest extends TestCase
         $client = Mockery::mock(DynamoDbClient::class);
         $command = Mockery::mock(Command::class, ['CommandName', []]);
         $ex = Mockery::mock(DynamoDbException::class, ['SomeAwsErrorMessage', $command]);
+        $ex
+            ->shouldReceive('getAwsErrorCode')
+            ->andReturn('ConditionalCheckFailedException');
+        $item = new \StdClass;
+        $item->_id = 'ANYID';
+        $item->title = 'TITLE';
+        $client
+            ->shouldReceive('putItem')
+            ->andThrow($ex);
+        $database = new Database($client, 'DATABSENAME');
+        try {
+            $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+            $this->fail(); //Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Resource does not exist', $ex->getMessage());
+        }
+    }
+
+    public function testDatabasePutExceptionOtherAwsError()
+    {
+        $client = Mockery::mock(DynamoDbClient::class);
+        $command = Mockery::mock(Command::class, ['CommandName', []]);
+        $ex = Mockery::mock(DynamoDbException::class, ['SomeAwsErrorMessage', $command]);
+        $ex
+            ->shouldReceive('getAwsErrorCode')
+            ->andReturn('OtherAwsErrorCode');
         $item = new \StdClass;
         $item->_id = 'ANYID';
         $item->title = 'TITLE';
@@ -168,7 +196,7 @@ class DynamoDbTest extends TestCase
         $list = [$item];
         $client
             ->shouldReceive('scan')
-            ->andReturn($this->mockBatchResponse($list));
+            ->andReturn($this->mockBatchResponse(['Items' => $list]));
         $database = new Database($client, 'DATABSENAME');
         $res = $database->get('resourcename', 'primarykey');
         $this->assertCount(1, $res);
@@ -176,7 +204,7 @@ class DynamoDbTest extends TestCase
         $this->assertEquals('TITLE', $res[0]->title);
     }
 
-    public function testDatabasePostPrimaryKeyCollisionUnresolved()
+    public function testDatabasePostPrimaryKeyCollision()
     {
         $client = Mockery::mock(DynamoDbClient::class);
         $item = new \StdClass;
@@ -193,35 +221,8 @@ class DynamoDbTest extends TestCase
             $res = $database->post('resourcename', '_id', $item);
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
-            $this->assertEquals('Creating new resource failed', $ex->getMessage());
-            $this->assertEquals(5, $ex->getDetails()['retryCount']);
+            $this->assertEquals('Primary key collision', $ex->getMessage());
         }
-    }
-
-    public function testDatabasePostPrimaryKeyCollisionResolved()
-    {
-        $client = Mockery::mock(DynamoDbClient::class);
-        $item = new \StdClass;
-        $item->title = 'TITLE';
-        $ex = Mockery::mock(DynamoDbException::class);
-        $ex
-            ->shouldReceive('getAwsErrorCode')
-            ->andReturn('ConditionalCheckFailedException');
-        $client
-            ->shouldReceive('putItem')
-            ->once()
-            ->andThrow($ex);
-        $client
-            ->shouldReceive('putItem')
-            ->once()
-            ->andReturn('anything');
-        $database = new Database($client, 'DATABSENAME');
-        $res = $database->post('resourcename', '_id', $item);
-        $this->assertEquals('TITLE', $res->title);
-        $this->assertEquals(
-            1,
-            preg_match('/^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/', $res->_id)
-        );
     }
 
     public function testDatabasePostOtherAwsException()
@@ -243,7 +244,6 @@ class DynamoDbTest extends TestCase
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('SomeAwsErrorMessage', $ex->getMessage());
-            $this->assertEquals(0, $ex->getDetails()['retryCount']);
         }
     }
 
@@ -262,7 +262,6 @@ class DynamoDbTest extends TestCase
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('SomeException', $ex->getMessage());
-            $this->assertEquals(0, $ex->getDetails()['retryCount']);
         }
     }
 
@@ -291,24 +290,5 @@ class DynamoDbTest extends TestCase
         $unmarshaledItem = $method->invokeArgs($resource, [null]);
         $this->assertEquals('array', gettype($unmarshaledItem));
         $this->assertCount(0, $unmarshaledItem);
-    }
-
-    public function testValidateUniqueFields()
-    {
-        $resource = new \StdClass;
-        $resource->_id = '2c5e9a27-68bd-40cf-adf2-2e8eb022a192';
-        $resource->title = 'TITLE';
-        //$resource->other = 'OTHER';
-        //$resource->noindex = 'noindex';
-
-        $object = new FooObject($resource);
-        try {
-            $object->validateUniqueFields();
-            $this->assertTrue(true);
-        } catch (RestException $ex) {
-            var_dump($ex->getMessage());
-            var_dump($ex->getDetails());
-            $this->fail();
-        }
     }
 }

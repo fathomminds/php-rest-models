@@ -116,45 +116,41 @@ class RestModelTest extends TestCase
     public function testUpdateValidStructure()
     {
         $resource = new \StdClass;
-        $resource->_id = 'ID';
+        $resource->_id = 'NEW';
         $resource->title = 'TITLE';
-        $dbResult = [
-            'results' => [
-                $resource,
-            ]
-        ];
-        $this->mockDatabase
-            ->shouldReceive('update')
-            ->once()
-            ->andReturn($this->mockResponse($dbResult));
-        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $resource->status = 0;
+        $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('put')
+            ->andReturn(null);
+        $model = $this->mockModel(FooModel::class, $mockObject);
         $model->createFromObject($resource);
-        $model->update();
-        $this->assertEquals('ID', $model->getProperty('_id'));
+        try {
+            $model->update();
+            $this->assertTrue(true);
+        } catch (\Exception $ex) {
+            $this->fail(); //Should not throw exception
+        }
     }
 
     public function testCreateValidStructure()
     {
         $resource = new \StdClass;
+        $resource->_id = 'NEW';
         $resource->title = 'TITLE';
-        $createdResource = new \StdClass;
-        $createdResource->_id = 'NEW';
-        $createdResource->title = 'TITLE';
-        $createdResource->status = 0;
-        $dbResult = [
-            'results' => [
-                $createdResource,
-            ]
-        ];
-        $this->mockDatabase
-            ->shouldReceive('insertOne')
-            ->once()
-            ->andReturn($this->mockResponse($dbResult));
-        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $resource->status = 0;
+        $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('post')
+            ->andReturn(null);
+        $model = $this->mockModel(FooModel::class, $mockObject);
         $model->createFromObject($resource);
-        $model->create();
-        $this->assertEquals('NEW', $model->getProperty('_id'));
-        $this->assertEquals('TITLE', $model->getProperty('title'));
+        try {
+            $model->create();
+            $this->assertTrue(true);
+        } catch (\Exception $ex) {
+            $this->fail(); //Should not throw exception
+        }
     }
 
     public function testDeleteNonExisting()
@@ -197,8 +193,12 @@ class RestModelTest extends TestCase
         $resource->_id = 'ID';
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->createFromObject($resource);
-        $this->expectException(RestException::class);
-        $model->validate();
+        try {
+            $model->validate();
+            $this->fail(); //Should throw exception
+        } catch (RestException $ex) {
+            $this->assertEquals('Invalid structure', $ex->getMessage());
+        }
     }
 
     public function testValidateValid()
@@ -206,11 +206,15 @@ class RestModelTest extends TestCase
         $resource = new \StdClass;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $mockObject = $this->mockObjectValidationOk($resource);
+        $model = $this->mockModel(FooModel::class, $mockObject);
         $model->createFromObject($resource);
-        $model->validate();
-        $this->assertEquals('ID', $model->getProperty('_id'));
-        $this->assertEquals('TITLE', $model->getProperty('title'));
+        try {
+            $model->validate();
+            $this->assertTrue(true); //Should reach this line
+        } catch (RestException $ex) {
+            $this->fail(); //Should not throw exception
+        }
     }
 
     public function testSetProperty()
@@ -319,23 +323,17 @@ class RestModelTest extends TestCase
     public function testPostWithDatabaseFailure()
     {
         $resource = new \StdClass;
+        $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $createdResource = new \StdClass;
-        $createdResource->_id = 'NEW';
-        $createdResource->title = 'TITLE';
-        $dbResult = [
-            'results' => [
-                $createdResource,
-            ]
-        ];
-        $this->mockDatabase
-            ->shouldReceive('insertOne')
-            ->once()
-            ->andReturn($this->mockResponse($dbResult, ['ERROR']));
-        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('post')
+            ->andThrow(RestException::class, 'Database operation failed');
+        $model = $this->mockModel(FooModel::class, $mockObject);
         $model->createFromObject($resource);
         try {
             $model->create();
+            $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }
@@ -346,19 +344,15 @@ class RestModelTest extends TestCase
         $resource = new \StdClass;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $dbResult = [
-            'results' => [
-                $resource,
-            ]
-        ];
-        $this->mockDatabase
-            ->shouldReceive('update')
-            ->once()
-            ->andReturn($this->mockResponse($dbResult, ['ERROR']));
-        $model = $this->mockModel(FooModel::class, FooObject::class);
+        $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('put')
+            ->andThrow(RestException::class, 'Database operation failed');
+        $model = $this->mockModel(FooModel::class, $mockObject);
         $model->createFromObject($resource);
         try {
             $model->update();
+            $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }
