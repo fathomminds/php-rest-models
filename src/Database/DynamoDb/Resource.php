@@ -93,7 +93,6 @@ class Resource implements IResource
                     'Primary key collision',
                     ['exception' => $ex]
                 );
-                break;
         }
         throw new RestException($ex->getMessage(), ['exception' => $ex]);
     }
@@ -130,7 +129,6 @@ class Resource implements IResource
                     'Resource does not exist',
                     ['exception' => $ex]
                 );
-                break;
         }
         throw new RestException($ex->getMessage(), ['exception' => $ex]);
     }
