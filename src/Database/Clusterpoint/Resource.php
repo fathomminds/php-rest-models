@@ -19,7 +19,7 @@ class Resource implements IResource
         $this->resourceName = $resourceName;
         $this->primaryKey = $primaryKey;
         $this->client = $client === null ? new Client : $client;
-        $this->databaseName = $databaseName === null ? getenv('CLUREXID_CLUSTERPOINT_DATABASE') : $databaseName;
+        $this->databaseName = $databaseName === null ? getenv('CLUSTERPOINT_DATABASE') : $databaseName;
         $this->collection = $this->client->database($this->databaseName . '.' . $this->resourceName);
     }
 

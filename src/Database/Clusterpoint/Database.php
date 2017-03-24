@@ -14,7 +14,7 @@ class Database implements IDatabase
     public function __construct(Client $client = null, $databaseName = null)
     {
         $this->client = $client === null ? new Client : $client;
-        $this->databaseName = $databaseName === null ? getenv('CLUREXID_CLUSTERPOINT_DATABASE') : $databaseName;
+        $this->databaseName = $databaseName === null ? getenv('CLUSTERPOINT_DATABASE') : $databaseName;
     }
 
     public function get($resourceName, $primaryKey, $resourceId = null)
