@@ -13,11 +13,11 @@ class RestObject extends CoreRestObject
     {
         $uniqueFields = $this->getUniqueFields();
         if (empty($uniqueFields)) {
-            return $this->primaryKey;
+            return;
         }
-        $uniqueFields[] = $this->primaryKey;
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         if ($this->updateMode) {
+            $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
         $query = $this->getUniqueFieldQuery($query, $uniqueFields);

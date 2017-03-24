@@ -10,6 +10,7 @@ class FooSchema extends SchemaValidator
 {
     protected $fields = [
         '_id' => [
+            'unique' => true,
             'validator' => [
                 'class' => StringValidator::class,
             ]

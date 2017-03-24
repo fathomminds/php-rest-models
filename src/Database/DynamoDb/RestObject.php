@@ -19,6 +19,7 @@ class RestObject extends CoreRestObject
         if (empty($uniqueFields)) {
             return;
         }
+        $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]); //Secondary indexes only
         if ($this->allUniqueFieldHasIndex($uniqueFields)) {
             return $this->queryUniqueFields($uniqueFields);
         }
@@ -29,7 +30,10 @@ class RestObject extends CoreRestObject
     {
         $indexes = array_keys($this->indexNames);
         $existingFields = array_keys(get_object_vars($this->resource));
-        $uniqueAndSet = array_intersect($fields, $existingFields); //Is unique and value is set
+        $uniqueAndSet = array_diff(
+            array_intersect($fields, $existingFields), //Is unique and value is set
+            [$this->primaryKey] //Collect only secondary indexes
+        );
         $uniqueAndSetAndIndexed = array_intersect($uniqueAndSet, $indexes); //Is unique and value is set and is indexed
         sort($uniqueAndSet);
         sort($uniqueAndSetAndIndexed);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false"
+         bootstrap="./bootstrap.php">
+    <testsuites>
+        <testsuite name="DynamoDb Test Suite">
+            <directory suffix="Test.php">./tests-integration/DynamoDb</directory>
+        </testsuite>
+        <testsuite name="Clusterpoint Test Suite">
+            <directory suffix="Test.php">./tests-integration/Clusterpoint</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-html" target="log/codeCoverage" charset="UTF-8"
+            yui="true" highlight="true"
+            lowUpperBound="50" highLowerBound="80"/>
+        <log type="testdox-html" target="log/testdox.html" />
+        <log type="coverage-clover" target="log/coverage.xml"/>
+    </logging>
+</phpunit>
