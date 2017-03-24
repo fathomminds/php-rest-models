@@ -9,6 +9,32 @@ Framework independent PHP REST models with schema validation and multiple databa
 * [Clusterpoint](https://www.clusterpoint.com)
 * [DynamoDB](https://aws.amazon.com/dynamodb)
 
+## Features ##
+
+* REST operations (GET, POST, PUT, DELETE) implemented for the supported databases under the hood
+* Basic model operations
+    * Model::create()
+    * Model::update()
+    * Model::one($resourceId)
+    * Model::all()
+    * Model::delete()
+    * Model::getProperty($propertyName)
+    * Model::setProperty($propertyName, $propertyValue)
+    * Model::createFromObject($stdClass)
+    * Model::validate()
+* Easily customizable model behaviour
+    * add any business logic
+    * extend the schema validation with consistency validation
+    * write complex queries in model methods directly with the database API to maximize performance
+* Easily customizable schema validation
+    * validators can implement any complex rules of your choice
+    * use base validator classes from the package and extend them as you need
+* JOINS AND RELATIONS BETWEEN MODELS ARE INTENTIONALLY NOT PART OF THE IMPLEMENTATION
+
+## Example application ##
+
+Todo Application: [REPOURL](REPOURL)
+
 ## Requirements ##
 
 * PHP 7+
@@ -59,7 +85,13 @@ Run integration tests:
 
 `vendor/bin/phpunit --configuration phpunit-integration-test.xml`
 
-Integration tests will interact with real databases. You need to follow the configuration steps to be able to run these tests. The tests use the FooSchema class for both databases. Please make sure the required objects (tables and indexes) are created before executing integration tests.
+Integration tests will interact with real databases. You need to follow the configuration steps to be able to run these tests. The tests use the example FooSchema class for both databases. Please make sure the required objects (tables and indexes) are created before executing integration tests.
+
+## HOWTO ##
+
+* [Create a Schema](./documentation/howto/schema.md)
+* [Create a Clusterpoint model](./documentation/howto/clusterpoint-model.md)
+* [Create a DynamoDb model](./documentation/howto/clusterpoint-model.md)
 
 ## License ##
 
