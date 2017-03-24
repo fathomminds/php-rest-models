@@ -7,24 +7,31 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Database engines supported ##
 
 * [Clusterpoint](https://www.clusterpoint.com)
-* ~~[DynamoDB](https://aws.amazon.com/dynamodb)~~
+* [DynamoDB](https://aws.amazon.com/dynamodb)
 
 ## Requirements ##
 
 * PHP 7+
 * Composer
 * Use with Clusterpoint: [Clusterpoint V4 PHP client](https://github.com/clusterpoint/php-client-api)
-* ~~Use with DynamoDB: [AWS SDK for PHP](https://github.com/aws/aws-sdk-php)~~
+* Use with DynamoDB: [AWS SDK for PHP](https://github.com/aws/aws-sdk-php)
 * For generating code coverage report: [Xdebug PHP extension](https://xdebug.org)
 
 ## Install ##
 
 `composer require fathomminds/php-rest-models`
 
+You must install the Database Engine specific packages in your project. (Left out from dependencies intentionally to allow installing only the required one.)
+
+If you use Clusterpoint: `composer require clusterpoint/php-client-api-v4`
+If you use DynamoDb: `composer require aws/aws-sdk-php`
+
+You can use both, in such case you need to install both DB package.
+
 ## Configuration ##
 
-* Use with Clusterpoint
-* ~~Use with DynamoDB~~
+* Use with Clusterpoint: [Clusterpoint configuration](./documentation/clusterpoint-config.md)
+* Use with DynamoDB: [DynamoDb configuration](./documentation/dynamodb-config.md)
 
 ## Contribution ##
 
@@ -41,9 +48,15 @@ Clone the repository and install dependencies:
 
 `composer install`
 
-Run PHPUnit
+Run unit tests:
 
-`phpunit`
+`vendor/bin/phpunit`
+
+Test coverage report is logged to folder: `log`
+
+Run integration tests:
+
+`vendor/bin/phpunit --configuration phpunit-integration-test.xml`
 
 ## License ##
 
