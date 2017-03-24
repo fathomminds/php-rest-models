@@ -92,6 +92,26 @@ class SchemaValidator implements ISchema
         return $fields;
     }
 
+    public function setDefault($fieldName, $value)
+    {
+        if (isset($this->fields[$fieldName])) {
+            $this->fields[$fieldName]['default'] = $value;
+            return;
+        }
+        throw new RestException(
+            'Setting default failed. Field does not exist.',
+            [
+                'schema' => static::class,
+                'fieldName' => $fieldName,
+            ]
+        );
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
     public function getRequiredFields()
     {
         return $this->filterFields('required', true);
