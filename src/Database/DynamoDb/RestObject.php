@@ -96,7 +96,6 @@ class RestObject extends CoreRestObject
 
     protected function queryUniqueFields($fields)
     {
-        $client = $this->getClient();
         $queries = [];
         foreach ($fields as $field) {
             if (property_exists($this->resource, $field)) {

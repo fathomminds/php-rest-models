@@ -89,7 +89,7 @@ class Resource implements IResource
     {
         try {
             $query = $this->createPostQuery($newResource);
-            $res = $this->client->putItem($query);
+            $this->client->putItem($query);
             return $newResource;
         } catch (DynamoDbException $ex) {
             if ($ex->getAwsErrorCode() === 'ConditionalCheckFailedException') {
