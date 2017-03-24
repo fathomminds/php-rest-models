@@ -183,22 +183,22 @@ class Resource implements IResource
         return $this->marshaler->marshalItem($resource);
     }
 
-    protected function unmarshalItem($item, $mapAsObject = true)
+    protected function unmarshalItem($item)
     {
         if ($item === null) {
             return new \StdClass;
         }
-        return $this->marshaler->unmarshalItem($item, $mapAsObject);
+        return $this->marshaler->unmarshalItem($item, true);
     }
 
-    protected function unmarshalBatch($itemList, $mapAsObject = true)
+    protected function unmarshalBatch($itemList)
     {
         if ($itemList === null) {
             return [];
         }
         $list = [];
         foreach ($itemList as $item) {
-            $list[] = $this->unmarshalItem($item, $mapAsObject);
+            $list[] = $this->unmarshalItem($item, true);
         }
         return $list;
     }
