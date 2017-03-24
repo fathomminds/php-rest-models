@@ -12,9 +12,6 @@ class RestObject extends CoreRestObject
     public function validateUniqueFields()
     {
         $uniqueFields = $this->getUniqueFields();
-        if (empty($uniqueFields)) {
-            return;
-        }
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         if ($this->updateMode) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);

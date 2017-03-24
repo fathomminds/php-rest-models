@@ -17,7 +17,7 @@ class RestObjectTest extends TestCase
         $input->_id = 'ID';
         $input->multi = 'MULTI';
         $object = $object->createFromObject($input);
-        $object->validateUniqueFields(); // Trigger early return in RestObject::validateUniqueFields
+        $object->validate(); // Trigger early return in RestObject::validateUniqueFields
         $this->assertCount(0, $object->getUniqueFields());
     }
 
@@ -123,7 +123,7 @@ class RestObjectTest extends TestCase
             $method = new \ReflectionMethod($object, 'setUpdateMode');
             $method->setAccessible(true);
             $method->invoke($object, [true]);
-            $res = $object->validateUniqueFields();
+            $res = $object->validate();
             $this->assertTrue(true); //Should reach this line
         } catch (\Exception $ex) {
             $this->fail();

@@ -119,7 +119,10 @@ abstract class RestObject implements IRestObject
 
     public function validate()
     {
-        $this->validateUniqueFields();
+        $uniqueFields = $this->getUniqueFields();
+        if (!empty($uniqueFields)) {
+            $this->validateUniqueFields();
+        }
     }
 
     public function toArray()

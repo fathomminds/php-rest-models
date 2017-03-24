@@ -16,9 +16,6 @@ class RestObject extends CoreRestObject
     public function validateUniqueFields()
     {
         $uniqueFields = $this->getUniqueFields();
-        if (empty($uniqueFields)) {
-            return;
-        }
         $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]); //Secondary indexes only
         if ($this->allUniqueFieldHasIndex($uniqueFields)) {
             return $this->queryUniqueFields($uniqueFields);
