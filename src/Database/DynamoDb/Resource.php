@@ -102,12 +102,12 @@ class Resource implements IResource
         try {
             $query = $this->createPostQuery($newResource);
             $this->client->putItem($query);
-            return $newResource;
         } catch (DynamoDbException $ex) {
             $this->throwAwsPostError($ex);
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['exception' => $ex]);
         }
+        return $newResource;
     }
 
     protected function createPostQuery($newResource)
@@ -139,12 +139,12 @@ class Resource implements IResource
             $newResource->{$this->primaryKey} = $resourceId;
             $query = $this->createPutQuery($newResource);
             $res = $this->client->putItem($query);
-            return $newResource;
         } catch (DynamoDbException $ex) {
             $this->throwAwsPutError($ex);
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
+        return $newResource;
     }
 
     protected function createPutQuery($newResource)
