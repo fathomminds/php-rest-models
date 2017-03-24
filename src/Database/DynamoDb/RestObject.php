@@ -27,14 +27,14 @@ class RestObject extends CoreRestObject
     {
         $indexes = array_keys($this->indexNames);
         $existingFields = array_keys(get_object_vars($this->resource));
-        $uniqueAndSet = array_diff(
+        $uniqueFields = array_diff(
             array_intersect($fields, $existingFields), //Is unique and value is set
             [$this->primaryKey] //Collect only secondary indexes
         );
-        $uniqueAndSetAndIndexed = array_intersect($uniqueAndSet, $indexes); //Is unique and value is set and is indexed
-        sort($uniqueAndSet);
-        sort($uniqueAndSetAndIndexed);
-        return $uniqueAndSet===$uniqueAndSetAndIndexed;
+        $indexedFields = array_intersect($uniqueFields, $indexes); //Is unique and value is set and is indexed
+        sort($uniqueFields);
+        sort($indexedFields);
+        return $uniqueFields===$indexedFields;
     }
 
     protected function scanUniqueFields($fields)
