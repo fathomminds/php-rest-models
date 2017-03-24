@@ -198,7 +198,7 @@ class Resource implements IResource
         }
         $list = [];
         foreach ($itemList as $item) {
-            $list[] = $this->unmarshalItem($item, true);
+            $list[] = $this->unmarshalItem($item);
         }
         return $list;
     }
