@@ -25,17 +25,20 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.0",
-        "vlucas/phpdotenv": "~2.2"
+        "vlucas/phpdotenv": "~2.2",
+        "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
         "mockery/mockery": "~0.9",
-        "clusterpoint/php-client-api-v4": "^4.0"
+        "clusterpoint/php-client-api-v4": "^4.0",
+        "aws/aws-sdk-php": "^3.24"
     },
     "autoload": {
         "psr-4": {
             "Fathomminds\\Rest\\": "src",
             "Fathomminds\\Rest\\Tests\\": "tests",
+            "Fathomminds\\Rest\\Tests\\Integration\\": "tests-integration",
             "Fathomminds\\Rest\\Examples\\": "examples"
         }
     }

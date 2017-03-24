@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Rest\Tests;
+namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Schema\TypeValidators\AnyValidator;

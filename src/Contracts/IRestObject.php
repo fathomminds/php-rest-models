@@ -14,6 +14,5 @@ interface IRestObject
     public function toArray();
     public function getProperty($propertyName);
     public function setProperty($propertyName, $propertyValue);
-    public function isNew();
     public function getPrimaryKeyValue();
 }

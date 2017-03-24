@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Rest\Tests;
+namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Mockery;
@@ -19,7 +19,7 @@ abstract class TestCase extends PHPUnitTestCase
     {
         $this->mockDatabase = Mockery::mock(Service::class);
         $this->mockClient = Mockery::mock(Client::class);
-        $this->mockClient->shouldReceive('database')->once()->andReturn($this->mockDatabase);
+        $this->mockClient->shouldReceive('database')->andReturn($this->mockDatabase);
     }
 
     public function mockResponse($rawResponse, $errors = [])
@@ -40,16 +40,16 @@ abstract class TestCase extends PHPUnitTestCase
 
     public function mockModel($modelClassName = null, $objectClassName = null)
     {
-        $ReflectionHelper = new ReflectionHelper;
-        $object = $this->mockObject($objectClassName);
-        $model = $ReflectionHelper->createInstance($modelClassName, [$object]);
+        $reflectionHelper = new ReflectionHelper;
+        $object = gettype($objectClassName) === 'object' ? $objectClassName : $this->mockObject($objectClassName);
+        $model = $reflectionHelper->createInstance($modelClassName, [$object]);
         return $model;
     }
 
     public function mockObject($objectClassName)
     {
-        $ReflectionHelper = new ReflectionHelper;
-        $object = $ReflectionHelper->createInstance(
+        $reflectionHelper = new ReflectionHelper;
+        $object = $reflectionHelper->createInstance(
             $objectClassName,
             [
               null,
@@ -58,5 +58,34 @@ abstract class TestCase extends PHPUnitTestCase
             ]
         );
         return $object;
+    }
+
+    public function mockObjectValidationOk($resource)
+    {
+        $mockObject = Mockery::mock(FooObject::class);
+        $mockObject
+            ->shouldReceive('validateUniqueFields')
+            ->andReturn(null);
+        $mockObject
+            ->shouldReceive('setProperty')
+            ->andReturn(null);
+        $mockObject
+            ->shouldReceive('createFromObject')
+            ->andReturn($mockObject);
+        $resource = new \StdClass;
+        $resource->title = 'REQUIRED';
+        $mockObject
+            ->shouldReceive('getResource')
+            ->andReturn($resource);
+        $mockObject
+            ->shouldReceive('validateSchema')
+            ->andReturn(null);
+        $mockObject
+            ->shouldReceive('validate')
+            ->andReturn(null);
+        $mockObject
+            ->shouldReceive('getPrimaryKeyValue')
+            ->andReturn(property_exists($resource, '_id') ? $resource->_id : null);
+        return $mockObject;
     }
 }
