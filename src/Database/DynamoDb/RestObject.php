@@ -97,12 +97,7 @@ class RestObject extends CoreRestObject
 
     protected function queryUniqueFields($fields)
     {
-        $queries = [];
-        foreach ($fields as $field) {
-            if (property_exists($this->resource, $field)) {
-                $queries[] = $this->generateQuery($field);
-            }
-        }
+        $queries = $this->generateQueries($fields);
         $promises = $this->generatePromises($queries);
         $results = PromiseFunctions\unwrap($promises);
         foreach ($results as $result) {
@@ -117,6 +112,17 @@ class RestObject extends CoreRestObject
                 );
             }
         }
+    }
+
+    protected function generateQueries($fields)
+    {
+        $queries = [];
+        foreach ($fields as $field) {
+            if (property_exists($this->resource, $field)) {
+                $queries[] = $this->generateQuery($field);
+            }
+        }
+        return $queries;
     }
 
     protected function generateQuery($field)
