@@ -51,6 +51,7 @@ abstract class RestObject implements IRestObject
 
     public function post($newResource)
     {
+        $this->setUpdateMode(false);
         $this->setFieldDefaults();
         $this->validateSchema($newResource);
         $this->validate();
@@ -59,6 +60,7 @@ abstract class RestObject implements IRestObject
 
     public function put($resourceId, $newResource)
     {
+        $this->setUpdateMode(true);
         $this->setFieldDefaults();
         $this->validateSchema($newResource);
         $this->validate();
@@ -81,6 +83,11 @@ abstract class RestObject implements IRestObject
         $this->resource = new \StdClass();
     }
 
+    protected function setUpdateMode($value)
+    {
+        $this->updateMode = $value;
+    }
+    
     protected function setFieldDefaults()
     {
         $properties = get_object_vars($this->resource);

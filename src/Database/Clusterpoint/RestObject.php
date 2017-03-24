@@ -8,23 +8,29 @@ class RestObject extends CoreRestObject
 {
     protected $primaryKey = '_id';
     protected $databaseClass = Database::class;
+    protected $updateMode = false;
 
     public function validateUniqueFields()
     {
         $uniqueFields = $this->getUniqueFields();
         if (empty($uniqueFields)) {
-            return;
+            return $this->primaryKey;
         }
+        $uniqueFields[] = $this->primaryKey;
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
-        if (property_exists($this->resource, $this->primaryKey)) {
+        if ($this->updateMode) {
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
         $query = $this->getUniqueFieldQuery($query, $uniqueFields);
         $res = $query->limit(1)->get();
         if ((int)$res->hits() > 0) {
+            $results = json_decode($res->rawResponse())->results;
+            $message = $results[0]->{$this->primaryKey} === $this->getPrimaryKeyValue() ?
+                'Primary key collision' :
+                'Unique constraint violation';
             throw new RestException(
-                'Unique constraint violation',
-                ['resourceName' => $this->resourceName, 'confilct' => $res[0]]
+                $message,
+                ['resourceName' => $this->resourceName, 'confilct' => $results[0]]
             );
         }
     }

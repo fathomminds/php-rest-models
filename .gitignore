@@ -2,3 +2,5 @@
 /vendor/
 clusterpoint.php
 .env
+phpunit-integration-test.xml
+/tests-integration

@@ -80,4 +80,50 @@ class ResourceTest extends TestCase
             $this->assertEquals('Error', $ex->getMessage());
         }
     }
+
+    public function testFailOnErrorResourceDoesNotExist()
+    {
+        $id = 'ID';
+        $resource = new \StdClass();
+        $resource->_id = $id;
+        $resource->title = 'TITLE';
+        $error = new \StdClass;
+        $error->message = 'Requested document does not exist';
+        $this->mockDatabase
+            ->shouldReceive('find')
+            ->andReturn($this->mockResponse(
+                [],
+                [$error]
+            ));
+        $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
+        try {
+            $ret = $rest->get($id);
+            $this->fail();
+        } catch (\Exception $ex) {
+            $this->assertEquals('Resource does not exist', $ex->getMessage());
+        }
+    }
+
+    public function testFailOnErrorDataaseOperationFailed()
+    {
+        $id = 'ID';
+        $resource = new \StdClass();
+        $resource->_id = $id;
+        $resource->title = 'TITLE';
+        $error = new \StdClass;
+        $error->message = 'Some Clusterpoint Database error message';
+        $this->mockDatabase
+            ->shouldReceive('find')
+            ->andReturn($this->mockResponse(
+                [],
+                [$error]
+            ));
+        $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
+        try {
+            $ret = $rest->get($id);
+            $this->fail();
+        } catch (\Exception $ex) {
+            $this->assertEquals('Database operation failed', $ex->getMessage());
+        }
+    }
 }

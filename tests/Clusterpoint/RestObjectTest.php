@@ -2,6 +2,7 @@
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use Mockery;
+use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\NoUniqueFieldObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
@@ -94,6 +95,67 @@ class RestObjectTest extends TestCase
             $this->assertEquals('ID', $res->_id);
         } catch (\Exception $ex) {
             $this->fail();
+        }
+    }
+
+    public function testValidateUniqueFieldsUpdateMode()
+    {
+        $id = 'ID';
+        $resource = new \StdClass();
+        $resource->_id = $id;
+        $resource->title = 'TITLE';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse($resource);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(0);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new FooObject($resource, null, $database);
+        try {
+            $method = new \ReflectionMethod($object, 'setUpdateMode');
+            $method->setAccessible(true);
+            $method->invoke($object, [true]);
+            $res = $object->validateUniqueFields();
+            $this->assertTrue(true); //Should reach this line
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testValidateUniqueFieldsPrimaryKeyCollision()
+    {
+        $id = 'ID';
+        $resource = new \StdClass();
+        $resource->_id = $id;
+        $resource->title = 'TITLE';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse(['results' => [$resource]]);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(1);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new FooObject($resource, null, $database);
+        try {
+            $res = $object->validateUniqueFields();
+            $this->fail(); //Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Primary key collision', $ex->getMessage());
         }
     }
 }

@@ -25,7 +25,6 @@ class FooSchema extends SchemaValidator
         ],
         'other' => [
             'unique' => true,
-            'required' => true,
             'validator' => [
                 'class' => StringValidator::class,
                 'params' => [

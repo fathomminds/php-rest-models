@@ -38,6 +38,7 @@
         "psr-4": {
             "Fathomminds\\Rest\\": "src",
             "Fathomminds\\Rest\\Tests\\": "tests",
+            "Fathomminds\\Rest\\Tests\\Integration\\": "tests-integration",
             "Fathomminds\\Rest\\Examples\\": "examples"
         }
     }

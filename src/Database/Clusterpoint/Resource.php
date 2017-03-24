@@ -50,7 +50,11 @@ class Resource implements IResource
         try {
             $res = $this->collection->insertOne($newResource);
             $this->failOnError($res);
-            return $this->toObject($res);
+            $object = $this->toObject($res);
+            $newResource->{$this->primaryKey} = empty($object->{$this->primaryKey}) ?
+                null :
+                $object->{$this->primaryKey};
+            return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
@@ -83,8 +87,11 @@ class Resource implements IResource
         if (empty($res->error())) {
             return;
         }
+        $message = $res->error()[0]->message === 'Requested document does not exist' ?
+            'Resource does not exist' :
+            'Database operation failed';
         throw new RestException(
-            'Database operation failed',
+            $message,
             [
                 'error' => $res->error(),
                 'res' => $res,
