@@ -157,12 +157,12 @@ class RestObject extends CoreRestObject
         return $promises;
     }
 
-    protected function generatePromise($client, $query)
+    protected function generatePromise($client, $request)
     {
         $promise = new Promise(
-            function () use (&$promise, $client, $query) {
-                $q = new Query($client, $query);
-                while ($res = $q->next()) {
+            function () use (&$promise, $client, $request) {
+                $query = new Query($client, $request);
+                while ($res = $query->next()) {
                     if ($res['Count'] !== 0) {
                         $promise->resolve($res);
                         return;
