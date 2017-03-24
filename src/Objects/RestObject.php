@@ -14,6 +14,7 @@ abstract class RestObject implements IRestObject
     protected $schema;
     protected $databaseClass;
     protected $database;
+    protected $updateMode = false;
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -87,7 +88,7 @@ abstract class RestObject implements IRestObject
     {
         $this->updateMode = $value;
     }
-    
+
     protected function setFieldDefaults()
     {
         $properties = get_object_vars($this->resource);

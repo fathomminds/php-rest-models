@@ -8,7 +8,6 @@ class RestObject extends CoreRestObject
 {
     protected $primaryKey = '_id';
     protected $databaseClass = Database::class;
-    protected $updateMode = false;
 
     public function validateUniqueFields()
     {
