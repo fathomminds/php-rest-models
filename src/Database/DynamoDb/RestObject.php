@@ -152,21 +152,25 @@ class RestObject extends CoreRestObject
         $client = $this->getClient();
         $promises = [];
         foreach ($queries as $query) {
-            $promise = new Promise(
-                function () use (&$promise, $client, $query) {
-                    $q = new Query($client, $query);
-                    while ($res = $q->next()) {
-                        if ($res['Count'] !== 0) {
-                            $promise->resolve($res);
-                            return;
-                        }
-                    }
-                    $promise->resolve(null);
-                }
-            );
-            $promises[] = $promise;
-            unset($promise);
+            $promises[] = $this->generatePromise($client, $query);
         }
         return $promises;
+    }
+
+    protected function generatePromise($client, $query)
+    {
+        $promise = new Promise(
+            function () use (&$promise, $client, $query) {
+                $q = new Query($client, $query);
+                while ($res = $q->next()) {
+                    if ($res['Count'] !== 0) {
+                        $promise->resolve($res);
+                        return;
+                    }
+                }
+                $promise->resolve(null);
+            }
+        );
+        return $promise;
     }
 }
