@@ -11,10 +11,10 @@
          bootstrap="./bootstrap.php">
     <testsuites>
         <testsuite name="DynamoDb Test Suite">
-            <directory suffix="Test.php">./tests/DynamoDb</directory>
+            <directory suffix="Test.php">./tests-integration/DynamoDb</directory>
         </testsuite>
         <testsuite name="Clusterpoint Test Suite">
-            <directory suffix="Test.php">./tests/Clusterpoint</directory>
+            <directory suffix="Test.php">./tests-integration/Clusterpoint</directory>
         </testsuite>
     </testsuites>
     <filter>
@@ -22,11 +22,4 @@
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
-    <logging>
-        <log type="coverage-html" target="log/codeCoverage" charset="UTF-8"
-            yui="true" highlight="true"
-            lowUpperBound="50" highLowerBound="80"/>
-        <log type="testdox-html" target="log/testdox.html" />
-        <log type="coverage-clover" target="log/coverage.xml"/>
-    </logging>
 </phpunit>

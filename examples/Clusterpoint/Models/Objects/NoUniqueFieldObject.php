@@ -1,8 +1,8 @@
 <?php
-namespace Fathomminds\Rest\Examples\Models\Objects;
+namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Objects;
 
 use Fathomminds\Rest\Database\Clusterpoint\RestObject;
-use Fathomminds\Rest\Examples\Models\Schema\NoUniqueFieldSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\NoUniqueFieldSchema;
 
 class NoUniqueFieldObject extends RestObject
 {

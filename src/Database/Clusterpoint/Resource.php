@@ -12,12 +12,14 @@ class Resource implements IResource
     protected $databaseName;
     protected $collection;
     protected $resourceName;
+    protected $primaryKey;
 
-    public function __construct($resourceName, Client $client = null, $databaseName = null)
+    public function __construct($resourceName, $primaryKey, Client $client = null, $databaseName = null)
     {
         $this->resourceName = $resourceName;
+        $this->primaryKey = $primaryKey;
         $this->client = $client === null ? new Client : $client;
-        $this->databaseName = $databaseName === null ? getenv('CLUREXID_CLUSTERPOINT_DATABASE') : $databaseName;
+        $this->databaseName = $databaseName === null ? getenv('CLUSTERPOINT_DATABASE') : $databaseName;
         $this->collection = $this->client->database($this->databaseName . '.' . $this->resourceName);
     }
 
@@ -48,7 +50,11 @@ class Resource implements IResource
         try {
             $res = $this->collection->insertOne($newResource);
             $this->failOnError($res);
-            return $this->toObject($res);
+            $object = $this->toObject($res);
+            $newResource->{$this->primaryKey} = empty($object->{$this->primaryKey}) ?
+                null :
+                $object->{$this->primaryKey};
+            return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
@@ -76,18 +82,16 @@ class Resource implements IResource
         }
     }
 
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
     protected function failOnError($res)
     {
         if (empty($res->error())) {
             return;
         }
+        $message = $res->error()[0]->message === 'Requested document does not exist' ?
+            'Resource does not exist' :
+            'Database operation failed';
         throw new RestException(
-            'Database operation failed',
+            $message,
             [
                 'error' => $res->error(),
                 'res' => $res,

@@ -7,5 +7,4 @@ interface IResource
     public function post($newResource);
     public function put($resourceId, $newResource);
     public function delete($resourceId);
-    public function getCollection();
 }

@@ -1,9 +1,10 @@
 <?php
-namespace Fathomminds\Rest\Database\Clusterpoint;
+namespace Fathomminds\Rest\Database\DynamoDb;
 
-use Clusterpoint\Client;
+use Aws\Sdk;
+use Aws\DynamoDb\DynamoDbClient as Client;
 use Fathomminds\Rest\Contracts\IDatabase;
-use Fathomminds\Rest\Database\Clusterpoint\Resource;
+use Fathomminds\Rest\Database\DynamoDb\Resource;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 
 class Database implements IDatabase
@@ -13,8 +14,25 @@ class Database implements IDatabase
 
     public function __construct(Client $client = null, $databaseName = null)
     {
-        $this->client = $client === null ? new Client : $client;
-        $this->databaseName = $databaseName === null ? getenv('CLUSTERPOINT_DATABASE') : $databaseName;
+        $this->client = $client === null ? $this->createClient() : $client;
+        $this->databaseName = $databaseName === null ? $this->getFullDatabaseName() : $databaseName;
+    }
+
+    private function createClient()
+    {
+        $sdk = new Sdk([
+            'region' => getenv('AWS_SDK_REGION'),
+            'version' => getenv('AWS_SDK_VERSION'),
+            'http' => [
+                'verify' => getenv('AWS_SDK_HTTP_VERIFY') === 'false' ? false : getenv('AWS_SDK_HTTP_VERIFY'),
+            ]
+        ]);
+        return $sdk->createDynamoDb();
+    }
+
+    private function getFullDatabaseName()
+    {
+        return getenv('AWS_DYNAMODB_NAMESPACE') . '-' . getenv('AWS_DYNAMODB_DATABASE');
     }
 
     public function get($resourceName, $primaryKey, $resourceId = null)

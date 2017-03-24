@@ -1,5 +1,5 @@
 <?php
-namespace Fathomminds\Rest\Examples\Models\Schema\TypeValidators;
+namespace Fathomminds\Rest\Examples\DynamoDb\Models\Schema\TypeValidators;
 
 use Fathomminds\Rest\Schema\TypeValidators\StdTypeValidator;
 use Fathomminds\Rest\Exceptions\RestException;
