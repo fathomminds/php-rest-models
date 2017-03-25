@@ -28,18 +28,22 @@ Define the schema by adding all fields. Fields are defined as an associative arr
 ```
 (bool) unique = true|false
 (bool) required = true|false
-(mixed) default = a constant value - This declaration may include an initialization, but this initialization must be a constant value--that is, it must be able to be evaluated at compile time and must not depend on run-time information in order to be evaluated. [(http://de2.php.net/manual/en/language.oop5.properties.php)](http://de2.php.net/manual/en/language.oop5.properties.php)
+(mixed) default = a constant value
 (array) validator = [
-      (string) 'class' => (string) className, // the name of the class that implements the validation,
+      (string) 'class' => (string) the name of the class that implements the validation,
       (array) 'params' => [
           (string) 'key1' => (mixed) value1,
           (string) 'key2' => (mixed) value2,
-          // ...
-      ], // passed to the Validator::__construct($params)
-  ]; // the validator to be used to validate this field's value
+          ...
+      ],
+  ];
 ```
 
-Setting a value generator function as default field value (e.g. genrating a UUID run time):
+### Default field values ###
+
+"[...] This declaration may include an initialization, but this initialization must be a constant value--that is, it must be able to be evaluated at compile time and must not depend on run-time information in order to be evaluated. [...] [(http://de2.php.net/manual/en/language.oop5.properties.php)](http://de2.php.net/manual/en/language.oop5.properties.php)
+
+It is possible to set a value generator function as default field value (e.g. genrating a UUID run time) in the Schema constructor:
 
 ```
 <?php
@@ -77,6 +81,12 @@ class FooSchema extends SchemaValidator
 * [IntegerValidator](../../src/Schema/TypeValidators/AnyValidator.php)
 * [ObjectValidator](../../src/Schema/TypeValidators/AnyValidator.php)
 * [StringValidator](../../src/Schema/TypeValidators/AnyValidator.php)
+
+Params set in the field declaration for the validator will be passed to the Validator constructor:
+
+```
+Validator::__construct($params);
+```
 
 ### Writing new validators or extending existing ones ###
 
