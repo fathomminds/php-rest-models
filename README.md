@@ -9,6 +9,11 @@ Framework independent PHP REST models with schema validation and multiple databa
 * [Clusterpoint](https://www.clusterpoint.com)
 * [DynamoDB](https://aws.amazon.com/dynamodb)
 
+## Usage ##
+
+1. SCHEMA: Define schema in a single location [How to create a schema?](./documentation/howto/schema.md)
+1. REST OBJECT: Define the database properties (table name, primary key, indexes) [How to create a REST Object?](./documentation/howto/rest-object.md)
+
 ## Features ##
 
 * REST operations (GET, POST, PUT, DELETE) implemented for the supported databases under the hood
@@ -88,11 +93,13 @@ Run integration tests:
 
 Integration tests will interact with real databases. You need to follow the configuration steps to be able to run these tests. The tests use the example FooSchema class for both databases. Please make sure the required objects (tables and indexes) are created before executing integration tests.
 
-## HOWTO ##
+## HOW TO ##
 
-* [Create a Schema](./documentation/howto/schema.md)
-* [Create a Clusterpoint model](./documentation/howto/clusterpoint-model.md)
-* [Create a DynamoDb model](./documentation/howto/clusterpoint-model.md)
+* [Create a Schema?](./documentation/howto/schema.md)
+* [Create a Rest Object?](./documentation/howto/rest-object.md)
+* [Create a Model?](./documentation/howto/rest-object.md)
+* [Implement business logic?](./documentation/howto/business-logic.md)
+* [Use the models?](./documentation/howto/models.md)
 
 ## License ##
 
