@@ -33,13 +33,8 @@ class FooController extends Controller
             $model->setProperty('_id', $id);
             $model->save();
             return new JsonResponse($model->getResource());
-        } catch (RestException $ex) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => $ex->getMessage(),
-                    'details' => $ex->getDetails(),
-                ],
-            ]);
+        } catch (\Exception $ex) {
+            return new JsonResponse(['error' => $ex->getMessage()]);
         }
     }
 
@@ -48,13 +43,8 @@ class FooController extends Controller
         try {
             $model->one($id)->delete();
             return new JsonResponse($id);
-        } catch (RestException $ex) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => $ex->getMessage(),
-                    'details' => $ex->getDetails(),
-                ],
-            ]);
+        } catch (\Exception $ex) {
+            return new JsonResponse(['error' => $ex->getMessage()]);
         }
     }
 
@@ -65,13 +55,8 @@ class FooController extends Controller
             $model->createFromObject($input);
             $model->save();
             return new JsonResponse($model->getResource());
-        } catch (RestException $ex) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => $ex->getMessage(),
-                    'details' => $ex->getDetails(),
-                ],
-            ]);
+        } catch (\Exception $ex) {
+            return new JsonResponse(['error' => $ex->getMessage()]);
         }
     }
 
@@ -79,13 +64,8 @@ class FooController extends Controller
     {
         try {
             return new JsonResponse($model->one($id)->getResource());
-        } catch (RestException $ex) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => $ex->getMessage(),
-                    'details' => $ex->getDetails(),
-                ],
-            ]);
+        } catch (\Exception $ex) {
+            return new JsonResponse(['error' => $ex->getMessage()]);
         }
     }
 }
