@@ -20,7 +20,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Features ##
 
 * REST operations (GET, POST, PUT, DELETE) implemented for the supported databases under the hood
-* Basic model operations
+* Basic model operations with a sinmple API:
     * Model::create()
     * Model::update()
     * Model::one($resourceId)
@@ -30,6 +30,8 @@ Framework independent PHP REST models with schema validation and multiple databa
     * Model::setProperty($propertyName, $propertyValue)
     * Model::createFromObject($stdClass)
     * Model::validate()
+    * Model::getResource()
+    * Model::toArray()
 * ~~Filtering and pagination~~
 * Easily customizable model behaviour
     * add any business logic
@@ -39,6 +41,10 @@ Framework independent PHP REST models with schema validation and multiple databa
     * validators can implement any complex rules of your choice
     * use base validator classes from the package and extend them as you need
 * JOINS AND RELATIONS BETWEEN MODELS ARE INTENTIONALLY NOT PART OF THE IMPLEMENTATION
+
+## API reference ##
+
+  ~~[API reference](./README.md)~~
 
 ## Example application ##
 
