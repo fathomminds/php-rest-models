@@ -11,11 +11,11 @@ Framework independent PHP REST models with schema validation and multiple databa
 
 ## Usage ##
 
-1. DEFINE THE SCHEMA: Define schema in a single location [How to create a schema?](./documentation/howto/schema.md)
-2. DEFINE THE REST OBJECT: Set the corresponding Schema and define the database properties (table name, primary key, indexes) [How to create a REST Object?](./documentation/howto/object.md)
-3. DEFINE THE MODEL: Simply set the corresponding REST Object [How to create a REST Object?](./documentation/howto/model.md)
-4. IMPLEMENT BUSINESS LOGIC: the package implements the CRUD operations, so your Model is clean and you can focus on the application behaviour [How to implement the business logic?](./documentation/howto/business-logic.md)
-5. USE the Models in your application [How to use the Models?](./documentation/howto/use-models.md)
+1. **DEFINE THE SCHEMA**: Define schema in a single location [How to create a schema?](./documentation/howto/schema.md)
+2. **DEFINE THE REST OBJECT**: Set the corresponding Schema and define the database properties (table name, primary key, indexes) [How to create a REST Object?](./documentation/howto/object.md)
+3. **DEFINE THE MODEL**: Simply set the corresponding REST Object [How to create a Model?](./documentation/howto/model.md)
+4. **IMPLEMENT BUSINESS LOGIC**: the package implements the CRUD operations, so your Model is clean and you can focus on the application behaviour [How to implement the business logic?](./documentation/howto/business-logic.md)
+5. **USE THE MODELS** in your application [How to use the Models?](./documentation/howto/use-models.md)
 
 ## Features ##
 

@@ -15,7 +15,8 @@ abstract class RestObject implements IRestObject
     protected $databaseClass;
     protected $database;
     protected $updateMode = false;
-
+    protected $indexNames = [];
+    
     public function __construct($resource = null, $schema = null, $database = null)
     {
         $reflectionHelper = new ReflectionHelper;
