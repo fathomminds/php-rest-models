@@ -22,6 +22,7 @@ Framework independent PHP REST models with schema validation and multiple databa
     * Model::setProperty($propertyName, $propertyValue)
     * Model::createFromObject($stdClass)
     * Model::validate()
+* ~~Filtering and pagination~~
 * Easily customizable model behaviour
     * add any business logic
     * extend the schema validation with consistency validation
