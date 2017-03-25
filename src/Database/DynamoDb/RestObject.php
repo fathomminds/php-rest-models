@@ -11,8 +11,7 @@ class RestObject extends CoreRestObject
 {
     protected $primaryKey = '_id';
     protected $databaseClass = Database::class;
-    protected $indexNames = [];
-
+    
     public function validateUniqueFields()
     {
         $uniqueFields = $this->getUniqueFields();
