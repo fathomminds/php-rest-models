@@ -43,3 +43,4 @@ class FooObject extends RestObject
 (string) protected $resourceName; Table or collection name.
 (string) protected $primaryKey; Name of the primary key field. Default value is '_id'.
 (array) protected $indexNames; Available indexes in format [(string) fieldName => (string) indexName]; Default is empty array.
+```

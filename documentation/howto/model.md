@@ -39,3 +39,4 @@ class FooModel extends RestModel
 
 ```
 (string) protected $restObjectClass; Name of the REST Object class to be used with the Model.
+```
