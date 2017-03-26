@@ -4,7 +4,7 @@ To enable IDE autocompletion you only need to specify the return type for Model:
 
 ### Specify return type for Model::resource() ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 
@@ -27,7 +27,7 @@ class FooModel extends RestModel
 
 ### List the properties in the SchemaClass ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Schema;
 
