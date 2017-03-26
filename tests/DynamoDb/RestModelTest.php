@@ -264,31 +264,4 @@ class DynamoDbTest extends TestCase
             $this->assertEquals('SomeException', $ex->getMessage());
         }
     }
-
-    public function testDatabaseUnmarshalItemNull()
-    {
-        $client = Mockery::mock(DynamoDbClient::class);
-        $resource = new Resource('resourceName', 'primaryKey', $client, 'databaseName');
-        $marshaler = new Marshaler;
-        $class = new \ReflectionObject($resource);
-        $method = $class->getMethod('unmarshalItem');
-        $method->setAccessible(true);
-        $unmarshaledItem = $method->invokeArgs($resource, [null]);
-        $this->assertEquals('object', gettype($unmarshaledItem));
-        $this->assertEquals('stdClass', get_class($unmarshaledItem));
-        $this->assertCount(0, get_object_vars($unmarshaledItem));
-    }
-
-    public function testDatabaseUnmarshalBatchNull()
-    {
-        $client = Mockery::mock(DynamoDbClient::class);
-        $resource = new Resource('resourceName', 'primaryKey', $client, 'databaseName');
-        $marshaler = new Marshaler;
-        $class = new \ReflectionObject($resource);
-        $method = $class->getMethod('unmarshalBatch');
-        $method->setAccessible(true);
-        $unmarshaledItem = $method->invokeArgs($resource, [null]);
-        $this->assertEquals('array', gettype($unmarshaledItem));
-        $this->assertCount(0, $unmarshaledItem);
-    }
 }
