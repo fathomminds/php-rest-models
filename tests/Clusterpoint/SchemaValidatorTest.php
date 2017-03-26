@@ -39,10 +39,10 @@ class SchemaValidatorTest extends TestCase
     public function testCorrectSchema()
     {
         try {
-            $resource = new \StdClass;
+            $resource = new FooSchema;
             $resource->title = 'REQUIRED';
             $fooSchema = new FooSchema;
-            $fooSchema->validate($resource);
+            (new SchemaValidator)->validate($resource);
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
         } catch (RestException $ex) {
             $this->fail(); //Correct structure should not throw an exception
@@ -53,7 +53,7 @@ class SchemaValidatorTest extends TestCase
     {
         try {
             $foo = $this->mockModel(FooModel::class, FooObject::class);
-            $foo->setProperty('title', 1);
+            $foo->resource()->title = 1;
             $foo->validate();
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
         } catch (RestException $ex) {
@@ -67,31 +67,10 @@ class SchemaValidatorTest extends TestCase
         $method = $reflectionHelper->createMethod(SchemaValidator::class, 'expectObject');
         $method->setAccessible(true);
         try {
-            $method->invokeArgs(new FooSchema, ['string']);
+            $method->invokeArgs(new SchemaValidator, ['string']);
             $this->assertEquals(1, 0); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Object expected', $ex->getMessage());
         }
-    }
-
-    public function testSetDefault()
-    {
-        $object = new FooObject;
-        $property = new \ReflectionProperty($object, 'schema');
-        $property->setAccessible(true);
-        $schema = $property->getValue($object);
-        $schema->setDefault('_id', 'DEF');
-        $fields = $schema->getFields();
-        $this->assertEquals('DEF', $fields['_id']['default']);
-    }
-
-    public function testSetDefaultException()
-    {
-        $object = new FooObject;
-        $property = new \ReflectionProperty($object, 'schema');
-        $property->setAccessible(true);
-        $schema = $property->getValue($object);
-        $this->expectException(RestException::class);
-        $schema->setDefault('NOFIELD', 'DEF');
     }
 }

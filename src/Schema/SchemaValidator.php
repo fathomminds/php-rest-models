@@ -1,11 +1,10 @@
 <?php
 namespace Fathomminds\Rest\Schema;
 
-use Fathomminds\Rest\Contracts\ISchema;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Exceptions\RestException;
 
-class SchemaValidator implements ISchema
+class SchemaValidator
 {
     protected $fields = [];
 
@@ -21,7 +20,7 @@ class SchemaValidator implements ISchema
             throw new RestException(
                 'Invalid structure',
                 [
-                    'schema' => get_called_class(),
+                    'schema' => get_class($resource),
                     'errors' => $errors,
                 ]
             );
@@ -44,7 +43,7 @@ class SchemaValidator implements ISchema
     private function validateRequiredFields($resource)
     {
         $errors = [];
-        $requiredFields = $this->getRequiredFields();
+        $requiredFields = $this->getRequiredFields($resource);
         foreach ($requiredFields as $fieldName) {
             if (!property_exists($resource, $fieldName)) {
                 $errors[$fieldName] = 'Missing required field';
@@ -57,7 +56,7 @@ class SchemaValidator implements ISchema
     {
         $errors = [];
         foreach (array_keys(get_object_vars($resource)) as $fieldName) {
-            if (!isset($this->fields[$fieldName])) {
+            if (!isset($resource->schema()[$fieldName])) {
                 $errors[$fieldName] = 'Extraneous field';
             }
         }
@@ -68,7 +67,7 @@ class SchemaValidator implements ISchema
     {
         $validatorFactory = new ValidatorFactory;
         $errors = [];
-        foreach ($this->fields as $fieldName => $rules) {
+        foreach ($resource->schema() as $fieldName => $rules) {
             if (property_exists($resource, $fieldName)) {
                 try {
                     $validatorFactory->create($rules)->validate($resource->{$fieldName});
@@ -81,10 +80,10 @@ class SchemaValidator implements ISchema
         return $errors;
     }
 
-    private function filterFields($paramKey, $paramValue)
+    private function filterFields($resource, $paramKey, $paramValue)
     {
         $fields = [];
-        foreach ($this->fields as $fieldName => $params) {
+        foreach ($resource->schema() as $fieldName => $params) {
             if (isset($params[$paramKey]) && $params[$paramKey] == $paramValue) {
                 $fields[] = $fieldName;
             }
@@ -92,33 +91,18 @@ class SchemaValidator implements ISchema
         return $fields;
     }
 
-    public function setDefault($fieldName, $value)
+    public function getFields($resource)
     {
-        if (isset($this->fields[$fieldName])) {
-            $this->fields[$fieldName]['default'] = $value;
-            return;
-        }
-        throw new RestException(
-            'Setting default failed. Field does not exist.',
-            [
-                'schema' => static::class,
-                'fieldName' => $fieldName,
-            ]
-        );
+        return $resource->schema();
     }
 
-    public function getFields()
+    public function getRequiredFields($resource)
     {
-        return $this->fields;
+        return $this->filterFields($resource, 'required', true);
     }
 
-    public function getRequiredFields()
+    public function getUniqueFields($resource)
     {
-        return $this->filterFields('required', true);
-    }
-
-    public function getUniqueFields()
-    {
-        return $this->filterFields('unique', true);
+        return $this->filterFields($resource, 'unique', true);
     }
 }

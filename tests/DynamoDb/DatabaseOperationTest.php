@@ -8,6 +8,7 @@ use Fathomminds\Rest\Database\DynamoDb\Scan;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Aws\Sdk;
+use Fathomminds\Rest\Examples\DynamoDb\Models\Schema\FooSchema;
 
 class DatabaseOperationTest extends TestCase
 {
@@ -38,7 +39,7 @@ class DatabaseOperationTest extends TestCase
     {
         $marshaler = new Marshaler;
         $client = Mockery::mock(DynamoDbClient::class);
-        $item = new \StdClass;
+        $item = new FooSchema;
         $item->_id = 'ID';
         $item->title = 'TITLE';
         $list = [$item];
@@ -67,7 +68,7 @@ class DatabaseOperationTest extends TestCase
     {
         $marshaler = new Marshaler;
         $client = Mockery::mock(DynamoDbClient::class);
-        $item = new \StdClass;
+        $item = new FooSchema;
         $item->_id = 'ID';
         $item->title = 'TITLE';
         $list = [$item];
@@ -98,7 +99,7 @@ class DatabaseOperationTest extends TestCase
     {
         $marshaler = new Marshaler;
         $client = Mockery::mock(DynamoDbClient::class);
-        $item = new \StdClass;
+        $item = new FooSchema;
         $item->_id = 'ID';
         $item->title = 'TITLE';
         $list = [$item];

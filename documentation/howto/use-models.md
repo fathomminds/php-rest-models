@@ -4,7 +4,7 @@ An example usage of basic Model usage with the [Lumen PHP framework](https://lum
 
 ### FooController ###
 
-```
+```php
 <?php
 namespace App\Http\Controllers;
 
@@ -29,10 +29,10 @@ class FooController extends Controller
     {
         try {
             $input = json_decode($request->getContent());
-            $model->createFromObject($input);
-            $model->setProperty('_id', $id);
+            $model->use($input);
+            $model->resource()->_id = $id;
             $model->save();
-            return new JsonResponse($model->getResource());
+            return new JsonResponse($model->resource());
         } catch (\Exception $ex) {
             return new JsonResponse(['error' => $ex->getMessage()]);
         }
@@ -52,9 +52,9 @@ class FooController extends Controller
     {
         try {
             $input = json_decode($request->getContent());
-            $model->createFromObject($input);
+            $model->use($input);
             $model->save();
-            return new JsonResponse($model->getResource());
+            return new JsonResponse($model->resource());
         } catch (\Exception $ex) {
             return new JsonResponse(['error' => $ex->getMessage()]);
         }
@@ -63,7 +63,7 @@ class FooController extends Controller
     public function getItem(FooModel $model, $id)
     {
         try {
-            return new JsonResponse($model->one($id)->getResource());
+            return new JsonResponse($model->one($id)->resource());
         } catch (\Exception $ex) {
             return new JsonResponse(['error' => $ex->getMessage()]);
         }

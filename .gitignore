@@ -2,3 +2,6 @@
 /vendor/
 clusterpoint.php
 .env
+.buildpath
+.project
+.settings/

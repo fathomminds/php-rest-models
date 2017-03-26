@@ -24,6 +24,25 @@ class DynamoDbTest extends TestCase
         $this->assertEquals(get_class($client), DynamoDbClient::class);
     }
 
+    public function testUseIncorrectType()
+    {
+        $resource = new \StdClass;
+        $resource->_id = 'ID';
+        $resource->title = 'TITLE';
+        $database = Mockery::mock(Database::class);
+        $object = new FooObject(null, null, $database);
+        $property = new \ReflectionProperty($object, 'schemaClass');
+        $property->setAccessible(true);
+        $property->setValue($object, 'noSuchClass');
+        $model = new FooModel($object);
+        try {
+            $model->use($resource);
+            $this->fail();
+        } catch (RestException $ex) {
+            $this->assertEquals('Setting model resource failed', $ex->getMessage());
+        }
+    }
+
     public function testDatabaseGet()
     {
         $client = Mockery::mock(DynamoDbClient::class);
@@ -263,32 +282,5 @@ class DynamoDbTest extends TestCase
         } catch (RestException $ex) {
             $this->assertEquals('SomeException', $ex->getMessage());
         }
-    }
-
-    public function testDatabaseUnmarshalItemNull()
-    {
-        $client = Mockery::mock(DynamoDbClient::class);
-        $resource = new Resource('resourceName', 'primaryKey', $client, 'databaseName');
-        $marshaler = new Marshaler;
-        $class = new \ReflectionObject($resource);
-        $method = $class->getMethod('unmarshalItem');
-        $method->setAccessible(true);
-        $unmarshaledItem = $method->invokeArgs($resource, [null]);
-        $this->assertEquals('object', gettype($unmarshaledItem));
-        $this->assertEquals('stdClass', get_class($unmarshaledItem));
-        $this->assertCount(0, get_object_vars($unmarshaledItem));
-    }
-
-    public function testDatabaseUnmarshalBatchNull()
-    {
-        $client = Mockery::mock(DynamoDbClient::class);
-        $resource = new Resource('resourceName', 'primaryKey', $client, 'databaseName');
-        $marshaler = new Marshaler;
-        $class = new \ReflectionObject($resource);
-        $method = $class->getMethod('unmarshalBatch');
-        $method->setAccessible(true);
-        $unmarshaledItem = $method->invokeArgs($resource, [null]);
-        $this->assertEquals('array', gettype($unmarshaledItem));
-        $this->assertCount(0, $unmarshaledItem);
     }
 }

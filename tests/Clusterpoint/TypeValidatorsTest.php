@@ -12,6 +12,7 @@ use Fathomminds\Rest\Schema\TypeValidators\StdTypeValidator;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class TypeValidatorsTest extends TestCase
 {
@@ -162,7 +163,7 @@ class TypeValidatorsTest extends TestCase
             $this->assertEquals('Type mismatch', $ex->getMessage());
         }
         try {
-            $validator->validate(new \StdClass);
+            $validator->validate(new FooSchema);
             $this->assertEquals(1, 1); //Should always reach this line
         } catch (RestException $ex) {
             $this->fail();
