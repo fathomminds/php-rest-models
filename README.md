@@ -16,7 +16,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 3. **DEFINE THE MODEL**: Simply set the corresponding REST Object [How to create a Model?](./documentation/howto/model.md)
 4. **IMPLEMENT BUSINESS LOGIC**: the package implements the CRUD operations, so your Model is clean and you can focus on the application behaviour [How to implement the business logic?](./documentation/howto/business-logic.md)
 5. **USE THE MODELS** in your application [How to use the Models?](./documentation/howto/use-models.md)
-6. **ENABLE IDE AUTOCOMPLETION** [How to enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md) 
+6. **ENABLE IDE AUTOCOMPLETION** [How to enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
 
 ## Features ##
 
@@ -43,9 +43,9 @@ Framework independent PHP REST models with schema validation and multiple databa
     * use base validator classes from the package and extend them as you need
 * JOINS AND RELATIONS BETWEEN MODELS ARE INTENTIONALLY NOT PART OF THE IMPLEMENTATION
 
-## API reference ##
+## Model API reference ##
 
-  ~~[API reference](./README.md)~~
+  [Model API](./documentation/api/model/index.md)
 
 ## Example application ##
 
