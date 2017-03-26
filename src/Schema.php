@@ -30,6 +30,7 @@ abstract class Schema implements ISchema
                 []
             );
         }
+        return $this->{$name};
     }
 
     abstract public function schema();

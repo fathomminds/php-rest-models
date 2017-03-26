@@ -12,7 +12,5 @@ interface IRestObject
     public function reset();
     public function validate();
     public function toArray();
-    public function getProperty($propertyName);
-    public function setProperty($propertyName, $propertyValue);
     public function getPrimaryKeyValue();
 }

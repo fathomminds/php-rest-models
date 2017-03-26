@@ -46,7 +46,7 @@ abstract class RestObject implements IRestObject
     public function get($resourceId = null)
     {
         $reflectionHelper = new ReflectionHelper;
-        if ($resourceId == null) {
+        if ($resourceId === null) {
             $rawResources = $this->database->get($this->resourceName, $this->primaryKey);
             $resources = [];
             foreach ($rawResources as $rawResource) {
@@ -142,20 +142,6 @@ abstract class RestObject implements IRestObject
     public function toArray()
     {
         return json_decode(json_encode($this->resource), true);
-    }
-
-    public function getProperty($propertyName)
-    {
-        if (property_exists($this->resource, $propertyName)) {
-            return $this->resource->{$propertyName};
-        }
-        return null;
-    }
-
-    public function setProperty($propertyName, $propertyValue)
-    {
-        $this->resource->{$propertyName} = $propertyValue;
-        return $this;
     }
 
     public function getPrimaryKeyValue()
