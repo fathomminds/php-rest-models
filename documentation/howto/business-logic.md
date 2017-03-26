@@ -10,7 +10,7 @@ For example, for performance reasons, you may want to utilize a counter property
 
 ### Add the required fields to FooSchema ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Schema;
 
@@ -56,7 +56,7 @@ class FooSchema extends Schema
 
 ### No change required in the REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Objects;
 
@@ -73,7 +73,7 @@ class FooObject extends RestObject
 
 ### Override the Model::update() method to set the counter ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 

@@ -2,7 +2,7 @@
 
 Create a schema by extending your custom schema class from a base [Schema](../../src/Schema.php) class:
 
-```
+```php
 <?php
 namespace YourApp\Models\Schema;
 

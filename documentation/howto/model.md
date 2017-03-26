@@ -4,7 +4,7 @@ The Model will implement the application specific business logic. You only need 
 
 ### Create a Model with a Clusterpoint REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 
@@ -27,7 +27,7 @@ class FooModel extends RestModel
 
 ### Create a Model with a DynamoDb REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 

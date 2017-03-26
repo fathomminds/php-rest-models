@@ -4,7 +4,7 @@ An example usage of basic Model usage with the [Lumen PHP framework](https://lum
 
 ### FooController ###
 
-```
+```php
 <?php
 namespace App\Http\Controllers;
 
