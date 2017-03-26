@@ -4,12 +4,18 @@ The Model will implement the application specific business logic. You only need 
 
 ### Create a Model with a Clusterpoint REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 
 use Fathomminds\Rest\RestModel;
 use YourApp\Models\Objects\FooObject;
+
+/**
+ *
+ * @method FooSchema resource()
+ *
+ */
 
 class FooModel extends RestModel
 {
@@ -21,12 +27,18 @@ class FooModel extends RestModel
 
 ### Create a Model with a DynamoDb REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 
 use Fathomminds\Rest\RestModel;
 use YourApp\Models\Objects\FooObject;
+
+/**
+ *
+ * @method FooSchema resource()
+ *
+ */
 
 class FooModel extends RestModel
 {
@@ -40,3 +52,7 @@ class FooModel extends RestModel
 ```
 (string) protected $restObjectClass; Name of the REST Object class to be used with the Model.
 ```
+
+### Enable IDE autocompletion ###
+
+To enable IDE autocompletion, specify the return type for the inherited resource() method. [How to enable IDE autocompletion?](./ide-autocompletion.md)

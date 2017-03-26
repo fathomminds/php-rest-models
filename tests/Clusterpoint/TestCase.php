@@ -75,7 +75,7 @@ abstract class TestCase extends PHPUnitTestCase
         $resource = new \StdClass;
         $resource->title = 'REQUIRED';
         $mockObject
-            ->shouldReceive('getResource')
+            ->shouldReceive('resource')
             ->andReturn($resource);
         $mockObject
             ->shouldReceive('validateSchema')

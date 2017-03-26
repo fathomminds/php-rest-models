@@ -20,15 +20,22 @@ abstract class RestModel implements IRestModel
         $this->restObject = $restObject;
     }
 
-    public function createFromObject(\StdClass $obj)
+    public function use($obj)
     {
-        $this->restObject = $this->restObject->createFromObject($obj);
+        try {
+            $this->restObject = $this->restObject->createFromObject($obj);
+        } catch (\Exception $ex) {
+            throw new RestException(
+                'Setting model resource failed',
+                ['originalException' => $ex]
+            );
+        }
         return $this;
     }
 
-    public function getResource()
+    public function resource()
     {
-        return $this->restObject->getResource();
+        return $this->restObject->resource();
     }
 
     public function one($resourceId)
@@ -54,13 +61,13 @@ abstract class RestModel implements IRestModel
 
     public function create()
     {
-        $this->restObject->post($this->getResource());
+        $this->restObject->post($this->resource());
         return $this;
     }
 
     public function update()
     {
-        $this->restObject->put($this->restObject->getPrimaryKeyValue(), $this->getResource());
+        $this->restObject->put($this->restObject->getPrimaryKeyValue(), $this->resource());
         return $this;
     }
 
@@ -73,19 +80,8 @@ abstract class RestModel implements IRestModel
 
     public function validate()
     {
-        $this->restObject->validateSchema($this->getResource());
+        $this->restObject->validateSchema($this->resource());
         $this->restObject->validate();
-    }
-
-    public function getProperty($propertyName)
-    {
-        return $this->restObject->getProperty($propertyName);
-    }
-
-    public function setProperty($propertyName, $propertyValue)
-    {
-        $this->restObject->setProperty($propertyName, $propertyValue);
-        return $this;
     }
 
     public function toArray()

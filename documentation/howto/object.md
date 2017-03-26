@@ -4,7 +4,7 @@ The REST Objects implement the Database operations to read and write the data. O
 
 ### Create a Clusterpoint REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Objects;
 
@@ -21,7 +21,7 @@ class FooObject extends RestObject
 
 ### Create a DynamoDb REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Objects;
 

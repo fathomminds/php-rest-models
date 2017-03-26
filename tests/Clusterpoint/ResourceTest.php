@@ -4,13 +4,14 @@ namespace Fathomminds\Rest\Tests\Clusterpoint;
 use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Resource;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class ResourceTest extends TestCase
 {
     public function testPut()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
@@ -28,7 +29,7 @@ class ResourceTest extends TestCase
     public function testPutException()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
@@ -47,7 +48,7 @@ class ResourceTest extends TestCase
     public function testPost()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
@@ -65,7 +66,7 @@ class ResourceTest extends TestCase
     public function testPostException()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
@@ -84,7 +85,7 @@ class ResourceTest extends TestCase
     public function testFailOnErrorResourceDoesNotExist()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $error = new \StdClass;
@@ -107,7 +108,7 @@ class ResourceTest extends TestCase
     public function testFailOnErrorDataaseOperationFailed()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $error = new \StdClass;

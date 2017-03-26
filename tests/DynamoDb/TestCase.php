@@ -42,10 +42,9 @@ abstract class TestCase extends PHPUnitTestCase
 
     public function mockResponse($array)
     {
-        $marshaler = new Marshaler;
         $return = [];
         foreach ($array as $key => $value) {
-            $return[$key] = $marshaler->marshalItem($value);
+            $return[$key] = $this->marshalItem($value);
         }
         $result = new Result($return);
         return $result;
@@ -53,12 +52,11 @@ abstract class TestCase extends PHPUnitTestCase
 
     public function mockBatchResponse($array)
     {
-        $marshaler = new Marshaler;
         $return = [];
         $items = [];
         if (isset($array['Items'])) {
             foreach ($array['Items'] as $item) {
-                $marshaledItem = $marshaler->marshalItem($item);
+                $marshaledItem = $this->marshalItem($item);
                 $items[] = $marshaledItem;
             }
             unset($array['Items']);
@@ -66,7 +64,7 @@ abstract class TestCase extends PHPUnitTestCase
         foreach ($array as $key => $value) {
             switch ($key) {
                 case 'LastEvaluatedKey':
-                    $return[$key] = $marshaler->marshalItem($value);
+                    $return[$key] = $this->marshalItem($value);
                     break;
                 default:
                     $return[$key] = $value;
@@ -75,6 +73,19 @@ abstract class TestCase extends PHPUnitTestCase
         $return['Items'] = $items;
         $result = new Result($return);
         return $result;
+    }
+
+    public function marshalItem($resource)
+    {
+        $marshaler = new Marshaler;
+        $toMarshal = $resource;
+        if (gettype($resource) === 'object') {
+            $toMarshal = new \StdClass;
+            foreach (get_object_vars($resource) as $name => $value) {
+                $toMarshal->$name = $value;
+            }
+        }
+        return $marshaler->marshalItem($toMarshal);
     }
 
     public function resource($array)
