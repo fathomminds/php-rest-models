@@ -1,6 +1,6 @@
-## Model::create() ##
+## Model::all() ##
 
-Stores the model's resource in database.
+Removes the model's resource (identified by its primary key) from the database
 
 ### Parameters ###
 
@@ -8,7 +8,7 @@ Stores the model's resource in database.
 
 ### Returns ###
 
-*(Model)* The model instance
+*(mixed)* The primary key value of the deleted item
 
 ### Throws ###
 
@@ -28,12 +28,8 @@ class Do
     public function something()
     {
         try {
-            $resource = new \StdClass;
-            $resource->title = 'TITLE';
-            $model = new FooModel();
-            $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $model = new FooModel;
+            $model->one('KEY')->delete();
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

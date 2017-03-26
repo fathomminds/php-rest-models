@@ -1,6 +1,6 @@
-## Model::create() ##
+## Model::resource() ##
 
-Stores the model's resource in database.
+Returns the Model's currently set resource object
 
 ### Parameters ###
 
@@ -8,7 +8,7 @@ Stores the model's resource in database.
 
 ### Returns ###
 
-*(Model)* The model instance
+*(mixed)* Returns a reference to the object of the SchemaClass configured
 
 ### Throws ###
 
@@ -28,12 +28,9 @@ class Do
     public function something()
     {
         try {
-            $resource = new \StdClass;
-            $resource->title = 'TITLE';
             $model = new FooModel();
-            $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $model->one('KEY');
+            $title = $model->resource()->title;
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

@@ -1,10 +1,10 @@
-## Model::create() ##
+## Model::use($resource) ##
 
-Stores the model's resource in database.
+Sets the Model's resource
 
 ### Parameters ###
 
-*None*
+*(object)* $resource
 
 ### Returns ###
 
@@ -32,8 +32,7 @@ class Do
             $resource->title = 'TITLE';
             $model = new FooModel();
             $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $title = $model->resource()->title;
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

@@ -1,6 +1,6 @@
-## Model::create() ##
+## Model::all() ##
 
-Stores the model's resource in database.
+Retreives multiple resources from the database
 
 ### Parameters ###
 
@@ -8,7 +8,7 @@ Stores the model's resource in database.
 
 ### Returns ###
 
-*(Model)* The model instance
+*Array<Schema>* An array of resources with the SchemaClass configured in the Model's RestObject or an empty array if none found
 
 ### Throws ###
 
@@ -28,12 +28,12 @@ class Do
     public function something()
     {
         try {
-            $resource = new \StdClass;
-            $resource->title = 'TITLE';
-            $model = new FooModel();
-            $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $model = new FooModel;
+            $list = $model->all();
+            foreach ($list as $resource) {
+                $model = new FooModel;
+                $model->use($resource);
+            }
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

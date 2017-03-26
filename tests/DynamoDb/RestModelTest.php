@@ -24,6 +24,25 @@ class DynamoDbTest extends TestCase
         $this->assertEquals(get_class($client), DynamoDbClient::class);
     }
 
+    public function testUseIncorrectType()
+    {
+        $resource = new \StdClass;
+        $resource->_id = 'ID';
+        $resource->title = 'TITLE';
+        $database = Mockery::mock(Database::class);
+        $object = new FooObject(null, null, $database);
+        $property = new \ReflectionProperty($object, 'schemaClass');
+        $property->setAccessible(true);
+        $property->setValue($object, 'noSuchClass');
+        $model = new FooModel($object);
+        try {
+            $model->use($resource);
+            $this->fail();
+        } catch (RestException $ex) {
+            $this->assertEquals('Setting model resource failed', $ex->getMessage());
+        }
+    }
+
     public function testDatabaseGet()
     {
         $client = Mockery::mock(DynamoDbClient::class);

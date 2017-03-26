@@ -1,10 +1,10 @@
-## Model::create() ##
+## Model::one($resourceId) ##
 
-Stores the model's resource in database.
+Retreives a single resource from the database
 
 ### Parameters ###
 
-*None*
+*(mixed)* $resourceId
 
 ### Returns ###
 
@@ -28,12 +28,9 @@ class Do
     public function something()
     {
         try {
-            $resource = new \StdClass;
-            $resource->title = 'TITLE';
-            $model = new FooModel();
-            $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $model = new FooModel;
+            $model->one('KEY');
+            $title = $model->resource()->title;
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

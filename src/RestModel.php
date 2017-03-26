@@ -22,7 +22,14 @@ abstract class RestModel implements IRestModel
 
     public function use($obj)
     {
-        $this->restObject = $this->restObject->createFromObject($obj);
+        try {
+            $this->restObject = $this->restObject->createFromObject($obj);
+        } catch (\Exception $ex) {
+            throw new RestException(
+                'Setting model resource failed',
+                ['originalException' => $ex]
+            );
+        }
         return $this;
     }
 

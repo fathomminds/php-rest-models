@@ -1,6 +1,6 @@
-## Model::create() ##
+## Model::update() ##
 
-Stores the model's resource in database.
+Updates the model's resource in database.
 
 ### Parameters ###
 
@@ -28,12 +28,10 @@ class Do
     public function something()
     {
         try {
-            $resource = new \StdClass;
-            $resource->title = 'TITLE';
-            $model = new FooModel();
-            $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $model = new FooModel;
+            $model->one('KEY');
+            $model->resource()->title = 'NEW TITLE';
+            $model->update();
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

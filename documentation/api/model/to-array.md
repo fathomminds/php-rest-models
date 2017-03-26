@@ -1,6 +1,6 @@
-## Model::create() ##
+## Model::toArray0() ##
 
-Stores the model's resource in database.
+Returns the Model's currently set resource object as an associative array
 
 ### Parameters ###
 
@@ -8,11 +8,7 @@ Stores the model's resource in database.
 
 ### Returns ###
 
-*(Model)* The model instance
-
-### Throws ###
-
-*RestException*
+*(array)*
 
 ### Example code ###
 
@@ -28,12 +24,10 @@ class Do
     public function something()
     {
         try {
-            $resource = new \StdClass;
-            $resource->title = 'TITLE';
             $model = new FooModel();
-            $model->use($resource);
-            $model->create();
-            $newId = $model->resource()->_id;
+            $model->one('KEY');
+            $array = $model->toArray();
+            $title = $array['title'];
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();
