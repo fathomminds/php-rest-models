@@ -22,5 +22,15 @@ abstract class Schema implements ISchema
         }
     }
 
+    public function __get($name)
+    {
+        if (!isset($this->{$name})) {
+            throw new RestException() {
+                'Trying to access undefined property ' . $name,
+                []
+            }
+        }
+    }
+
     abstract public function schema();
 }
