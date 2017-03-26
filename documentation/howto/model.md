@@ -55,4 +55,4 @@ class FooModel extends RestModel
 
 ### Enable IDE autocompletion ###
 
-To enable IDE autocompletion, specify the return type for the inherited resource() method
+To enable IDE autocompletion, specify the return type for the inherited resource() method. [How to enable IDE autocompletion?](./ide-autocompletion.md)

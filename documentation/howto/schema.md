@@ -48,6 +48,50 @@ Define the schema by adding all fields. Fields are defined as an associative arr
   ];
 ```
 
+### Default values ###
+
+You can set constant and run-time generated values too as default values.
+
+```php
+<?php
+namespace YourApp\Models\Schema;
+
+use Fathomminds\Rest\Schema;
+use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
+
+/**
+ *
+ * @property string $_id
+ * @property string $otherField
+ *
+ */
+
+class FooSchema extends Schema
+{
+    public function schema()
+    {
+        return [
+            '_id' => [
+                'unique' => true,
+                'default' => 'STRING',
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+            'otherField' => [
+                'default' => function () {
+                    return time();
+                },
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+        ];
+    }
+}
+
+```
+
 ### Type validators ###
 
 * [AnyValidator](../../src/Schema/TypeValidators/AnyValidator.php)
@@ -68,3 +112,7 @@ Validator::__construct($params);
 Type validators must implement the interface [ITypeValidator](../../src/Contracts/ITypeValidator.php).
 
 On validation failure, the validator must throw an exception.
+
+### Enable IDE autocompletion ###
+
+To enable IDE autocompletion, list the properties. [How to enable IDE autocompletion?](./ide-autocompletion.md)

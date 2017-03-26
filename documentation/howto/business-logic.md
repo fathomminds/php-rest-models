@@ -92,7 +92,7 @@ class FooModel extends RestModel
 
     public function update()
     {
-        $this->setProperty('barCounter', count($this->getProperty('bar')));
+        $this->resource()->barCounter = count($this->resource()->bar);
         parent::update();
     }
 }

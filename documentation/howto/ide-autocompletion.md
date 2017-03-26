@@ -43,6 +43,7 @@ use YourApp\Models\Schema\BarSchema;
  * @property string $title
  * @property integer $status
  * @property BarSchema $bar
+ *
  */
 
 
