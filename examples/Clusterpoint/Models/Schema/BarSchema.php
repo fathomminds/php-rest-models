@@ -6,9 +6,10 @@ use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\TypeValidators\PhoneNumberValidator;
 
 /**
- * 
+ *
  * @property string $_id
  * @property string $mobile
+ *
  */
 
 class BarSchema extends Schema

@@ -8,11 +8,12 @@ use Fathomminds\Rest\Helpers\Uuid;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
 
 /**
- * 
+ *
  * @property string $_id
  * @property string $title
  * @property integer $status
  * @property BarSchema $bar
+ *
  */
 
 

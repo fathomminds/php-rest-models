@@ -7,8 +7,8 @@ use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
 use Fathomminds\Rest\Examples\DynamoDb\Models\Schema\BarSchema;
 
 /**
- * 
- * @property string $id
+ *
+ * @property string $_id
  * @property string $title
  * @property string $other
  * @property string $noindex

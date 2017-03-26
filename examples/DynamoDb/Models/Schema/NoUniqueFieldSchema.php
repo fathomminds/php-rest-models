@@ -5,8 +5,8 @@ use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 
 /**
- * 
- * @property string $id
+ *
+ * @property string $_id
  * @property string $multi
  *
  */
