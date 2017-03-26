@@ -21,7 +21,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Features ##
 
 * REST operations (GET, POST, PUT, DELETE) implemented for the supported databases under the hood
-* Basic model operations with a sinmple API:
+* Basic model operations with a simple API:
     * Model::create()
     * Model::update()
     * Model::one($resourceId)

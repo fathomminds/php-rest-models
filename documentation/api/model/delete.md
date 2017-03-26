@@ -1,4 +1,4 @@
-## Model::all() ##
+## Model::delete() ##
 
 Removes the model's resource (identified by its primary key) from the database
 

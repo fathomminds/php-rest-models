@@ -1,4 +1,4 @@
-## Model::toArray0() ##
+## Model::toArray() ##
 
 Returns the Model's currently set resource object as an associative array
 
