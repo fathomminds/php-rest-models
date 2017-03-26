@@ -3,8 +3,8 @@ namespace Fathomminds\Rest\Contracts;
 
 interface IRestModel
 {
-    public function createFromObject(\StdClass $obj);
-    public function getResource();
+    public function use($obj);
+    public function resource();
     public function one($resourceId);
     public function all();
     public function create();
@@ -12,6 +12,4 @@ interface IRestModel
     public function delete();
     public function validate();
     public function toArray();
-    public function getProperty($propertyName);
-    public function setProperty($propertyName, $propertyValue);
 }

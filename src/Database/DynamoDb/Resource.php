@@ -3,11 +3,11 @@ namespace Fathomminds\Rest\Database\DynamoDb;
 
 use Aws\Sdk;
 use Aws\DynamoDb\DynamoDbClient as Client;
-use Aws\DynamoDb\Marshaler;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Contracts\IResource;
 use Fathomminds\Rest\Helpers\Uuid;
 use Aws\DynamoDb\Exception\DynamoDbException;
+use Fathomminds\Rest\Database\DynamoDb\QueryConstructor;
 
 class Resource implements IResource
 {
@@ -17,7 +17,7 @@ class Resource implements IResource
     protected $fullTableName;
     protected $resourceName;
     protected $primaryKey;
-    protected $marshaler;
+    protected $queryConstructor;
 
     public function __construct($resourceName, $primaryKey, Client $client = null, $databaseName = null)
     {
@@ -26,7 +26,7 @@ class Resource implements IResource
         $this->client = $client === null ? $this->createClient() : $client;
         $this->databaseName = $databaseName === null ? $this->getFullDatabaseName() : $databaseName;
         $this->fullTableName = $this->databaseName . '-' . $this->resourceName;
-        $this->marshaler = new Marshaler;
+        $this->queryConstructor = new QueryConstructor;
     }
 
     private function createClient()
@@ -56,33 +56,16 @@ class Resource implements IResource
 
     protected function getOne($resourceId)
     {
-        $query = $this->createGetQuery($resourceId);
+        $query = $this->queryConstructor->createGetQuery($this->fullTableName, $this->primaryKey, $resourceId);
         $res = $this->client->getItem($query);
-        return $this->unmarshalItem($res['Item']);
-    }
-
-    protected function createGetQuery($resourceId)
-    {
-        $query = [
-            'TableName' => $this->fullTableName,
-            'Key' => $this->marshalItem([$this->primaryKey => $resourceId]),
-        ];
-        return $query;
+        return $this->queryConstructor->unmarshalItem($res['Item']);
     }
 
     protected function getAll()
     {
-        $query = $this->createScanQuery();
+        $query = $this->queryConstructor->createScanQuery($this->fullTableName);
         $res = $this->client->scan($query);
-        return $this->unmarshalBatch($res['Items']);
-    }
-
-    protected function createScanQuery()
-    {
-        $query = [
-            'TableName' => $this->fullTableName,
-        ];
-        return $query;
+        return $this->queryConstructor->unmarshalBatch($res['Items']);
     }
 
     protected function throwAwsPostError($exception)
@@ -100,25 +83,15 @@ class Resource implements IResource
     public function post($newResource)
     {
         try {
-            $query = $this->createPostQuery($newResource);
+            $query = $this->queryConstructor->createPostQuery($this->fullTableName, $this->primaryKey, $newResource);
             $this->client->putItem($query);
         } catch (DynamoDbException $ex) {
             $this->throwAwsPostError($ex);
         } catch (\Exception $ex) {
+            //var_dump($ex);
             throw new RestException($ex->getMessage(), ['exception' => $ex]);
         }
         return $newResource;
-    }
-
-    protected function createPostQuery($newResource)
-    {
-        $query = [
-            'TableName' => $this->fullTableName,
-            'Item' => $this->marshalItem($newResource),
-            'ConditionExpression' => 'attribute_not_exists(#pk)',
-            "ExpressionAttributeNames" => ["#pk" => $this->primaryKey],
-        ];
-        return $query;
     }
 
     protected function throwAwsPutError($exception)
@@ -137,7 +110,7 @@ class Resource implements IResource
     {
         try {
             $newResource->{$this->primaryKey} = $resourceId;
-            $query = $this->createPutQuery($newResource);
+            $query = $this->queryConstructor->createPutQuery($this->fullTableName, $this->primaryKey, $newResource);
             $res = $this->client->putItem($query);
         } catch (DynamoDbException $ex) {
             $this->throwAwsPutError($ex);
@@ -147,59 +120,14 @@ class Resource implements IResource
         return $newResource;
     }
 
-    protected function createPutQuery($newResource)
-    {
-        $query = [
-            'TableName' => $this->fullTableName,
-            'Item' => $this->marshalItem($newResource),
-            'ConditionExpression' => 'attribute_exists(#pk)',
-            "ExpressionAttributeNames" => ["#pk" => $this->primaryKey],
-        ];
-        return $query;
-    }
-
     public function delete($resourceId)
     {
         try {
-            $query = $this->createDeleteQuery($resourceId);
+            $query = $this->queryConstructor->createDeleteQuery($this->fullTableName, $this->primaryKey, $resourceId);
             $res = $this->client->deleteItem($query);
             return $resourceId;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
         }
-    }
-
-    protected function createDeleteQuery($resourceId)
-    {
-        $query = [
-            'TableName' => $this->fullTableName,
-            'Key' => $this->marshalItem([$this->primaryKey => $resourceId]),
-        ];
-        return $query;
-    }
-
-    protected function marshalItem($resource)
-    {
-        return $this->marshaler->marshalItem($resource);
-    }
-
-    protected function unmarshalItem($item)
-    {
-        if ($item === null) {
-            return new \StdClass;
-        }
-        return $this->marshaler->unmarshalItem($item, true);
-    }
-
-    protected function unmarshalBatch($itemList)
-    {
-        if ($itemList === null) {
-            return [];
-        }
-        $list = [];
-        foreach ($itemList as $item) {
-            $list[] = $this->unmarshalItem($item);
-        }
-        return $list;
     }
 }

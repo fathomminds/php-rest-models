@@ -6,6 +6,7 @@ use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\NoUniqueFieldObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\NoUniqueFieldSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
 
 class RestObjectTest extends TestCase
@@ -13,18 +14,19 @@ class RestObjectTest extends TestCase
     public function testNoUniqueFieldSchemaValidation()
     {
         $object = $this->mockObject(NoUniqueFieldObject::class);
-        $input = new \StdClass();
+        $input = new NoUniqueFieldSchema;
         $input->_id = 'ID';
         $input->multi = 'MULTI';
         $object = $object->createFromObject($input);
         $object->validate(); // Trigger early return in RestObject::validateUniqueFields
-        $this->assertCount(0, $object->getUniqueFields());
+        $uniqueFields = $object->getUniqueFields();
+        $this->assertCount(0, $uniqueFields);
     }
 
     public function testPut()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $schema = Mockery::mock(FooSchema::class);
@@ -53,7 +55,7 @@ class RestObjectTest extends TestCase
     public function testPost()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $schema = Mockery::mock(FooSchema::class);
@@ -82,7 +84,7 @@ class RestObjectTest extends TestCase
     public function testSetFieldDefaultsSkipExisting()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $database = Mockery::mock(Database::class);
@@ -91,7 +93,7 @@ class RestObjectTest extends TestCase
             $method = new \ReflectionMethod($object, 'setFieldDefaults');
             $method->setAccessible(true);
             $method->invoke($object);
-            $res = $object->getResource();
+            $res = $object->resource();
             $this->assertEquals('ID', $res->_id);
         } catch (\Exception $ex) {
             $this->fail();
@@ -101,7 +103,7 @@ class RestObjectTest extends TestCase
     public function testValidateUniqueFieldsUpdateMode()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $database = new Database($this->mockClient, 'DatabaseName');
@@ -133,7 +135,7 @@ class RestObjectTest extends TestCase
     public function testValidateUniqueFieldsPrimaryKeyCollision()
     {
         $id = 'ID';
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $database = new Database($this->mockClient, 'DatabaseName');

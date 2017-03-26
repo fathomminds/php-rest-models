@@ -3,18 +3,19 @@ namespace Fathomminds\Rest\Tests\Integration\Clusterpoint;
 
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class IntegrationTest extends TestCase
 {
     public function testOnRealData()
     {
         $model = new FooModel;
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->title = 'CREATED';
-        $model->createFromObject($resource);
+        $model->use($resource);
 
         $model->create();
-        $id = $model->getProperty('_id');
+        $id = $model->resource()->_id;
         $this->assertTrue(!empty($id));
 
         try {
@@ -32,19 +33,19 @@ class IntegrationTest extends TestCase
 
         $model = new FooModel;
         $model->one($id);
-        $this->assertEquals($id, $model->getProperty('_id'));
-        $this->assertEquals('CREATED', $model->getProperty('title'));
+        $this->assertEquals($id, $model->resource()->_id);
+        $this->assertEquals('CREATED', $model->resource()->title);
 
-        $model->setProperty('title', 'UPDATED');
+        $model->resource()->title = 'UPDATED';
         $model->update();
 
         $model = new FooModel;
         $model->one($id);
-        $this->assertEquals($id, $model->getProperty('_id'));
-        $this->assertEquals('UPDATED', $model->getProperty('title'));
+        $this->assertEquals($id, $model->resource()->_id);
+        $this->assertEquals('UPDATED', $model->resource()->title);
 
         $model->delete();
-        $this->assertTrue(empty(get_object_vars($model->getResource())));
+        $this->assertTrue(empty(get_object_vars($model->resource())));
 
         try {
             $model = new FooModel;

@@ -5,6 +5,7 @@ use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\DynamoDb\Resource;
 use Aws\DynamoDb\DynamoDbClient;
+use Fathomminds\Rest\Database\DynamoDb\QueryConstructor;
 
 class ResourceTest extends TestCase
 {
@@ -82,5 +83,20 @@ class ResourceTest extends TestCase
         } catch (\Exception $ex) {
             $this->assertEquals('Error', $ex->getMessage());
         }
+    }
+
+    public function testUnmarshalItemNull()
+    {
+        $queryConstructor = new QueryConstructor;
+        $res = $queryConstructor->unmarshalItem(null);
+        $this->assertEquals('stdClass', get_class($res));
+    }
+
+    public function testUnmarshalBatchNull()
+    {
+        $queryConstructor = new QueryConstructor;
+        $res = $queryConstructor->unmarshalBatch(null);
+        $this->assertEquals('array', gettype($res));
+        $this->assertEquals(0, count($res));
     }
 }

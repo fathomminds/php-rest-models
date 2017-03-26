@@ -4,13 +4,15 @@ namespace Fathomminds\Rest\Tests\Clusterpoint;
 use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class DatabaseTest extends TestCase
 {
     public function testPut()
     {
         $database = new Database($this->mockClient, 'DATABASENAME');
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $this->mockDatabase
@@ -24,7 +26,7 @@ class DatabaseTest extends TestCase
     public function testPost()
     {
         $database = new Database($this->mockClient, 'DATABASENAME');
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $id = 'ID';
         $resource->_id = $id;
         $resource->title = 'TITLE';

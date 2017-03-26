@@ -12,7 +12,7 @@ class RestObjectTest extends TestCase
 {
     public function testValidateUniqueFieldsWithQuery()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -33,7 +33,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsWithScan()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -59,7 +59,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsWithQueryException()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -80,7 +80,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsWithScanException()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -106,7 +106,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsEmptySchema()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -122,5 +122,20 @@ class RestObjectTest extends TestCase
         } catch (RestException $ex) {
             $this->fail();
         }
+    }
+
+    public function testGetListResult()
+    {
+        $resource = new \StdClass;
+        $resource->_id = 'ID';
+        $resource->title = 'TITLE';
+        $database = Mockery::mock(Database::class);
+        $database
+            ->shouldReceive('get')
+            ->andReturn([$resource]);
+        $object = new FooObject($resource, null, $database);
+        $list = $object->get();
+        $this->assertEquals(1, count($list));
+        $this->assertEquals(FooSchema::class, get_class($list[0]));
     }
 }

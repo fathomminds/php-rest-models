@@ -1,11 +1,41 @@
+## How to enable IDE autocompletion? ##
+
+To enable IDE autocompletion you only need to specify the return type for Model::resource() and list the properties in the SchemaClasses:
+
+### Specify return type for Model::resource() ###
+
+```php
 <?php
-namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Schema;
+namespace YourApp\Models;
+
+use Fathomminds\Rest\RestModel;
+use YourApp\Models\Objects\FooObject;
+use YourApp\Models\Schema\FooSchema;
+
+/**
+ *
+ * @method FooSchema resource()
+ *
+ */
+class FooModel extends RestModel
+{
+    protected $restObjectClass = FooObject::class;
+}
+
+
+```
+
+### List the properties in the SchemaClass ###
+
+```php
+<?php
+namespace YourApp\Models\Schema;
 
 use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
 use Fathomminds\Rest\Helpers\Uuid;
-use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
+use YourApp\Models\Schema\BarSchema;
 
 /**
  *
@@ -57,3 +87,5 @@ class FooSchema extends Schema
         ];
     }
 }
+
+```

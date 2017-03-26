@@ -10,42 +10,53 @@ For example, for performance reasons, you may want to utilize a counter property
 
 ### Add the required fields to FooSchema ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Schema;
 
-use Fathomminds\Rest\Schema\SchemaValidator;
+use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ArrayValidator;
 use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
 
-class FooSchema extends SchemaValidator
+/**
+ *
+ * @property string $_id
+ * @property array $bar
+ * @property integer $barCounter
+ *
+ */
+
+class FooSchema extends Schema
 {
-    protected $fields = [
-        '_id' => [
-            'unique' => true,
-            'validator' => [
-                'class' => StringValidator::class,
-            ]
-        ],
-        'bar' => [
-            'validator' => [
-                'class' => ArrayValidator::class,
-            ]
-        ],
-        'barCounter' => [
-            'validator' => [
-                'class' => IntegerValidator::class,
-            ]
-        ],
-    ];
+    public function schema()
+    {
+        return [
+            '_id' => [
+                'unique' => true,
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+            'bar' => [
+                'validator' => [
+                    'class' => ArrayValidator::class,
+                ]
+            ],
+            'barCounter' => [
+                'validator' => [
+                    'class' => IntegerValidator::class,
+                ]
+            ],
+        ];
+    }
 }
 
 ```
 
 ### No change required in the REST Object ###
 
-```
+```php
 <?php
 namespace YourApp\Models\Objects;
 
@@ -62,12 +73,18 @@ class FooObject extends RestObject
 
 ### Override the Model::update() method to set the counter ###
 
-```
+```php
 <?php
 namespace YourApp\Models;
 
 use Fathomminds\Rest\RestModel;
 use YourApp\Models\Objects\FooObject;
+
+/**
+ *
+ * @method FooSchema resource()
+ *
+ */
 
 class FooModel extends RestModel
 {
@@ -75,7 +92,7 @@ class FooModel extends RestModel
 
     public function update()
     {
-        $this->setProperty('barCounter', count($this->getProperty('bar')));
+        $this->resource()->barCounter = count($this->resource()->bar);
         parent::update();
     }
 }
