@@ -1,29 +1,38 @@
 ## How to create a schema? ##
 
-Create a schema by extending your custom schema class from ShcemaValidator:
+Create a schema by extending your custom schema class from a base [Schema](../../src/Schema.php) class:
 
 ```
 <?php
 namespace YourApp\Models\Schema;
 
-use Fathomminds\Rest\Schema\SchemaValidator;
+use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 
-class FooSchema extends SchemaValidator
+/**
+ *
+ * @property string $_id
+ *
+ */
+
+class FooSchema extends Schema
 {
-    protected $fields = [
-        '_id' => [
-            'unique' => true,
-            'validator' => [
-                'class' => StringValidator::class,
-            ]
-        ],
-    ];
+    public function schema()
+    {
+        return [
+            '_id' => [
+                'unique' => true,
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+        ];
+    }
 }
 
 ```
 
-Define the schema by adding all fields. Fields are defined as an associative array in the $fields class property. The following properties can be set:
+Define the schema by adding all fields. Fields are defined as an associative array in the return value of the schema() method. The following properties can be set:
 
 ```
 (bool) unique = true|false
@@ -37,40 +46,6 @@ Define the schema by adding all fields. Fields are defined as an associative arr
           ...
       ],
   ];
-```
-
-### Default field values ###
-
-"[...] This declaration may include an initialization, but this initialization must be a constant value--that is, it must be able to be evaluated at compile time and must not depend on run-time information in order to be evaluated. [...] [(http://de2.php.net/manual/en/language.oop5.properties.php)](http://de2.php.net/manual/en/language.oop5.properties.php)
-
-It is possible to set a value generator function as default field value (e.g. genrating a UUID run time) in the Schema constructor:
-
-```
-<?php
-namespace YourApp\Models\Schema;
-
-use Fathomminds\Rest\Schema\SchemaValidator;
-use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
-use Fathomminds\Rest\Helpers\Uuid;
-
-class FooSchema extends SchemaValidator
-{
-    protected $fields = [
-        '_id' => [
-            'unique' => true,
-            'validator' => [
-                'class' => StringValidator::class,
-            ]
-        ],
-    ];
-
-    public function __construct()
-    {
-        $this->setDefault('_id', function () {
-            return (new Uuid)->generate();
-        });
-    }
-}
 ```
 
 ### Type validators ###

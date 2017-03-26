@@ -12,7 +12,7 @@ class RestObjectTest extends TestCase
 {
     public function testValidateUniqueFieldsWithQuery()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -33,7 +33,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsWithScan()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -59,7 +59,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsWithQueryException()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -80,7 +80,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsWithScanException()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);
@@ -106,7 +106,7 @@ class RestObjectTest extends TestCase
 
     public function testValidateUniqueFieldsEmptySchema()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $client = Mockery::mock(DynamoDbClient::class);

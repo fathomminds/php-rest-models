@@ -16,6 +16,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 3. **DEFINE THE MODEL**: Simply set the corresponding REST Object [How to create a Model?](./documentation/howto/model.md)
 4. **IMPLEMENT BUSINESS LOGIC**: the package implements the CRUD operations, so your Model is clean and you can focus on the application behaviour [How to implement the business logic?](./documentation/howto/business-logic.md)
 5. **USE THE MODELS** in your application [How to use the Models?](./documentation/howto/use-models.md)
+6. **ENABLE IDE AUTOCOMPLETION** [How to enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md) 
 
 ## Features ##
 
@@ -26,12 +27,12 @@ Framework independent PHP REST models with schema validation and multiple databa
     * Model::one($resourceId)
     * Model::all()
     * Model::delete()
-    * Model::getProperty($propertyName)
-    * Model::setProperty($propertyName, $propertyValue)
-    * Model::createFromObject($stdClass)
+    * Model::use($resource)
     * Model::validate()
-    * Model::getResource()
+    * Model::resource()
     * Model::toArray()
+* IDE autocompletion friendly
+    * Schema rules and property hints for IDEs in single file
 * ~~Filtering and pagination~~
 * Easily customizable model behaviour
     * add any business logic
@@ -48,7 +49,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 
 ## Example application ##
 
-Todo Application: [REPOURL](REPOURL)
+~~Todo Application: [REPOURL](REPOURL)~~
 
 ## Requirements ##
 
@@ -109,6 +110,7 @@ Integration tests will interact with real databases. You need to follow the conf
 * [Create a Model?](./documentation/howto/model.md)
 * [Implement business logic?](./documentation/howto/business-logic.md)
 * [Use the models?](./documentation/howto/use-models.md)
+* [Enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
 
 ## License ##
 

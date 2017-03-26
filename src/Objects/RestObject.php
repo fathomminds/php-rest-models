@@ -3,6 +3,7 @@ namespace Fathomminds\Rest\Objects;
 
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 use Fathomminds\Rest\Contracts\IRestObject;
+use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
 
 abstract class RestObject implements IRestObject
@@ -16,22 +17,23 @@ abstract class RestObject implements IRestObject
     protected $database;
     protected $updateMode = false;
     protected $indexNames = [];
-    
+
     public function __construct($resource = null, $schema = null, $database = null)
     {
         $reflectionHelper = new ReflectionHelper;
-        $this->resource = $resource === null ? new \StdClass : $resource;
+        $this->resource = $resource === null ? $reflectionHelper->createInstance($this->schemaClass) : $resource;
         $this->database = $database === null ? $reflectionHelper->createInstance($this->databaseClass) : $database;
-        $this->schema = $schema === null ? $reflectionHelper->createInstance($this->schemaClass) : $schema;
+        $this->schema = $schema === null ? new SchemaValidator : $schema;
     }
 
-    public function createFromObject(\StdClass $object)
+    public function createFromObject($object)
     {
-        $this->resource = $object;
+        $reflectionHelper = new ReflectionHelper;
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$object]);
         return $this;
     }
 
-    public function getResource()
+    public function resource()
     {
         return $this->resource;
     }
@@ -43,35 +45,45 @@ abstract class RestObject implements IRestObject
 
     public function get($resourceId = null)
     {
+        $reflectionHelper = new ReflectionHelper;
         if ($resourceId == null) {
-            $resources = $this->database->get($this->resourceName, $this->primaryKey);
+            $rawResources = $this->database->get($this->resourceName, $this->primaryKey);
+            $resources = [];
+            foreach ($rawResources as $rawResource) {
+                $resources[] = $reflectionHelper->createInstance($this->schemaClass, [$rawResource]);
+            }
             return $resources;
         }
-        $this->resource = $this->database->get($this->resourceName, $this->primaryKey, $resourceId);
+        $res = $this->database->get($this->resourceName, $this->primaryKey, $resourceId);
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
         return $this->resource;
     }
 
     public function post($newResource)
     {
+        $reflectionHelper = new ReflectionHelper;
         $this->setUpdateMode(false);
         $this->setFieldDefaults();
         $this->validateSchema($newResource);
         $this->validate();
-        $this->resource = $this->database->post($this->resourceName, $this->primaryKey, $newResource);
+        $res = $this->database->post($this->resourceName, $this->primaryKey, $newResource);
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
     }
 
     public function put($resourceId, $newResource)
     {
+        $reflectionHelper = new ReflectionHelper;
         $this->setUpdateMode(true);
         $this->setFieldDefaults();
         $this->validateSchema($newResource);
         $this->validate();
-        $this->resource = $this->database->put(
+        $res = $this->database->put(
             $this->resourceName,
             $this->primaryKey,
             $resourceId,
             $newResource
         );
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
     }
 
     public function delete($resourceId)
@@ -82,7 +94,8 @@ abstract class RestObject implements IRestObject
 
     public function reset()
     {
-        $this->resource = new \StdClass();
+        $reflectionHelper = new ReflectionHelper;
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass);
     }
 
     protected function setUpdateMode($value)
@@ -93,7 +106,7 @@ abstract class RestObject implements IRestObject
     protected function setFieldDefaults()
     {
         $properties = get_object_vars($this->resource);
-        foreach ($this->schema->getFields() as $fieldName => $field) {
+        foreach ($this->schema->getFields($this->resource) as $fieldName => $field) {
             if (isset($properties[$fieldName])) {
                 continue;
             }
@@ -155,7 +168,7 @@ abstract class RestObject implements IRestObject
 
     public function getUniqueFields()
     {
-        return $this->schema->getUniqueFields();
+        return $this->schema->getUniqueFields($this->resource);
     }
 
     abstract public function validateUniqueFields();

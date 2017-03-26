@@ -1,49 +1,58 @@
 <?php
 namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Schema;
 
-use Fathomminds\Rest\Schema\SchemaValidator;
+use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
 use Fathomminds\Rest\Helpers\Uuid;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
 
-class FooSchema extends SchemaValidator
+/**
+ * 
+ * @property string $_id
+ * @property string $title
+ * @property integer $status
+ * @property BarSchema $bar
+ */
+
+
+class FooSchema extends Schema
 {
-    protected $fields = [
-        '_id' => [
-            'unique' => true,
-            'validator' => [
-                'class' => StringValidator::class,
-            ]
-        ],
-        'title' => [
-            'unique' => true,
-            'required' => true,
-            'validator' => [
-                'class' => StringValidator::class,
-                'params' => [
-                    'maxLength' => 100,
-                ],
-            ],
-        ],
-        'status' => [
-            'default' => 0,
-            'validator' => [
-                'class' => IntegerValidator::class,
-                'params' => [
-                    'min' => 0,
-                    'max' => 1,
-                ],
-            ],
-        ],
-        'bar' => [
-            'type' => BarSchema::class,
-        ],
-    ];
-
-    public function __construct()
+    public function schema()
     {
-        $this->setDefault('_id', function () {
-            return (new Uuid)->generate();
-        });
+        return [
+            '_id' => [
+                'unique' => true,
+                'default' => function () {
+                    return (new Uuid)->generate();
+                },
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+            'title' => [
+                'unique' => true,
+                'required' => true,
+                'validator' => [
+                    'class' => StringValidator::class,
+                    'params' => [
+                        'maxLength' => 100,
+                    ],
+                ],
+            ],
+            'status' => [
+                'default' => 0,
+                'validator' => [
+                    'class' => IntegerValidator::class,
+                    'params' => [
+                        'min' => 0,
+                        'max' => 1,
+                    ],
+                ],
+            ],
+            'bar' => [
+                'type' => BarSchema::class,
+            ],
+        ];
     }
 }

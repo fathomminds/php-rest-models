@@ -105,6 +105,7 @@ class Resource implements IResource
         } catch (DynamoDbException $ex) {
             $this->throwAwsPostError($ex);
         } catch (\Exception $ex) {
+            //var_dump($ex);
             throw new RestException($ex->getMessage(), ['exception' => $ex]);
         }
         return $newResource;
@@ -180,7 +181,14 @@ class Resource implements IResource
 
     protected function marshalItem($resource)
     {
-        return $this->marshaler->marshalItem($resource);
+        $toMarshal = $resource;
+        if (gettype($resource) === 'object') {
+            $toMarshal = new \StdClass;
+            foreach (get_object_vars($resource) as $name => $value) {
+                $toMarshal->$name = $value;
+            }
+        }
+        return $this->marshaler->marshalItem($toMarshal);
     }
 
     protected function unmarshalItem($item)

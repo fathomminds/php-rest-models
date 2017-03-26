@@ -1,6 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
@@ -21,22 +22,22 @@ class RestModelTest extends TestCase
     public function testCreateFromObject()
     {
         $foo = $this->mockModel(FooModel::class, FooObject::class);
-        $obj = new \StdClass;
+        $obj = new FooSchema;
         $obj->_id = 'ID';
         $obj->title = 'TITLE';
-        $foo->createFromObject($obj);
-        $this->assertEquals('ID', $foo->getProperty('_id'));
-        $this->assertEquals('TITLE', $foo->getProperty('title'));
+        $foo->use($obj);
+        $this->assertEquals('ID', $foo->resource()->_id);
+        $this->assertEquals('TITLE', $foo->resource()->title);
     }
 
     public function testGetResource()
     {
         $foo = $this->mockModel(FooModel::class, FooObject::class);
-        $obj = new \StdClass;
+        $obj = new FooSchema;
         $obj->_id = 'ID';
         $obj->title = 'TITLE';
-        $foo->createFromObject($obj);
-        $this->assertEquals($obj, $foo->getResource());
+        $foo->use($obj);
+        $this->assertEquals($obj, $foo->resource());
     }
 
     public function testOneResourceDoesNotExtist()
@@ -69,7 +70,7 @@ class RestModelTest extends TestCase
 
     public function testOneResourceExtists()
     {
-        $resource = new \StdClass();
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $dbResult = [
             'results' => [
@@ -82,7 +83,7 @@ class RestModelTest extends TestCase
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->one('ID');
-        $this->assertEquals('ID', $model->getProperty('_id'));
+        $this->assertEquals('ID', $model->resource()->_id);
     }
 
     public function testAll()
@@ -115,7 +116,7 @@ class RestModelTest extends TestCase
 
     public function testUpdateValidStructure()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'NEW';
         $resource->title = 'TITLE';
         $resource->status = 0;
@@ -124,7 +125,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('put')
             ->andReturn(null);
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->createFromObject($resource);
+        $model->use($resource);
         try {
             $model->update();
             $this->assertTrue(true);
@@ -135,7 +136,7 @@ class RestModelTest extends TestCase
 
     public function testCreateValidStructure()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'NEW';
         $resource->title = 'TITLE';
         $resource->status = 0;
@@ -144,7 +145,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('post')
             ->andReturn(null);
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->createFromObject($resource);
+        $model->use($resource);
         try {
             $model->create();
             $this->assertTrue(true);
@@ -155,7 +156,7 @@ class RestModelTest extends TestCase
 
     public function testDeleteNonExisting()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $dbResult = [
             'results' => []
@@ -165,14 +166,14 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult, ['Assume DB failure']));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
+        $model->use($resource);
         $this->expectException(RestException::class);
         $deletedId = $model->delete();
     }
 
     public function testDeleteExisting()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $dbResult = [
             'results' => []
@@ -182,17 +183,17 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
+        $model->use($resource);
         $deletedId = $model->delete();
         $this->assertEquals('ID', $deletedId);
     }
 
     public function testValidateInvalid()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
+        $model->use($resource);
         try {
             $model->validate();
             $this->fail(); //Should throw exception
@@ -203,12 +204,12 @@ class RestModelTest extends TestCase
 
     public function testValidateValid()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $mockObject = $this->mockObjectValidationOk($resource);
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->createFromObject($resource);
+        $model->use($resource);
         try {
             $model->validate();
             $this->assertTrue(true); //Should reach this line
@@ -219,33 +220,32 @@ class RestModelTest extends TestCase
 
     public function testSetProperty()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
-        $model->setProperty('title', 'OTHER');
-        $this->assertEquals('OTHER', $model->getProperty('title'));
+        $model->use($resource);
+        $model->resource()->title = 'OTHER';
+        $this->assertEquals('OTHER', $model->resource()->title);
     }
 
     public function testGettingNonExistentProperty()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
-        $prop = $model->getProperty('NO');
-        $this->assertEquals(null, $prop);
+        $model->use($resource);
+        $this->assertTrue(!isset($model->resource()->noSuchProperty));
     }
 
     public function testToArray()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
+        $model->use($resource);
         $array = $model->toArray();
         $this->assertArrayHasKey('_id', $array);
         $this->assertEquals('ID', $array['_id']);
@@ -255,7 +255,7 @@ class RestModelTest extends TestCase
 
     public function testValidateUniqueFieldsNoConflict()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $this->mockDatabase
@@ -277,17 +277,17 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($mockResponse);
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
+        $model->use($resource);
         $model->validateUniqueFields();
         $this->assertEquals(1, 1); //Reaching this line if no exception is thrown
     }
 
     public function testValidateUniqueFieldsConflict()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
-        $conflict = new \StdClass;
+        $conflict = new FooSchema;
         $conflict->_id = 'CONFLICT';
         $conflict->title = 'TITLE';
         $this->mockDatabase
@@ -315,14 +315,14 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($mockResponse);
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->createFromObject($resource);
+        $model->use($resource);
         $this->expectException(RestException::class);
         $model->validateUniqueFields();
     }
 
     public function testPostWithDatabaseFailure()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $mockObject = $this->mockObjectValidationOk($resource);
@@ -330,7 +330,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('post')
             ->andThrow(RestException::class, 'Database operation failed');
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->createFromObject($resource);
+        $model->use($resource);
         try {
             $model->create();
             $this->fail(); //Should not reach this line
@@ -341,7 +341,7 @@ class RestModelTest extends TestCase
 
     public function testPutWithDatabaseFailure()
     {
-        $resource = new \StdClass;
+        $resource = new FooSchema;
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $mockObject = $this->mockObjectValidationOk($resource);
@@ -349,7 +349,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('put')
             ->andThrow(RestException::class, 'Database operation failed');
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->createFromObject($resource);
+        $model->use($resource);
         try {
             $model->update();
             $this->fail(); //Should not reach this line
