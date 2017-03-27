@@ -27,9 +27,8 @@ Framework independent PHP REST models with schema validation and multiple databa
     * Model::one($resourceId)
     * Model::all()
     * Model::delete()
-    * Model::use($resource)
     * Model::validate()
-    * Model::resource()
+    * Model::resource($resource)
     * Model::toArray()
 * IDE autocompletion friendly
     * Schema rules and property hints for IDEs in single file

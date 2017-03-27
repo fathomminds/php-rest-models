@@ -4,7 +4,7 @@ Returns the Model's currently set resource object
 
 ### Parameters ###
 
-*None*
+*(mixed)* $resource If the parameter is provided it is set as the Model's resource
 
 ### Returns ###
 

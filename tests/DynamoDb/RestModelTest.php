@@ -36,7 +36,7 @@ class DynamoDbTest extends TestCase
         $property->setValue($object, 'noSuchClass');
         $model = new FooModel($object);
         try {
-            $model->use($resource);
+            $model->resource($resource);
             $this->fail();
         } catch (RestException $ex) {
             $this->assertEquals('Setting model resource failed', $ex->getMessage());
