@@ -14,7 +14,7 @@ class IntegrationTest extends TestCase
         $resource = new FooSchema;
         $resource->_id = (new Uuid)->generate();
         $resource->title = 'CREATED';
-        $model->use($resource);
+        $model->resource($resource);
 
         $model->create();
         $id = $model->resource()->_id;

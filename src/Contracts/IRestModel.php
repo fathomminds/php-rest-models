@@ -3,8 +3,7 @@ namespace Fathomminds\Rest\Contracts;
 
 interface IRestModel
 {
-    public function use($obj);
-    public function resource();
+    public function resource($resource = null);
     public function one($resourceId);
     public function all();
     public function create();

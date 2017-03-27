@@ -1,10 +1,10 @@
-## Model::resource() ##
+## Model::resource($resource = null) ##
 
 Returns the Model's currently set resource object
 
 ### Parameters ###
 
-*None*
+*(mixed)* $resource If the parameter is provided it is set as the Model's resource
 
 ### Returns ###
 
@@ -31,6 +31,9 @@ class Do
             $model = new FooModel();
             $model->one('KEY');
             $title = $model->resource()->title;
+            $resource = new \StdClass;
+            $resource->title = 'TITLE';
+            $title = $model->resource($resource)->title;
         } catch (RestException $exception) {
             $message = $exception->getMessage();
             $details = $exception->getDetails();

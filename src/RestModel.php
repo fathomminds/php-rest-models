@@ -20,7 +20,7 @@ abstract class RestModel implements IRestModel
         $this->restObject = $restObject;
     }
 
-    public function use($obj)
+    protected function useResource($obj)
     {
         try {
             $this->restObject = $this->restObject->createFromObject($obj);
@@ -33,8 +33,11 @@ abstract class RestModel implements IRestModel
         return $this;
     }
 
-    public function resource()
+    public function resource($resource = null)
     {
+        if ($resource !== null) {
+            $this->useResource($resource);
+        }
         return $this->restObject->resource();
     }
 
