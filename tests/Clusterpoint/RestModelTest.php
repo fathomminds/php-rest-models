@@ -25,7 +25,7 @@ class RestModelTest extends TestCase
         $obj = new FooSchema;
         $obj->_id = 'ID';
         $obj->title = 'TITLE';
-        $foo->use($obj);
+        $foo->resource($obj);
         $this->assertEquals('ID', $foo->resource()->_id);
         $this->assertEquals('TITLE', $foo->resource()->title);
     }
@@ -36,7 +36,7 @@ class RestModelTest extends TestCase
         $obj = new FooSchema;
         $obj->_id = 'ID';
         $obj->title = 'TITLE';
-        $foo->use($obj);
+        $foo->resource($obj);
         $this->assertEquals($obj, $foo->resource());
     }
 
@@ -128,7 +128,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('put')
             ->andReturn(null);
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->use($resource);
+        $model->resource($resource);
         try {
             $model->update();
             $this->assertTrue(true);
@@ -151,7 +151,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('post')
             ->andReturn(null);
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->use($resource);
+        $model->resource($resource);
         try {
             $model->create();
             $this->assertTrue(true);
@@ -172,7 +172,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult, ['Assume DB failure']));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $this->expectException(RestException::class);
         $deletedId = $model->delete();
     }
@@ -189,7 +189,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($this->mockResponse($dbResult));
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $deletedId = $model->delete();
         $this->assertEquals('ID', $deletedId);
     }
@@ -199,7 +199,7 @@ class RestModelTest extends TestCase
         $resource = new FooSchema;
         $resource->_id = 'ID';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         try {
             $model->validate();
             $this->fail(); //Should throw exception
@@ -215,7 +215,7 @@ class RestModelTest extends TestCase
         $resource->title = 'TITLE';
         $mockObject = $this->mockObjectValidationOk($resource);
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->use($resource);
+        $model->resource($resource);
         try {
             $model->validate();
             $this->assertTrue(true); //Should reach this line
@@ -230,7 +230,7 @@ class RestModelTest extends TestCase
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $model->resource()->title = 'OTHER';
         $this->assertEquals('OTHER', $model->resource()->title);
     }
@@ -241,7 +241,7 @@ class RestModelTest extends TestCase
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $this->assertTrue(!isset($model->resource()->noSuchProperty));
     }
 
@@ -251,7 +251,7 @@ class RestModelTest extends TestCase
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $array = $model->toArray();
         $this->assertArrayHasKey('_id', $array);
         $this->assertEquals('ID', $array['_id']);
@@ -283,7 +283,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($mockResponse);
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $model->validate();
         $this->assertEquals(1, 1); //Reaching this line if no exception is thrown
     }
@@ -321,7 +321,7 @@ class RestModelTest extends TestCase
             ->once()
             ->andReturn($mockResponse);
         $model = $this->mockModel(FooModel::class, FooObject::class);
-        $model->use($resource);
+        $model->resource($resource);
         $this->expectException(RestException::class);
         $model->validate();
     }
@@ -339,7 +339,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('post')
             ->andThrow(RestException::class, 'Database operation failed');
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->use($resource);
+        $model->resource($resource);
         try {
             $model->create();
             $this->fail(); //Should not reach this line
@@ -361,7 +361,7 @@ class RestModelTest extends TestCase
             ->shouldReceive('put')
             ->andThrow(RestException::class, 'Database operation failed');
         $model = $this->mockModel(FooModel::class, $mockObject);
-        $model->use($resource);
+        $model->resource($resource);
         try {
             $model->update();
             $this->fail(); //Should not reach this line
