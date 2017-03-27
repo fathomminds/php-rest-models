@@ -113,6 +113,9 @@ class RestObjectTest extends TestCase
         $database = new Database($client, 'DATABASENAME');
         $schema = Mockery::mock(FooSchema::class);
         $schema
+            ->shouldReceive('allowExtraneous')
+            ->andReturn(null);
+        $schema
             ->shouldReceive('getUniqueFields')
             ->andReturn([]);
         $object = new FooObject($resource, $schema, $database);

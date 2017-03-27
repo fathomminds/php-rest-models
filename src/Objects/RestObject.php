@@ -17,6 +17,7 @@ abstract class RestObject implements IRestObject
     protected $database;
     protected $updateMode = false;
     protected $indexNames = [];
+    protected $allowExtraneous = false;
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -24,6 +25,7 @@ abstract class RestObject implements IRestObject
         $this->resource = $resource === null ? $reflectionHelper->createInstance($this->schemaClass) : $resource;
         $this->database = $database === null ? $reflectionHelper->createInstance($this->databaseClass) : $database;
         $this->schema = $schema === null ? new SchemaValidator : $schema;
+        $this->schema->allowExtraneous($this->allowExtraneous);
     }
 
     public function createFromObject($object)

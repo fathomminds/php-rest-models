@@ -73,4 +73,37 @@ class SchemaValidatorTest extends TestCase
             $this->assertEquals('Object expected', $ex->getMessage());
         }
     }
+
+    public function testExtraneousFieldNotAllowed()
+    {
+        try {
+            $resource = new FooSchema;
+            $resource->title = 'REQUIRED';
+            $resource->extraneous = 'exists';
+            $fooSchema = new FooSchema;
+            $schemaValidator = new SchemaValidator;
+            $schemaValidator->allowExtraneous(false);
+            $schemaValidator->validate($resource);
+            $this->fail(); //Reaching this line only if no exception is thrown
+        } catch (RestException $ex) {
+            $this->assertEquals('Invalid structure', $ex->getMessage());
+            $this->assertEquals('Extraneous field', $ex->getDetails()['errors']['extraneous']);
+        }
+    }
+
+    public function testExtraneousFieldAllowed()
+    {
+        try {
+            $resource = new FooSchema;
+            $resource->title = 'REQUIRED';
+            $resource->extraneous = 'exists';
+            $fooSchema = new FooSchema;
+            $schemaValidator = new SchemaValidator;
+            $schemaValidator->allowExtraneous(true);
+            $schemaValidator->validate($resource);
+            $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
+        } catch (RestException $ex) {
+            $this->fail();
+        }
+    }
 }
