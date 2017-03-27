@@ -61,12 +61,18 @@ abstract class RestModel implements IRestModel
 
     public function create()
     {
+        $this->restObject->updateMode = false;
+        $this->restObject->setFieldDefaults();
+        $this->validate();
         $this->restObject->post($this->resource());
         return $this;
     }
 
     public function update()
     {
+        $this->restObject->updateMode = true;
+        $this->restObject->setFieldDefaults();
+        $this->validate();
         $this->restObject->put($this->restObject->getPrimaryKeyValue(), $this->resource());
         return $this;
     }

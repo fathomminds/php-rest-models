@@ -15,9 +15,9 @@ abstract class RestObject implements IRestObject
     protected $schema;
     protected $databaseClass;
     protected $database;
-    protected $updateMode = false;
     protected $indexNames = [];
     protected $allowExtraneous = false;
+    public $updateMode = false;
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -64,10 +64,6 @@ abstract class RestObject implements IRestObject
     public function post($newResource)
     {
         $reflectionHelper = new ReflectionHelper;
-        $this->setUpdateMode(false);
-        $this->setFieldDefaults();
-        $this->validateSchema($newResource);
-        $this->validate();
         $res = $this->database->post($this->resourceName, $this->primaryKey, $newResource);
         $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
     }
@@ -75,10 +71,6 @@ abstract class RestObject implements IRestObject
     public function put($resourceId, $newResource)
     {
         $reflectionHelper = new ReflectionHelper;
-        $this->setUpdateMode(true);
-        $this->setFieldDefaults();
-        $this->validateSchema($newResource);
-        $this->validate();
         $res = $this->database->put(
             $this->resourceName,
             $this->primaryKey,
@@ -105,7 +97,7 @@ abstract class RestObject implements IRestObject
         $this->updateMode = $value;
     }
 
-    protected function setFieldDefaults()
+    public function setFieldDefaults()
     {
         $properties = get_object_vars($this->resource);
         foreach ($this->schema->getFields($this->resource) as $fieldName => $field) {
