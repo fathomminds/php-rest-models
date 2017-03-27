@@ -7,13 +7,18 @@ use Fathomminds\Rest\Exceptions\RestException;
 class SchemaValidator
 {
     protected $fields = [];
+    protected $allowExtraneous = false;
 
     public function validate($resource)
     {
         $this->expectObject($resource);
+        $extraneousCheck = [];
+        if (!$this->allowExtraneous) {
+            $extraneousCheck = $this->validateExtraneousFields($resource);
+        }
         $errors = array_merge(
             $this->validateRequiredFields($resource),
-            $this->validateExtraneousFields($resource),
+            $extraneousCheck,
             $this->validateFieldTypes($resource)
         );
         if (!empty($errors)) {
@@ -25,6 +30,11 @@ class SchemaValidator
                 ]
             );
         }
+    }
+
+    public function allowExtraneous($value)
+    {
+        $this->allowExtraneous = $value;
     }
 
     private function expectObject($resource)

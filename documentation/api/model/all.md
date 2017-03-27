@@ -8,7 +8,7 @@ Retreives multiple resources from the database
 
 ### Returns ###
 
-*Array<Schema>* An array of resources with the SchemaClass configured in the Model's RestObject or an empty array if none found
+*(Array<SchemaClass>)* An array of resources with the SchemaClass configured in the Model's RestObject or an empty array if none found
 
 ### Throws ###
 

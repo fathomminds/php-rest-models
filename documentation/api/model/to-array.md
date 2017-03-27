@@ -8,7 +8,7 @@ Returns the Model's currently set resource object as an associative array
 
 ### Returns ###
 
-*(array)*
+*(array)* An associative array creted fomr the Model's resource
 
 ### Example code ###
 

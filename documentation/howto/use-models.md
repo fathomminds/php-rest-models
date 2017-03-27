@@ -31,7 +31,7 @@ class FooController extends Controller
             $input = json_decode($request->getContent());
             $model->use($input);
             $model->resource()->_id = $id;
-            $model->save();
+            $model->update();
             return new JsonResponse($model->resource());
         } catch (\Exception $ex) {
             return new JsonResponse(['error' => $ex->getMessage()]);
@@ -53,7 +53,7 @@ class FooController extends Controller
         try {
             $input = json_decode($request->getContent());
             $model->use($input);
-            $model->save();
+            $model->create();
             return new JsonResponse($model->resource());
         } catch (\Exception $ex) {
             return new JsonResponse(['error' => $ex->getMessage()]);
