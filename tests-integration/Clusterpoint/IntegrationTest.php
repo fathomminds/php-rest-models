@@ -12,7 +12,7 @@ class IntegrationTest extends TestCase
         $model = new FooModel;
         $resource = new FooSchema;
         $resource->title = 'CREATED';
-        $model->use($resource);
+        $model->resource($resource);
 
         $model->create();
         $id = $model->resource()->_id;
