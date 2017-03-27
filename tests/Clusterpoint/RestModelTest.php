@@ -278,7 +278,7 @@ class RestModelTest extends TestCase
             ->andReturn($mockResponse);
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->use($resource);
-        $model->validateUniqueFields();
+        $model->validate();
         $this->assertEquals(1, 1); //Reaching this line if no exception is thrown
     }
 
@@ -317,7 +317,7 @@ class RestModelTest extends TestCase
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $model->use($resource);
         $this->expectException(RestException::class);
-        $model->validateUniqueFields();
+        $model->validate();
     }
 
     public function testPostWithDatabaseFailure()

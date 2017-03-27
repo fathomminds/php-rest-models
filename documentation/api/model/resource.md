@@ -8,7 +8,7 @@ Returns the Model's currently set resource object
 
 ### Returns ###
 
-*(mixed)* Returns a reference to the object of the SchemaClass configured
+*(object)* Returns a reference to an instance of an object of the SchemaClass configured
 
 ### Throws ###
 

@@ -95,11 +95,11 @@ class FooSchema extends Schema
 ### Type validators ###
 
 * [AnyValidator](../../src/Schema/TypeValidators/AnyValidator.php)
-* [ArrayValidator](../../src/Schema/TypeValidators/AnyValidator.php)
-* [DoubleValidator](../../src/Schema/TypeValidators/AnyValidator.php)
-* [IntegerValidator](../../src/Schema/TypeValidators/AnyValidator.php)
-* [ObjectValidator](../../src/Schema/TypeValidators/AnyValidator.php)
-* [StringValidator](../../src/Schema/TypeValidators/AnyValidator.php)
+* [ArrayValidator](../../src/Schema/TypeValidators/ArrayValidator.php)
+* [DoubleValidator](../../src/Schema/TypeValidators/DoubleValidator.php)
+* [IntegerValidator](../../src/Schema/TypeValidators/IntegerValidator.php)
+* [ObjectValidator](../../src/Schema/TypeValidators/ObjectValidator.php)
+* [StringValidator](../../src/Schema/TypeValidators/StringValidator.php)
 
 Params set in the field declaration for the validator will be passed to the Validator constructor:
 
@@ -107,11 +107,74 @@ Params set in the field declaration for the validator will be passed to the Vali
 Validator::__construct($params);
 ```
 
+```php
+<?php
+namespace YourApp\Models\Schema;
+
+use Fathomminds\Rest\Schema;
+use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
+
+/**
+ *
+ * @property string $_id
+ *
+ */
+
+class FooSchema extends Schema
+{
+    public function schema()
+    {
+        return [
+            '_id' => [
+                'unique' => true,
+                'validator' => [
+                    'class' => StringValidator::class,
+                    'params' => [
+                        'maxLength' => 16,
+                    ],
+                ]
+            ],
+        ];
+    }
+}
+
+```
+
 ### Writing new validators or extending existing ones ###
 
 Type validators must implement the interface [ITypeValidator](../../src/Contracts/ITypeValidator.php).
 
 On validation failure, the validator must throw an exception.
+
+```php
+<?php
+namespace YourApp\Models\Schema\TypeValidators;
+
+use Fathomminds\Rest\Schema\TypeValidators\StdTypeValidator;
+use Fathomminds\Rest\Exceptions\RestException;
+
+class PhoneNumberValidator extends StdTypeValidator
+{
+    protected $validType = 'string';
+
+    public function validate($value)
+    {
+        $this->validateType($value);
+        $this->validateSomething($value);
+    }
+
+    public function validateSomething($value) {
+        $somethingIsWrong = true; // Something is always wrong :-)
+        if ($somethingIsWrong) {
+            throw new RestException(
+                'Something is wrong...',
+                []
+            );
+        }
+    }
+}
+
+```
 
 ### Enable IDE autocompletion ###
 
