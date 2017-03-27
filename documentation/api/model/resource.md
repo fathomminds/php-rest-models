@@ -1,4 +1,4 @@
-## Model::resource() ##
+## Model::resource($resource = null) ##
 
 Returns the Model's currently set resource object
 
