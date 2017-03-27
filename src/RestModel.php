@@ -88,9 +88,4 @@ abstract class RestModel implements IRestModel
     {
         return $this->restObject->toArray();
     }
-
-    public function validateUniqueFields()
-    {
-        return $this->restObject->validateUniqueFields();
-    }
 }

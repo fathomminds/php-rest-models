@@ -111,6 +111,8 @@ Integration tests will interact with real databases. You need to follow the conf
 * [Implement business logic?](./documentation/howto/business-logic.md)
 * [Use the models?](./documentation/howto/use-models.md)
 * [Enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
+* [Create and use a DynamoDb secondary index?](./documentation/howto/dynamodb-secondary-index.md)
+* [Allow undefined schema fields?](./documentation/howto/allow-extraneous.md)
 
 ## License ##
 

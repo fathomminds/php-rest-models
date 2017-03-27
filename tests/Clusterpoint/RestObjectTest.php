@@ -31,6 +31,9 @@ class RestObjectTest extends TestCase
         $resource->title = 'TITLE';
         $schema = Mockery::mock(FooSchema::class);
         $schema
+            ->shouldReceive('allowExtraneous')
+            ->andReturn(null);
+        $schema
             ->shouldReceive('getFields')
             ->andReturn([]);
         $schema
@@ -59,6 +62,9 @@ class RestObjectTest extends TestCase
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $schema = Mockery::mock(FooSchema::class);
+        $schema
+            ->shouldReceive('allowExtraneous')
+            ->andReturn(null);
         $schema
             ->shouldReceive('getFields')
             ->andReturn([]);
