@@ -88,7 +88,6 @@ class Resource implements IResource
         } catch (DynamoDbException $ex) {
             $this->throwAwsPostError($ex);
         } catch (\Exception $ex) {
-            //var_dump($ex);
             throw new RestException($ex->getMessage(), ['exception' => $ex]);
         }
         return $newResource;

@@ -122,6 +122,9 @@ class RestModelTest extends TestCase
         $resource->status = 0;
         $mockObject = $this->mockObjectValidationOk($resource);
         $mockObject
+            ->shouldReceive('setFieldDefaults')
+            ->andReturn(null);
+        $mockObject
             ->shouldReceive('put')
             ->andReturn(null);
         $model = $this->mockModel(FooModel::class, $mockObject);
@@ -141,6 +144,9 @@ class RestModelTest extends TestCase
         $resource->title = 'TITLE';
         $resource->status = 0;
         $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('setFieldDefaults')
+            ->andReturn(null);
         $mockObject
             ->shouldReceive('post')
             ->andReturn(null);
@@ -327,6 +333,9 @@ class RestModelTest extends TestCase
         $resource->title = 'TITLE';
         $mockObject = $this->mockObjectValidationOk($resource);
         $mockObject
+            ->shouldReceive('setFieldDefaults')
+            ->andReturn(null);
+        $mockObject
             ->shouldReceive('post')
             ->andThrow(RestException::class, 'Database operation failed');
         $model = $this->mockModel(FooModel::class, $mockObject);
@@ -345,6 +354,9 @@ class RestModelTest extends TestCase
         $resource->_id = 'ID';
         $resource->title = 'TITLE';
         $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('setFieldDefaults')
+            ->andReturn(null);
         $mockObject
             ->shouldReceive('put')
             ->andThrow(RestException::class, 'Database operation failed');
