@@ -65,7 +65,7 @@ class FooSchema extends Schema
 namespace YourApp\Models\Objects;
 
 use Fathomminds\Rest\Database\DynamoDb\RestObject;
-use Fathomminds\Rest\Examples\DynamoDb\Models\Schema\FooSchema;
+use YourApp\Models\Schema\FooSchema;
 
 class FooObject extends RestObject
 {
