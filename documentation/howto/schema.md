@@ -58,6 +58,7 @@ namespace YourApp\Models\Schema;
 
 use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
+use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
 
 /**
  *
@@ -83,7 +84,7 @@ class FooSchema extends Schema
                     return time();
                 },
                 'validator' => [
-                    'class' => StringValidator::class,
+                    'class' => IntegerValidator::class,
                 ]
             ],
         ];
