@@ -1,10 +1,11 @@
 <?php
 namespace Fathomminds\Rest\Database;
 
+use Fathomminds\Rest\Contracts\IFinder;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Where;
 
-abstract class Finder
+abstract class Finder implements IFinder
 {
     protected $databaseName;
     protected $select = '*';
@@ -88,7 +89,7 @@ abstract class Finder
         return $this;
     }
 
-    public function orderBy($fieldName, $sortMode)
+    public function orderBy($fieldName, $sortMode = 'ASC')
     {
         $this->orderBy[] = [$fieldName => $sortMode];
         return $this;
