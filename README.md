@@ -64,6 +64,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Model API reference ##
 
   [Model API](./documentation/api/model/index.md)
+  
   [Finder API](./documentation/api/finder/index.md)
 
 ## Example application ##
