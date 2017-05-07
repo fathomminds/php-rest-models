@@ -17,6 +17,8 @@ Framework independent PHP REST models with schema validation and multiple databa
 4. **IMPLEMENT BUSINESS LOGIC**: the package implements the CRUD operations, so your Model is clean and you can focus on the application behaviour [How to implement the business logic?](./documentation/howto/business-logic.md)
 5. **USE THE MODELS** in your application [How to use the Models?](./documentation/howto/use-models.md)
 6. **ENABLE IDE AUTOCOMPLETION** [How to enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
+7. **DO SIMPLE PAGINATION AND FILTERING** [How to do simple pagination and filtering](./documentation/howto/pagination-and-filtering.md)
+8. **EXECUTE CUSTOM QUERIES** [How to execute custom queries](./documentation/howto/custom-queries.md)
 
 ## Features ##
 
@@ -130,8 +132,8 @@ Integration tests will interact with real databases. You need to follow the conf
 * [Enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
 * [Create and use a DynamoDb secondary index?](./documentation/howto/dynamodb-secondary-index.md)
 * [Allow undefined schema fields?](./documentation/howto/allow-extraneous.md)
-* [Simple pagination and filtering](./documentation/howto/pagination-and-filtering.md)
-* [Custom queries](./documentation/howto/custom-queries.md)
+* [Do simple pagination and filtering](./documentation/howto/pagination-and-filtering.md)
+* [Execute custom queries](./documentation/howto/custom-queries.md)
 
 ## License ##
 
