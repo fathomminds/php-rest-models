@@ -4,6 +4,8 @@ namespace Fathomminds\Rest\Contracts;
 interface IRestModel
 {
     public function resource($resource = null);
+    public function query();
+    public function find();
     public function one($resourceId);
     public function all();
     public function create();

@@ -9,6 +9,16 @@ class RestObject extends CoreRestObject
     protected $primaryKey = '_id';
     protected $databaseClass = Database::class;
 
+    public function find($client = null)
+    {
+        if ($client === null) {
+            $client = $this->getClient();
+        }
+        return (new Finder($client))
+          ->database($this->getDatabaseName())
+          ->from($this->getResourceName());
+    }
+
     public function validateUniqueFields()
     {
         $uniqueFields = $this->getUniqueFields();
@@ -42,6 +52,12 @@ class RestObject extends CoreRestObject
             }
         });
         // @codeCoverageIgnoreEnd
+        return $query;
+    }
+
+    public function query()
+    {
+        $query = $this->database->getClient()->database($this->database->getDatabaseName().'.'.$this->resourceName);
         return $query;
     }
 }
