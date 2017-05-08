@@ -40,19 +40,24 @@ abstract class Finder implements IFinder
                 $this->validateConditions($condition);
                 return;
             }
-            if (count($condition) === 3) {
-                $operator = $condition[1];
-                if (!in_array($operator, $this->validOperators)) {
-                    throw new RestException('Invalid operator in where condition', [
-                        'operator' => $operator,
-                    ]);
-                }
-                return;
-            }
-            throw new RestException('Invalid where condition', [
-                'condition' => $condition,
-            ]);
+            $this->validateCondition($condition);
         }
+    }
+
+    private function validateCondition($condition)
+    {
+        if (count($condition) === 3) {
+            $operator = $condition[1];
+            if (!in_array($operator, $this->validOperators)) {
+                throw new RestException('Invalid operator in where condition', [
+                    'operator' => $operator,
+                ]);
+            }
+            return;
+        }
+        throw new RestException('Invalid where condition', [
+            'condition' => $condition,
+        ]);
     }
 
     public function __construct($client = null)
