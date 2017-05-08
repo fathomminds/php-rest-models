@@ -8,6 +8,8 @@ use Clusterpoint\Response\Batch;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Finder;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FinderModel;
+use Aws\DynamoDb\DynamoDbClient;
+use Aws\Sdk;
 
 class QueryBuilderTest extends TestCase
 {
@@ -375,5 +377,20 @@ class QueryBuilderTest extends TestCase
         $model = new FinderModel;
         $res = $model->find($mockClient)->first();
         $this->assertNull($res);
+    }
+
+    public function testClusterpointFinderWithDynamoDbClient()
+    {
+        $sdk = new Sdk([
+            'region' => getenv('AWS_SDK_REGION'),
+            'version' => getenv('AWS_SDK_VERSION'),
+            'http' => [
+                'verify' => getenv('AWS_SDK_HTTP_VERIFY') === 'false' ? false : getenv('AWS_SDK_HTTP_VERIFY'),
+            ]
+        ]);
+        $dynamoDbClient = $sdk->createDynamoDb();
+        $finder = new Finder($dynamoDbClient);
+        $this->expectException(RestException::class);
+        $finder->get();
     }
 }

@@ -41,7 +41,7 @@ abstract class Finder implements IFinder
                 return;
             }
             if (count($condition) === 3) {
-                list($fieldName, $operator, $fieldValue) = $condition;
+                $operator = $condition[1];
                 if (!in_array($operator, $this->validOperators)) {
                     throw new RestException('Invalid operator in where condition', [
                         'operator' => $operator,

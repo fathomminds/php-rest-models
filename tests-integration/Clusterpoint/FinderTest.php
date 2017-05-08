@@ -87,7 +87,7 @@ class FinderTest extends TestCase
             ->where([
               ['status', '<', 10],
             ])
-            ->orderBy(['title', 'ASC'])
+            ->orderBy('title', 'ASC')
             ->limit(1)
             ->offset(1)
             ->get()
@@ -103,7 +103,7 @@ class FinderTest extends TestCase
             ->where([
               ['status', '<', 10],
             ])
-            ->orderBy(['title', 'DESC'])
+            ->orderBy('title', 'DESC')
             ->limit(1)
             ->offset(1)
             ->get()
