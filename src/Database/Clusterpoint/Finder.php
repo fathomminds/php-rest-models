@@ -35,11 +35,20 @@ class Finder extends BaseFinder
         }
     }
 
-    public function setWhere($collection)
+    protected function setWhere($collection)
     {
         if (!empty($this->queryConfiguration->where)) {
             $this->parseWhere($collection, $this->queryConfiguration->where, $this->mainLogical);
         }
+    }
+
+    protected function configQuery($collection)
+    {
+        $this->setLimit($collection);
+        $this->setOffset($collection);
+        $this->setOrderBy($collection);
+        $this->setSelect($collection);
+        $this->setWhere($collection);
     }
 
     public function get()
@@ -55,15 +64,11 @@ class Finder extends BaseFinder
             '.'.
             $this->queryConfiguration->from
         );
-        $this->setLimit($collection);
-        $this->setOffset($collection);
-        $this->setOrderBy($collection);
-        $this->setSelect($collection);
-        $this->setWhere($collection);
+        $this->configQuery($collection);
         $items = json_decode(json_encode($collection->get()->toArray()));
-        $c = count($items);
-        for ($i=0; $i<$c; $i++) {
-            $this->resultSet[] = $items[$i];
+        $count = count($items);
+        for ($idx=0; $idx<$count; $idx++) {
+            $this->resultSet[] = $items[$idx];
         }
         return $this;
     }
