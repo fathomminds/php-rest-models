@@ -162,4 +162,6 @@ abstract class RestObject implements IRestObject
     {
         return $this->database->getClient();
     }
+
+    abstract public function query();
 }

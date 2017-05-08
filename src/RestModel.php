@@ -41,6 +41,16 @@ abstract class RestModel implements IRestModel
         return $this->restObject->resource();
     }
 
+    public function query()
+    {
+        return $this->restObject->query();
+    }
+
+    public function find($client = null)
+    {
+        return $this->restObject->find($client);
+    }
+
     public function one($resourceId)
     {
         $this->restObject->get($resourceId);

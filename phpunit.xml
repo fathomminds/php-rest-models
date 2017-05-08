@@ -16,6 +16,9 @@
         <testsuite name="Clusterpoint Test Suite">
             <directory suffix="Test.php">./tests/Clusterpoint</directory>
         </testsuite>
+        <testsuite name="Querybuilder Test Suite">
+            <directory suffix="Test.php">./tests/QueryBuilder</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
