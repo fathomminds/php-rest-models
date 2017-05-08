@@ -92,6 +92,9 @@ class RestModelTest extends TestCase
             'results' => []
         ];
         $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
             ->shouldReceive('get')
             ->once()
             ->andReturn($this->mockResponse($dbResult));
@@ -368,5 +371,12 @@ class RestModelTest extends TestCase
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
         }
+    }
+
+    public function testQuery()
+    {
+        $model = new FooModel;
+        $q = $model->query();
+        $this->assertEquals('Clusterpoint\Instance\Service', get_class($q));
     }
 }

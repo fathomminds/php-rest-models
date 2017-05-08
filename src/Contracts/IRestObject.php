@@ -5,6 +5,8 @@ interface IRestObject
 {
     public function createFromObject($obj);
     public function resource();
+    public function query();
+    public function find();
     public function get($resourceId = null);
     public function post($newResource);
     public function put($resourceId, $newResource);

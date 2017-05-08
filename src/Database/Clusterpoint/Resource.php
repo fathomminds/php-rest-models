@@ -8,6 +8,7 @@ use Fathomminds\Rest\Contracts\IResource;
 
 class Resource implements IResource
 {
+    protected $MAX_LIMIT = 2147483647;
     protected $client;
     protected $databaseName;
     protected $collection;
@@ -40,7 +41,7 @@ class Resource implements IResource
 
     protected function getAll()
     {
-        $res = $this->collection->get();
+        $res = $this->collection->limit($this->MAX_LIMIT)->get();
         $this->failOnError($res);
         return $this->toObjectArray($res);
     }

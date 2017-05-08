@@ -17,11 +17,13 @@ Framework independent PHP REST models with schema validation and multiple databa
 4. **IMPLEMENT BUSINESS LOGIC**: the package implements the CRUD operations, so your Model is clean and you can focus on the application behaviour [How to implement the business logic?](./documentation/howto/business-logic.md)
 5. **USE THE MODELS** in your application [How to use the Models?](./documentation/howto/use-models.md)
 6. **ENABLE IDE AUTOCOMPLETION** [How to enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
+7. **DO SIMPLE PAGINATION AND FILTERING** [How to do simple pagination and filtering](./documentation/howto/pagination-and-filtering.md)
+8. **EXECUTE CUSTOM QUERIES** [How to execute custom queries](./documentation/howto/custom-queries.md)
 
 ## Features ##
 
 * REST operations (GET, POST, PUT, DELETE) implemented for the supported databases under the hood
-* Basic model operations with a simple API:
+* Basic model operations with a simple API ([Model API](./documentation/api/model/index.md)):
     * Model::create()
     * Model::update()
     * Model::one($resourceId)
@@ -30,9 +32,26 @@ Framework independent PHP REST models with schema validation and multiple databa
     * Model::validate()
     * Model::resource($resource)
     * Model::toArray()
+    * Model::find()
+    * Model::query()
 * IDE autocompletion friendly
     * Schema rules and property hints for IDEs in single file
-* ~~Filtering and pagination~~
+* Filtering and pagination ([Finder API](./documentation/api/finder/index.md))
+    * Clusterpoint
+    * ~~DynamoDb~~
+    * Finder::database($databaseName)
+    * Finder::select($fieldNamesArray)
+    * Finder::from($collectionName)
+    * Finder::where($whereConditions)
+    * Finder::orderBy($fieldName, $sortMode = 'ASC')
+    * Finder::limit($limit)
+    * Finder::offset($offset)
+    * Finder::get()
+    * Finder::first()
+    * Finder::all()
+* Custom queries
+    * Clusterpoint
+    * ~~DynamoDb~~
 * Easily customizable model behaviour
     * add any business logic
     * extend the schema validation with consistency validation
@@ -45,6 +64,8 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Model API reference ##
 
   [Model API](./documentation/api/model/index.md)
+  
+  [Finder API](./documentation/api/finder/index.md)
 
 ## Example application ##
 
@@ -112,6 +133,8 @@ Integration tests will interact with real databases. You need to follow the conf
 * [Enable IDE autocompletion?](./documentation/howto/ide-autocompletion.md)
 * [Create and use a DynamoDb secondary index?](./documentation/howto/dynamodb-secondary-index.md)
 * [Allow undefined schema fields?](./documentation/howto/allow-extraneous.md)
+* [Do simple pagination and filtering](./documentation/howto/pagination-and-filtering.md)
+* [Execute custom queries](./documentation/howto/custom-queries.md)
 
 ## License ##
 
