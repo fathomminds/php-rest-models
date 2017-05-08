@@ -10,3 +10,5 @@ Public API of the PHP REST Models:
 * [Model::validate()](./validate.md)
 * [Model::resource($resource = null)](./resource.md)
 * [Model::toArray()](./to-array.md)
+* [Model::find()](./find.md)
+* [Model::query()](./query.md)

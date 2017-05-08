@@ -283,4 +283,11 @@ class DynamoDbTest extends TestCase
             $this->assertEquals('SomeException', $ex->getMessage());
         }
     }
+
+    public function testQuery()
+    {
+        $model = new FooModel;
+        $q = $model->query();
+        $this->assertNull($q);
+    }
 }

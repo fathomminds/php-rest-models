@@ -8,6 +8,7 @@ use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\NoUniqueFieldObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\NoUniqueFieldSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
+use Fathomminds\Rest\Database\Clusterpoint\Finder;
 
 class RestObjectTest extends TestCase
 {
@@ -165,5 +166,21 @@ class RestObjectTest extends TestCase
         } catch (RestException $ex) {
             $this->assertEquals('Primary key collision', $ex->getMessage());
         }
+    }
+
+    public function testFind()
+    {
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $object = new FooObject(null, null, $database);
+        $finder = $object->find();
+        $this->assertEquals(Finder::class, get_class($finder));
+    }
+
+    public function testFindWithMockclient()
+    {
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $object = new FooObject(null, null, $database);
+        $finder = $object->find($this->mockClient);
+        $this->assertEquals(Finder::class, get_class($finder));
     }
 }
