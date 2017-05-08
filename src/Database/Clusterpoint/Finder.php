@@ -9,36 +9,36 @@ class Finder extends BaseFinder
 {
     protected function setLimit($collection)
     {
-        if ($this->limit !== null) {
-            $collection->limit($this->limit);
+        if ($this->queryConfiguration->limit !== null) {
+            $collection->limit($this->queryConfiguration->limit);
         }
     }
 
     protected function setOffset($collection)
     {
-        if ($this->offset !== null) {
-            $collection->offset($this->offset);
+        if ($this->queryConfiguration->offset !== null) {
+            $collection->offset($this->queryConfiguration->offset);
         }
     }
 
     protected function setOrderBy($collection)
     {
-        foreach ($this->orderBy as $orderBy) {
+        foreach ($this->queryConfiguration->orderBy as $orderBy) {
             $collection->orderBy(key($orderBy), current($orderBy));
         }
     }
 
     protected function setSelect($collection)
     {
-        if ($this->select !== '*') {
-            $collection->select($this->select);
+        if ($this->queryConfiguration->select !== '*') {
+            $collection->select($this->queryConfiguration->select);
         }
     }
 
     public function setWhere($collection)
     {
-        if (!empty($this->where)) {
-            $this->parseWhere($collection, $this->where, $this->mainLogical);
+        if (!empty($this->queryConfiguration->where)) {
+            $this->parseWhere($collection, $this->queryConfiguration->where, $this->mainLogical);
         }
     }
 
@@ -50,7 +50,11 @@ class Finder extends BaseFinder
                 ['type' => get_class($this->client)]
             );
         }
-        $collection = $this->client->database($this->databaseName.'.'.$this->from);
+        $collection = $this->client->database(
+            $this->queryConfiguration->databaseName.
+            '.'.
+            $this->queryConfiguration->from
+        );
         $this->setLimit($collection);
         $this->setOffset($collection);
         $this->setOrderBy($collection);

@@ -34,10 +34,10 @@ class QueryBuilderTest extends TestCase
         $mockClient = Mockery::mock(Client::class);
         $finder = new Finder($mockClient);
         $finder->database('DATABASE');
-        $property = new \ReflectionProperty($finder, 'databaseName');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals('DATABASE', $value);
+        $this->assertEquals('DATABASE', $value->databaseName);
     }
 
     public function testMethodSelect()
@@ -46,12 +46,12 @@ class QueryBuilderTest extends TestCase
         $finder = new Finder($mockClient);
         $arg = ['F1', 'F2'];
         $finder->select($arg);
-        $property = new \ReflectionProperty($finder, 'select');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertTrue(in_array('F1', $value));
-        $this->assertTrue(in_array('F2', $value));
-        $this->assertTrue(2 === count($value));
+        $this->assertTrue(in_array('F1', $value->select));
+        $this->assertTrue(in_array('F2', $value->select));
+        $this->assertTrue(2 === count($value->select));
     }
 
     public function testMethodFrom()
@@ -59,10 +59,10 @@ class QueryBuilderTest extends TestCase
         $mockClient = Mockery::mock(Client::class);
         $finder = new Finder($mockClient);
         $finder->from('COLLECTION');
-        $property = new \ReflectionProperty($finder, 'from');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals('COLLECTION', $value);
+        $this->assertEquals('COLLECTION', $value->from);
     }
 
     public function testMethodOrderBy()
@@ -70,10 +70,10 @@ class QueryBuilderTest extends TestCase
         $mockClient = Mockery::mock(Client::class);
         $finder = new Finder($mockClient);
         $finder->orderBy('F', 'ASC');
-        $property = new \ReflectionProperty($finder, 'orderBy');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals([0 => ['F'=>'ASC']], $value);
+        $this->assertEquals([0 => ['F'=>'ASC']], $value->orderBy);
     }
 
     public function testMethodLimit()
@@ -81,10 +81,10 @@ class QueryBuilderTest extends TestCase
         $mockClient = Mockery::mock(Client::class);
         $finder = new Finder($mockClient);
         $finder->limit(9);
-        $property = new \ReflectionProperty($finder, 'limit');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals(9, $value);
+        $this->assertEquals(9, $value->limit);
     }
 
     public function testMethodOffset()
@@ -92,10 +92,10 @@ class QueryBuilderTest extends TestCase
         $mockClient = Mockery::mock(Client::class);
         $finder = new Finder($mockClient);
         $finder->offset(9);
-        $property = new \ReflectionProperty($finder, 'offset');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals(9, $value);
+        $this->assertEquals(9, $value->offset);
     }
 
     public function testMethodFirst()
@@ -129,10 +129,10 @@ class QueryBuilderTest extends TestCase
             ],
         ];
         $finder->where($where);
-        $property = new \ReflectionProperty($finder, 'where');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals($where, $value);
+        $this->assertEquals($where, $value->where);
     }
 
     public function testMethodWhereWithInValidConditionsInvalidGroup()
@@ -177,10 +177,10 @@ class QueryBuilderTest extends TestCase
         $finder = new Finder($mockClient);
         $where = [];
         $finder->where($where);
-        $property = new \ReflectionProperty($finder, 'where');
+        $property = new \ReflectionProperty($finder, 'queryConfiguration');
         $property->setAccessible(true);
         $value = $property->getValue($finder);
-        $this->assertEquals($where, $value);
+        $this->assertEquals($where, $value->where);
     }
 
     public function testClusterpointMethodGet()

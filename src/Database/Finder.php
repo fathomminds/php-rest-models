@@ -7,13 +7,7 @@ use Fathomminds\Rest\Database\Where;
 
 abstract class Finder implements IFinder
 {
-    protected $databaseName;
-    protected $select = '*';
-    protected $from;
-    protected $where;
-    protected $orderBy = [];
-    protected $limit;
-    protected $offset;
+    protected $queryConfiguration;
     protected $resultSet;
     protected $client;
     protected $mainLogical = '&&';
@@ -62,6 +56,7 @@ abstract class Finder implements IFinder
 
     public function __construct($client = null)
     {
+        $this->queryConfiguration = new FinderQueryConfiguration;
         if ($client !== null) {
             $this->client = $client;
             return $this;
@@ -71,44 +66,44 @@ abstract class Finder implements IFinder
 
     public function database($databaseName)
     {
-        $this->databaseName = $databaseName;
+        $this->queryConfiguration->databaseName = $databaseName;
         return $this;
     }
 
     public function select($fieldList)
     {
-        $this->select = $fieldList;
+        $this->queryConfiguration->select = $fieldList;
         return $this;
     }
 
     public function from($collectionName)
     {
-        $this->from = $collectionName;
+        $this->queryConfiguration->from = $collectionName;
         return $this;
     }
 
     public function where($conditions)
     {
         $this->validateConditions($conditions);
-        $this->where = $conditions;
+        $this->queryConfiguration->where = $conditions;
         return $this;
     }
 
     public function orderBy($fieldName, $sortMode = 'ASC')
     {
-        $this->orderBy[] = [$fieldName => $sortMode];
+        $this->queryConfiguration->orderBy[] = [$fieldName => $sortMode];
         return $this;
     }
 
     public function limit($limit)
     {
-        $this->limit = $limit;
+        $this->queryConfiguration->limit = $limit;
         return $this;
     }
 
     public function offset($offset)
     {
-        $this->offset = $offset;
+        $this->queryConfiguration->offset = $offset;
         return $this;
     }
 
