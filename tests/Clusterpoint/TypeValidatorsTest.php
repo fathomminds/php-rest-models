@@ -13,6 +13,9 @@ use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlopSchema;
+use Fathomminds\Rest\Schema\SchemaValidator;
 
 class TypeValidatorsTest extends TestCase
 {
@@ -181,6 +184,79 @@ class TypeValidatorsTest extends TestCase
             $this->assertEquals(1, 0); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Maximum length error', $ex->getMessage());
+        }
+    }
+
+    public function testNestedSchemaValidator()
+    {
+        $flop = new FlopSchema;
+        $flop->_id = 'FlopId';
+        $flop->mobile = '0011223334445';
+
+        $bar = new BarSchema;
+        $bar->_id = 'BarId';
+        $bar->flop = $flop;
+
+        $foo = new FooSchema;
+        $foo->_id = 'FooId';
+        $foo->title = 'FooTitle';
+        $foo->status = 1;
+        $foo->bar = [
+            $bar,
+        ];
+
+        $validator = new SchemaValidator;
+        try {
+            $validator->validate($foo);
+            $this->assertEquals(1, 1); //Should always reach this line
+        } catch (RestException $ex) {
+            $this->fail(); //Should not throw exception
+        }
+    }
+
+    public function testNestedSchemaValidatorIncorrectNestedRestSchema()
+    {
+        $bar = new BarSchema;
+        $bar->_id = 'BarId';
+        $bar->flop = new \StdClass;
+
+        $foo = new FooSchema;
+        $foo->_id = 'FooId';
+        $foo->title = 'TITLE';
+        $foo->status = 1;
+        $foo->bar = [
+            $bar,
+        ];
+
+        $validator = new SchemaValidator;
+        try {
+            $validator->validate($foo);
+            $this->assertEquals(1, 0); // Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Invalid structure', $ex->getMessage());
+        }
+    }
+
+    public function testNestedSchemaValidatorIncorrectNestedRestSchemaType()
+    {
+        $flop = new FlopSchema;
+        $flop->_id = 'FlopId';
+        $flop->mobile = '0011223334445';
+
+        $foo = new FooSchema;
+        $foo->_id = 'FooId';
+        $foo->title = 'TITLE';
+        $foo->status = 1;
+        $foo->bar = [
+            $flop,
+        ];
+
+        $validator = new SchemaValidator;
+        try {
+            $validator->validate($foo);
+            $this->assertEquals(1, 0); // Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Invalid structure', $ex->getMessage());
         }
     }
 }
