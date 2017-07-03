@@ -8,10 +8,18 @@ class SchemaValidator
 {
     protected $fields = [];
     protected $allowExtraneous = false;
+    protected $requiredSchemaClass = null;
+
+    public function __construct($requiredSchemaClass = null)
+    {
+        $this->requiredSchemaClass = $requiredSchemaClass;
+    }
 
     public function validate($resource)
     {
         $this->expectObject($resource);
+        $this->objectHasSchemaMethod($resource);
+        $this->objectIsValidSchemaClass($resource);
         $extraneousCheck = [];
         if (!$this->allowExtraneous) {
             $extraneousCheck = $this->validateExtraneousFields($resource);
@@ -42,6 +50,35 @@ class SchemaValidator
         if (gettype($resource) !== 'object') {
             throw new RestException(
                 'Object expected',
+                [
+                    'schema' => static::class,
+                    'type' => gettype($resource),
+                ]
+            );
+        }
+    }
+
+    private function objectHasSchemaMethod($resource)
+    {
+        if (!method_exists($resource, 'schema')) {
+            throw new RestException(
+                'Object must be a correct RestSchema object',
+                [
+                    'schema' => static::class,
+                    'type' => gettype($resource),
+                ]
+            );
+        }
+    }
+
+    private function objectIsValidSchemaClass($resource)
+    {
+        if ($this->requiredSchemaClass === null) {
+            return;
+        }
+        if (get_class($resource) !== $this->requiredSchemaClass) {
+            throw new RestException(
+                'Object must be an instance of the defined SchemaClass',
                 [
                     'schema' => static::class,
                     'type' => gettype($resource),
