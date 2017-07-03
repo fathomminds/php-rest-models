@@ -2,6 +2,7 @@
 namespace Fathomminds\Rest\Schema\TypeValidators;
 
 use Fathomminds\Rest\Exceptions\RestException;
+use Fathomminds\Rest\Schema\SchemaValidator;
 
 class ValidatorFactory
 {
@@ -9,6 +10,9 @@ class ValidatorFactory
     {
         $validatorClass = $this->getValidatorClass($rules);
         $params = $this->getValidatorParameters($rules);
+        if (isset($rules['type']) && $rules['type'] === 'schema') {
+            return new SchemaValidator($rules['validator']['class']);
+        }
         return $validatorClass->newInstanceArgs(empty($params) ? [] : [$params]);
     }
 
