@@ -4,6 +4,7 @@ namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Schema;
 use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 use Fathomminds\Rest\Schema\TypeValidators\IntegerValidator;
+use Fathomminds\Rest\Schema\TypeValidators\ArrayValidator;
 use Fathomminds\Rest\Helpers\Uuid;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
 
@@ -52,7 +53,22 @@ class FooSchema extends Schema
                 ],
             ],
             'bar' => [
-                'type' => BarSchema::class,
+                'validator' => [
+                    'class' => ArrayValidator::class,
+                    'params' => [
+                        'key' => [
+                            'validator' => [
+                                'class' => IntegerValidator::class,
+                            ],
+                        ],
+                        'item' => [
+                            'type' => 'schema',
+                            'validator' => [
+                                'class' => BarSchema::class,
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ];
     }
