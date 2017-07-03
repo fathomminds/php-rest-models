@@ -17,9 +17,7 @@ class SchemaValidator
 
     public function validate($resource)
     {
-        $this->expectObject($resource);
-        $this->objectHasSchemaMethod($resource);
-        $this->objectIsValidSchemaClass($resource);
+        $this->validateResourceType($resource);
         $extraneousCheck = [];
         if (!$this->allowExtraneous) {
             $extraneousCheck = $this->validateExtraneousFields($resource);
@@ -43,6 +41,13 @@ class SchemaValidator
     public function allowExtraneous($value)
     {
         $this->allowExtraneous = $value;
+    }
+
+    private function validateResourceType($resource)
+    {
+        $this->expectObject($resource);
+        $this->objectHasSchemaMethod($resource);
+        $this->objectIsValidSchemaClass($resource);
     }
 
     private function expectObject($resource)
