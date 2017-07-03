@@ -7,11 +7,11 @@ use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 /**
  *
  * @property string $_id
- * @property string $flop
+ * @property string $mobile
  *
  */
 
-class BarSchema extends Schema
+class FlopSchema extends Schema
 {
     public function schema()
     {
@@ -22,13 +22,11 @@ class BarSchema extends Schema
                     'class' => StringValidator::class,
                 ]
             ],
-            'flop' => [
-                'type' => 'schema',
-                'required' => true,
+            'mobile' => [
                 'validator' => [
-                    'class' => FlopSchema::class,
-                ],
-            ],
+                    'class' => StringValidator::class,
+                ]
+            ]
         ];
     }
 }
