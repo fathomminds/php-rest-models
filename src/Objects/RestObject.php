@@ -114,7 +114,7 @@ abstract class RestObject implements IRestObject
             if (isset($properties[$fieldName])) {
                 continue;
             }
-            if (!isset($field['default'])) {
+            if (!array_key_exists('default', $field)) {
                 continue;
             }
             $this->setFieldDefaultValue($fieldName, $field['default']);
