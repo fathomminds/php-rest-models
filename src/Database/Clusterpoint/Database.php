@@ -57,6 +57,11 @@ class Database implements IDatabase
         ))->delete($resourceId);
     }
 
+    public function setDatabaseName($databaseName)
+    {
+        $this->databaseName = $databaseName;
+    }
+
     public function getDatabaseName()
     {
         return $this->databaseName;

@@ -10,9 +10,9 @@
          syntaxCheck="false"
          bootstrap="./bootstrap.php">
     <testsuites>
-        <testsuite name="DynamoDb Test Suite">
+        <!--<testsuite name="DynamoDb Test Suite">
             <directory suffix="Test.php">./tests-integration/DynamoDb</directory>
-        </testsuite>
+        </testsuite>-->
         <testsuite name="Clusterpoint Test Suite">
             <directory suffix="Test.php">./tests-integration/Clusterpoint</directory>
         </testsuite>

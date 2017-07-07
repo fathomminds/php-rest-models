@@ -183,4 +183,23 @@ class RestObjectTest extends TestCase
         $finder = $object->find($this->mockClient);
         $this->assertEquals(Finder::class, get_class($finder));
     }
+
+    public function testSetDatabaseName()
+    {
+        $testDatabaseName = 'TestDatabaseName';
+        $mockDatabase = Mockery::mock(Database::class);
+        $mockDatabase->shouldReceive('setDatabaseName')->with($testDatabaseName)->once();
+        $object = new FooObject(null, null, $mockDatabase);
+        $object->setDatabaseName($testDatabaseName);
+        $this->assertEquals(1, 1); // Must reach this line
+    }
+
+    public function testGetDatabaseName()
+    {
+        $mockDatabase = Mockery::mock(Database::class);
+        $mockDatabase->shouldReceive('getDatabaseName')->withNoArgs()->once();
+        $object = new FooObject(null, null, $mockDatabase);
+        $object->getDatabaseName();
+        $this->assertEquals(1, 1); // Must reach this line
+    }
 }

@@ -3,6 +3,7 @@ namespace Fathomminds\Rest\Tests\DynamoDb;
 
 use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
+use Fathomminds\Rest\Database\DynamoDb\Database;
 use Fathomminds\Rest\Database\DynamoDb\Query;
 use Fathomminds\Rest\Database\DynamoDb\Scan;
 use Aws\DynamoDb\DynamoDbClient;
@@ -134,5 +135,13 @@ class DatabaseOperationTest extends TestCase
         $item = $items[0];
         $this->assertEquals('ID', $item->_id);
         $this->assertEquals('TITLE', $item->title);
+    }
+
+    public function testSetDatabaseName()
+    {
+        $testDatabaseName = 'TestDatabaseName';
+        $database = new Database($this->mockClient, 'DATABASENAME');
+        $database->setDatabaseName($testDatabaseName);
+        $this->assertEquals($database->getDatabaseName(), $testDatabaseName);
     }
 }
