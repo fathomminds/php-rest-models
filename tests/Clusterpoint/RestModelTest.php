@@ -316,10 +316,6 @@ class RestModelTest extends TestCase
             ->shouldReceive('hits')
             ->once()
             ->andReturn('1'); //Clusterpoint returns number as string
-        $mockResponse
-            ->shouldReceive('offsetGet')
-            ->once()
-            ->andReturn($conflict);
         $this->mockDatabase
             ->shouldReceive('get')
             ->once()
@@ -384,27 +380,19 @@ class RestModelTest extends TestCase
     public function testSetDatabaseName()
     {
         $testDabataseName = 'TestDatabaseName';
-        $mockRestObject = Mockery::mock('RestObject');
-        $mockRestObject->shouldReceive('setDatabaseName')->with($testDabataseName)->once();
-        $model = new FooModel;
-        $class = new \ReflectionClass($model);
-        $property = $class->getProperty('restObject');
-        $property->setAccessible(true);
-        $property->setValue($model, $mockRestObject);
+        $mockRestObject = Mockery::mock(FooObject::class);
+        $mockRestObject->shouldReceive('setDatabaseName')->once();
+        $model = new FooModel($mockRestObject);
         $model->setDatabaseName($testDabataseName);
-        $this->assertEquals(1, 1); // setDatabaseName should have called once with correct argument
+        $this->assertEquals(1, 1); // Must reach this line
     }
 
     public function testGetDatabaseName()
     {
-        $mockRestObject = Mockery::mock('RestObject');
+        $mockRestObject = Mockery::mock(FooObject::class);
         $mockRestObject->shouldReceive('getDatabaseName')->withNoArgs()->once();
-        $model = new FooModel;
-        $class = new \ReflectionClass($model);
-        $property = $class->getProperty('restObject');
-        $property->setAccessible(true);
-        $property->setValue($model, $mockRestObject);
+        $model = new FooModel($mockRestObject);
         $model->getDatabaseName();
-        $this->assertEquals(1, 1); // getDatabaseName should have called once without any arguments
+        $this->assertEquals(1, 1); // Must reach this line
     }
 }

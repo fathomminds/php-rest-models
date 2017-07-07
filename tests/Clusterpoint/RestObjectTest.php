@@ -191,7 +191,7 @@ class RestObjectTest extends TestCase
         $mockDatabase->shouldReceive('setDatabaseName')->with($testDatabaseName)->once();
         $object = new FooObject(null, null, $mockDatabase);
         $object->setDatabaseName($testDatabaseName);
-        $this->assertEquals(1, 1); // setDatabaseName should have called once with correct argument
+        $this->assertEquals(1, 1); // Must reach this line
     }
 
     public function testGetDatabaseName()
@@ -200,6 +200,6 @@ class RestObjectTest extends TestCase
         $mockDatabase->shouldReceive('getDatabaseName')->withNoArgs()->once();
         $object = new FooObject(null, null, $mockDatabase);
         $object->getDatabaseName();
-        $this->assertEquals(1, 1); // setDatabaseName should have called without any arguments
+        $this->assertEquals(1, 1); // Must reach this line
     }
 }
