@@ -92,4 +92,10 @@ abstract class TestCase extends PHPUnitTestCase
     {
         return json_decode(json_encode($array));
     }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
 }

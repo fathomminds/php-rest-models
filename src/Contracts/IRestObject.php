@@ -4,6 +4,8 @@ namespace Fathomminds\Rest\Contracts;
 interface IRestObject
 {
     public function createFromObject($obj);
+    public function setDatabaseName($databaseName);
+    public function getDatabaseName();
     public function resource();
     public function query();
     public function find();

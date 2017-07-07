@@ -37,4 +37,12 @@ class DatabaseTest extends TestCase
         $this->assertEquals('ID', $res->_id);
         $this->assertEquals('TITLE', $res->title);
     }
+
+    public function testSetDatabaseName()
+    {
+        $testDatabaseName = 'TestDatabaseName';
+        $database = new Database($this->mockClient, 'DATABASENAME');
+        $database->setDatabaseName($testDatabaseName);
+        $this->assertEquals($database->getDatabaseName(), $testDatabaseName);
+    }
 }
