@@ -25,16 +25,16 @@ abstract class TestCase extends PHPUnitTestCase
     public function mockResponse($rawResponse, $errors = [])
     {
         $mockResponse = Mockery::mock(Single::class);
-        $mockResponse->shouldReceive('error')->once()->andReturn($errors);
-        $mockResponse->shouldReceive('rawResponse')->once()->andReturn(json_encode($rawResponse));
+        $mockResponse->shouldReceive('error')->atLeast()->times(0)->andReturn($errors);
+        $mockResponse->shouldReceive('rawResponse')->atLeast()->times(0)->andReturn(json_encode($rawResponse));
         return $mockResponse;
     }
 
     public function mockBatchResponse($rawResponse, $errors = [])
     {
         $mockResponse = Mockery::mock(Batch::class);
-        $mockResponse->shouldReceive('error')->once()->andReturn($errors);
-        $mockResponse->shouldReceive('rawResponse')->once()->andReturn(json_encode($rawResponse));
+        $mockResponse->shouldReceive('error')->atLeast()->times(0)->andReturn($errors);
+        $mockResponse->shouldReceive('rawResponse')->atLeast()->times(0)->andReturn(json_encode($rawResponse));
         return $mockResponse;
     }
 
@@ -87,5 +87,11 @@ abstract class TestCase extends PHPUnitTestCase
             ->shouldReceive('getPrimaryKeyValue')
             ->andReturn(property_exists($resource, '_id') ? $resource->_id : null);
         return $mockObject;
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        Mockery::close();
     }
 }

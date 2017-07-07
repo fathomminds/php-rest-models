@@ -5,6 +5,7 @@ use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
+use Mockery;
 
 class RestModelTest extends TestCase
 {
@@ -315,10 +316,6 @@ class RestModelTest extends TestCase
             ->shouldReceive('hits')
             ->once()
             ->andReturn('1'); //Clusterpoint returns number as string
-        $mockResponse
-            ->shouldReceive('offsetGet')
-            ->once()
-            ->andReturn($conflict);
         $this->mockDatabase
             ->shouldReceive('get')
             ->once()
@@ -378,5 +375,24 @@ class RestModelTest extends TestCase
         $model = new FooModel;
         $q = $model->query();
         $this->assertEquals('Clusterpoint\Instance\Service', get_class($q));
+    }
+
+    public function testSetDatabaseName()
+    {
+        $testDabataseName = 'TestDatabaseName';
+        $mockRestObject = Mockery::mock(FooObject::class);
+        $mockRestObject->shouldReceive('setDatabaseName')->once();
+        $model = new FooModel($mockRestObject);
+        $model->setDatabaseName($testDabataseName);
+        $this->assertEquals(1, 1); // Must reach this line
+    }
+
+    public function testGetDatabaseName()
+    {
+        $mockRestObject = Mockery::mock(FooObject::class);
+        $mockRestObject->shouldReceive('getDatabaseName')->withNoArgs()->once();
+        $model = new FooModel($mockRestObject);
+        $model->getDatabaseName();
+        $this->assertEquals(1, 1); // Must reach this line
     }
 }
