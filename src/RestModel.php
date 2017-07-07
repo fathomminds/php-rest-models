@@ -107,4 +107,14 @@ abstract class RestModel implements IRestModel
     {
         return $this->restObject->toArray();
     }
+
+    public function setDatabaseName($databaseName)
+    {
+        $this->restObject->setDatabaseName($databaseName);
+    }
+
+    public function getDatabaseName()
+    {
+        return $this->restObject->getDatabaseName();
+    }
 }
