@@ -5,6 +5,7 @@ use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
+use Mockery;
 
 class RestModelTest extends TestCase
 {
@@ -378,5 +379,32 @@ class RestModelTest extends TestCase
         $model = new FooModel;
         $q = $model->query();
         $this->assertEquals('Clusterpoint\Instance\Service', get_class($q));
+    }
+
+    public function testSetDatabaseName()
+    {
+        $testDabataseName = 'TestDatabaseName';
+        $mockRestObject = Mockery::mock('RestObject');
+        $mockRestObject->shouldReceive('setDatabaseName')->with($testDabataseName)->once();
+        $model = new FooModel;
+        $class = new \ReflectionClass($model);
+        $property = $class->getProperty('restObject');
+        $property->setAccessible(true);
+        $property->setValue($model, $mockRestObject);
+        $model->setDatabaseName($testDabataseName);
+        $this->assertEquals(1, 1); // setDatabaseName should have called once with correct argument
+    }
+
+    public function testGetDatabaseName()
+    {
+        $mockRestObject = Mockery::mock('RestObject');
+        $mockRestObject->shouldReceive('getDatabaseName')->withNoArgs()->once();
+        $model = new FooModel;
+        $class = new \ReflectionClass($model);
+        $property = $class->getProperty('restObject');
+        $property->setAccessible(true);
+        $property->setValue($model, $mockRestObject);
+        $model->getDatabaseName();
+        $this->assertEquals(1, 1); // getDatabaseName should have called once without any arguments
     }
 }
