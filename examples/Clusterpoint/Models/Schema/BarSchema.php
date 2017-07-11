@@ -22,6 +22,11 @@ class BarSchema extends Schema
                     'class' => StringValidator::class,
                 ]
             ],
+            'flip' => [
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
             'flop' => [
                 'type' => 'schema',
                 'required' => true,
