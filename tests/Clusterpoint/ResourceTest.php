@@ -15,7 +15,7 @@ class ResourceTest extends TestCase
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
-            ->shouldReceive('update')
+            ->shouldReceive('replace')
             ->andReturn($this->mockResponse($resource));
         $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
         try {
@@ -33,7 +33,7 @@ class ResourceTest extends TestCase
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
-            ->shouldReceive('update')
+            ->shouldReceive('replace')
             ->andThrow(RestException::class, 'Error');
         $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
         try {

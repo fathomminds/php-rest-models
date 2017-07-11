@@ -31,7 +31,7 @@ class DatabaseTest extends TestCase
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
-            ->shouldReceive('update')
+            ->shouldReceive('replace')
             ->andReturn($this->mockResponse(['results' => [$resource]]));
         $res = $database->put('resourceName', '_id', $id, $resource);
         $this->assertEquals('ID', $res->_id);
