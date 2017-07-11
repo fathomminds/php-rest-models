@@ -64,7 +64,7 @@ class Resource implements IResource
     public function put($resourceId, $newResource)
     {
         try {
-            $res = $this->collection->update($resourceId, $newResource);
+            $res = $this->collection->replace($resourceId, $newResource);
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
