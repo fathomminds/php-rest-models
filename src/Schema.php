@@ -34,4 +34,9 @@ abstract class Schema implements ISchema
     }
 
     abstract public function schema();
+
+    public function toArray()
+    {
+        return json_decode(json_encode($this), true);
+    }
 }

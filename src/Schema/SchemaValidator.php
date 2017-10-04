@@ -9,10 +9,19 @@ class SchemaValidator
     protected $fields = [];
     protected $allowExtraneous = false;
     protected $requiredSchemaClass = null;
+    private $updateMode = false;
 
     public function __construct($requiredSchemaClass = null)
     {
         $this->requiredSchemaClass = $requiredSchemaClass;
+    }
+
+    public function updateMode($updateMode = null)
+    {
+        if (is_bool($updateMode)) {
+            $this->updateMode = $updateMode;
+        }
+        return $this->updateMode;
     }
 
     public function validate($resource)
@@ -95,6 +104,9 @@ class SchemaValidator
     private function validateRequiredFields($resource)
     {
         $errors = [];
+        if ($this->updateMode()) {
+            return $errors;
+        }
         $requiredFields = $this->getRequiredFields($resource);
         foreach ($requiredFields as $fieldName) {
             if (!property_exists($resource, $fieldName)) {
@@ -122,7 +134,7 @@ class SchemaValidator
         foreach ($resource->schema() as $fieldName => $rules) {
             if (property_exists($resource, $fieldName)) {
                 try {
-                    $validatorFactory->create($rules)->validate($resource->{$fieldName});
+                    $validatorFactory->create($rules, $this->updateMode())->validate($resource->{$fieldName});
                 } catch (RestException $ex) {
                     $errors[$fieldName]['error'] = $ex->getMessage();
                     $errors[$fieldName]['details'] = $ex->getDetails();

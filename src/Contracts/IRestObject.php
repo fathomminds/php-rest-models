@@ -11,6 +11,9 @@ interface IRestObject
     public function find();
     public function get($resourceId = null);
     public function post($newResource);
+    public function updateMode($value = null);
+    public function patch($resourceId, $newResource);
+    public function replaceMode($value = null);
     public function put($resourceId, $newResource);
     public function delete($resourceId);
     public function reset();

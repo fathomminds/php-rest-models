@@ -38,6 +38,21 @@ class DatabaseTest extends TestCase
         $this->assertEquals('TITLE', $res->title);
     }
 
+    public function testPatch()
+    {
+        $database = new Database($this->mockClient, 'DATABASENAME');
+        $resource = new FooSchema;
+        $id = 'ID';
+        $resource->_id = $id;
+        $resource->title = 'TITLE';
+        $this->mockDatabase
+            ->shouldReceive('update')
+            ->andReturn($this->mockResponse(['results' => [$resource]]));
+        $res = $database->patch('resourceName', '_id', $id, $resource);
+        $this->assertEquals('ID', $res->_id);
+        $this->assertEquals('TITLE', $res->title);
+    }
+
     public function testSetDatabaseName()
     {
         $testDatabaseName = 'TestDatabaseName';

@@ -122,6 +122,35 @@ class RestModelTest extends TestCase
     {
         $resource = new FooSchema;
         $resource->_id = 'NEW';
+        // $resource->title = 'TITLE'; // Skipping required field for update
+        $resource->status = 1;
+        $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('setFieldDefaults')
+            ->andReturn(null);
+        $mockObject
+            ->shouldReceive('patch')
+            ->andReturn(null);
+        $mockObject
+            ->shouldReceive('updateMode')
+            ->andReturn(true);
+        $mockObject
+            ->shouldReceive('replaceMode')
+            ->andReturn(false);
+        $model = $this->mockModel(FooModel::class, $mockObject);
+        $model->resource($resource);
+        try {
+            $model->update();
+            $this->assertTrue(true);
+        } catch (\Exception $ex) {
+            $this->fail(); //Should not throw exception
+        }
+    }
+
+    public function testReplaceValidStructure()
+    {
+        $resource = new FooSchema;
+        $resource->_id = 'NEW';
         $resource->title = 'TITLE';
         $resource->status = 0;
         $mockObject = $this->mockObjectValidationOk($resource);
@@ -131,10 +160,16 @@ class RestModelTest extends TestCase
         $mockObject
             ->shouldReceive('put')
             ->andReturn(null);
+        $mockObject
+            ->shouldReceive('updateMode')
+            ->andReturn(false);
+        $mockObject
+            ->shouldReceive('replaceMode')
+            ->andReturn(true);
         $model = $this->mockModel(FooModel::class, $mockObject);
         $model->resource($resource);
         try {
-            $model->update();
+            $model->replace();
             $this->assertTrue(true);
         } catch (\Exception $ex) {
             $this->fail(); //Should not throw exception
@@ -148,6 +183,12 @@ class RestModelTest extends TestCase
         $resource->title = 'TITLE';
         $resource->status = 0;
         $mockObject = $this->mockObjectValidationOk($resource);
+        $mockObject
+            ->shouldReceive('updateMode')
+            ->andReturn(false);
+        $mockObject
+            ->shouldReceive('replaceMode')
+            ->andReturn(false);
         $mockObject
             ->shouldReceive('setFieldDefaults')
             ->andReturn(null);
@@ -338,6 +379,12 @@ class RestModelTest extends TestCase
         $mockObject
             ->shouldReceive('post')
             ->andThrow(RestException::class, 'Database operation failed');
+        $mockObject
+            ->shouldReceive('updateMode')
+            ->andReturn(false);
+        $mockObject
+            ->shouldReceive('replaceMode')
+            ->andReturn(false);
         $model = $this->mockModel(FooModel::class, $mockObject);
         $model->resource($resource);
         try {
@@ -360,10 +407,16 @@ class RestModelTest extends TestCase
         $mockObject
             ->shouldReceive('put')
             ->andThrow(RestException::class, 'Database operation failed');
+        $mockObject
+            ->shouldReceive('updateMode')
+            ->andReturn(false);
+        $mockObject
+            ->shouldReceive('replaceMode')
+            ->andReturn(true);
         $model = $this->mockModel(FooModel::class, $mockObject);
         $model->resource($resource);
         try {
-            $model->update();
+            $model->replace();
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());
