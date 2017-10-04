@@ -9,6 +9,7 @@ class SchemaValidator
     protected $fields = [];
     protected $allowExtraneous = false;
     protected $requiredSchemaClass = null;
+    public $updateMode = false;
 
     public function __construct($requiredSchemaClass = null)
     {
@@ -95,6 +96,9 @@ class SchemaValidator
     private function validateRequiredFields($resource)
     {
         $errors = [];
+        if ($this->updateMode) {
+            return $errors;
+        }
         $requiredFields = $this->getRequiredFields($resource);
         foreach ($requiredFields as $fieldName) {
             if (!property_exists($resource, $fieldName)) {

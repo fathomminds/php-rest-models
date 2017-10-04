@@ -107,7 +107,7 @@ class RestObjectTest extends TestCase
         }
     }
 
-    public function testValidateUniqueFieldsUpdateMode()
+    public function testValidateUniqueFieldsReplaceMode()
     {
         $id = 'ID';
         $resource = new FooSchema;
@@ -129,7 +129,7 @@ class RestObjectTest extends TestCase
             ->andReturn($mockResponse);
         $object = new FooObject($resource, null, $database);
         try {
-            $method = new \ReflectionMethod($object, 'setUpdateMode');
+            $method = new \ReflectionMethod($object, 'setReplaceMode');
             $method->setAccessible(true);
             $method->invoke($object, [true]);
             $res = $object->validate();

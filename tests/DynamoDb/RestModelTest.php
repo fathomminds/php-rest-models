@@ -86,9 +86,9 @@ class DynamoDbTest extends TestCase
             ->shouldReceive('putItem')
             ->andReturn('anything');
         $database = new Database($client, 'DATABSENAME');
-        $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+        $res = $database->put('resourcename', '_id', 'REPLACE_THIS', $item);
         $this->assertEquals('TITLE', $res->title);
-        $this->assertEquals('UPDATE_THIS', $res->_id);
+        $this->assertEquals('REPLACE_THIS', $res->_id);
     }
 
     public function testDatabasePutException()
@@ -107,7 +107,7 @@ class DynamoDbTest extends TestCase
             ->andThrow($ex);
         $database = new Database($client, 'DATABSENAME');
         try {
-            $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+            $res = $database->put('resourcename', '_id', 'REPLACE_THIS', $item);
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Resource does not exist', $ex->getMessage());
@@ -130,7 +130,7 @@ class DynamoDbTest extends TestCase
             ->andThrow($ex);
         $database = new Database($client, 'DATABSENAME');
         try {
-            $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+            $res = $database->put('resourcename', '_id', 'REPLACE_THIS', $item);
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('SomeAwsErrorMessage', $ex->getMessage());

@@ -38,13 +38,13 @@ class IntegrationTest extends TestCase
         $this->assertEquals($id, $model->resource()->_id);
         $this->assertEquals('CREATED', $model->resource()->title);
 
-        $model->resource()->title = 'UPDATED';
-        $model->update();
+        $model->resource()->title = 'REPLACED';
+        $model->replace();
 
         $model = new FooModel;
         $model->one($id);
         $this->assertEquals($id, $model->resource()->_id);
-        $this->assertEquals('UPDATED', $model->resource()->title);
+        $this->assertEquals('REPLACED', $model->resource()->title);
 
         $model->delete();
         $this->assertTrue(empty(get_object_vars($model->resource())));
@@ -84,8 +84,8 @@ class IntegrationTest extends TestCase
             $this->assertEquals(1, 0); // Must not reach this line
         }
 
-        $fooSchema->title = "TITLE_UPDATED";
-        $fooSchema->bar[0]->flip = "FLIP_UPDATED";
+        $fooSchema->title = "TITLE_REPLACED";
+        $fooSchema->bar[0]->flip = "FLIP_REPLACED";
 
         try {
             $collection->replace($insertId, $fooSchema);
@@ -96,8 +96,8 @@ class IntegrationTest extends TestCase
         try {
             $res = $collection->where("_id", $insertId)->get();
             $fooData = json_decode($res->rawResponse(), true)["results"][0];
-            $this->assertEquals($fooData["title"], "TITLE_UPDATED");
-            $this->assertEquals($fooData["bar"][0]["flip"], "FLIP_UPDATED");
+            $this->assertEquals($fooData["title"], "TITLE_REPLACED");
+            $this->assertEquals($fooData["bar"][0]["flip"], "FLIP_REPLACED");
         } catch (\Exception $ex) {
             $this->assertEquals(1, 0); // Must not reach this line
         }

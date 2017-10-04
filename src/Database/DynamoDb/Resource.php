@@ -105,6 +105,11 @@ class Resource implements IResource
         throw new RestException($exception->getMessage(), ['exception' => $exception]);
     }
 
+    public function patch($resourceId, $newResource)
+    {
+        $this->put($resourceId, $newResource);
+    }
+
     public function put($resourceId, $newResource)
     {
         try {

@@ -118,7 +118,7 @@ class RestModelTest extends TestCase
         $list = $model->create();
     }
 
-    public function testUpdateValidStructure()
+    public function testReplaceValidStructure()
     {
         $resource = new FooSchema;
         $resource->_id = 'NEW';
@@ -134,7 +134,7 @@ class RestModelTest extends TestCase
         $model = $this->mockModel(FooModel::class, $mockObject);
         $model->resource($resource);
         try {
-            $model->update();
+            $model->replace();
             $this->assertTrue(true);
         } catch (\Exception $ex) {
             $this->fail(); //Should not throw exception
@@ -363,7 +363,7 @@ class RestModelTest extends TestCase
         $model = $this->mockModel(FooModel::class, $mockObject);
         $model->resource($resource);
         try {
-            $model->update();
+            $model->replace();
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Database operation failed', $ex->getMessage());

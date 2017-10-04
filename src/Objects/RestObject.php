@@ -1,5 +1,4 @@
-<?php
-namespace Fathomminds\Rest\Objects;
+<?php namespace Fathomminds\Rest\Objects;
 
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 use Fathomminds\Rest\Contracts\IRestObject;
@@ -18,6 +17,7 @@ abstract class RestObject implements IRestObject
     protected $indexNames = [];
     protected $allowExtraneous = false;
     public $updateMode = false;
+    public $replaceMode = false;
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -78,6 +78,18 @@ abstract class RestObject implements IRestObject
         $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
     }
 
+    public function patch($resourceId, $newResource)
+    {
+        $reflectionHelper = new ReflectionHelper;
+        $res = $this->database->patch(
+            $this->resourceName,
+            $this->primaryKey,
+            $resourceId,
+            $newResource
+        );
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
+    }
+
     public function put($resourceId, $newResource)
     {
         $reflectionHelper = new ReflectionHelper;
@@ -100,6 +112,11 @@ abstract class RestObject implements IRestObject
     {
         $reflectionHelper = new ReflectionHelper;
         $this->resource = $reflectionHelper->createInstance($this->schemaClass);
+    }
+
+    protected function setReplaceMode($value)
+    {
+        $this->replaceMode = $value;
     }
 
     protected function setUpdateMode($value)
@@ -132,6 +149,7 @@ abstract class RestObject implements IRestObject
 
     public function validateSchema($resource)
     {
+        $this->schema->updateMode = $this->updateMode;
         $this->schema->validate($resource);
     }
 
@@ -145,7 +163,7 @@ abstract class RestObject implements IRestObject
 
     public function toArray()
     {
-        return json_decode(json_encode($this->resource), true);
+        return $this->resource->toArray();
     }
 
     public function getPrimaryKeyValue()

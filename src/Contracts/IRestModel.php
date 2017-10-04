@@ -12,6 +12,7 @@ interface IRestModel
     public function all();
     public function create();
     public function update();
+    public function replace();
     public function delete();
     public function validate();
     public function toArray();
