@@ -159,10 +159,8 @@ class RestObjectTest extends TestCase
             ->shouldReceive('get')
             ->andReturn($mockResponse);
         $object = new FooObject($resource, null, $database);
+        $object->replaceMode(true);
         try {
-            $method = new \ReflectionMethod($object, 'replaceMode');
-            $method->setAccessible(true);
-            $method->invoke($object, [true]);
             $res = $object->validate();
             $this->assertTrue(true); //Should reach this line
         } catch (\Exception $ex) {
@@ -191,10 +189,8 @@ class RestObjectTest extends TestCase
             ->shouldReceive('get')
             ->andReturn($mockResponse);
         $object = new FooObject($resource, null, $database);
+        $object->updateMode(true);
         try {
-            $method = new \ReflectionMethod($object, 'updateMode');
-            $method->setAccessible(true);
-            $method->invoke($object, [true]);
             $res = $object->validate();
             $this->assertTrue(true); //Should reach this line
         } catch (\Exception $ex) {
