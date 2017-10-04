@@ -23,7 +23,7 @@ class RestObject extends CoreRestObject
     {
         $uniqueFields = $this->getUniqueFields();
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
-        if ($this->updateMode) {
+        if ($this->updateMode() || $this->replaceMode()) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
