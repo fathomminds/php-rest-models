@@ -37,6 +37,16 @@ class Database implements IDatabase
         ))->post($newResource);
     }
 
+    public function patch($resourceName, $primaryKey, $resourceId, $newResource)
+    {
+        return (new Resource(
+            $resourceName,
+            $primaryKey,
+            $this->client,
+            $this->databaseName
+        ))->patch($resourceId, $newResource);
+    }
+
     public function put($resourceName, $primaryKey, $resourceId, $newResource)
     {
         return (new Resource(
