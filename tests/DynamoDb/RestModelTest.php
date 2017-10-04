@@ -76,6 +76,21 @@ class DynamoDbTest extends TestCase
         );
     }
 
+    public function testDatabasePatch()
+    {
+        $client = Mockery::mock(DynamoDbClient::class);
+        $item = new \StdClass;
+        $item->_id = 'ANYID';
+        $item->title = 'TITLE';
+        $client
+            ->shouldReceive('putItem')
+            ->andReturn('anything');
+        $database = new Database($client, 'DATABSENAME');
+        $res = $database->patch('resourcename', '_id', 'REPLACE_THIS', $item);
+        $this->assertEquals('TITLE', $res->title);
+        $this->assertEquals('REPLACE_THIS', $res->_id);
+    }
+
     public function testDatabasePut()
     {
         $client = Mockery::mock(DynamoDbClient::class);

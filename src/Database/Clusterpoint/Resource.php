@@ -64,7 +64,7 @@ class Resource implements IResource
     public function patch($resourceId, $newResource)
     {
         try {
-            $res = $this->collection->update($resourceId, $newResource->__toArray());
+            $res = $this->collection->update($resourceId, $newResource->toArray());
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {

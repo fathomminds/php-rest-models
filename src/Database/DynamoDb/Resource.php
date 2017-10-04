@@ -107,7 +107,7 @@ class Resource implements IResource
 
     public function patch($resourceId, $newResource)
     {
-        $this->put($resourceId, $newResource);
+        return $this->put($resourceId, $newResource);
     }
 
     public function put($resourceId, $newResource)

@@ -16,8 +16,8 @@ abstract class RestObject implements IRestObject
     protected $database;
     protected $indexNames = [];
     protected $allowExtraneous = false;
-    public $updateMode = false;
-    public $replaceMode = false;
+    private $updateMode = false;
+    private $replaceMode = false;
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -114,14 +114,20 @@ abstract class RestObject implements IRestObject
         $this->resource = $reflectionHelper->createInstance($this->schemaClass);
     }
 
-    protected function setReplaceMode($value)
+    public function replaceMode($value = null)
     {
-        $this->replaceMode = $value;
+        if (is_bool($value)) {
+            $this->replaceMode = $value;
+        }
+        return $this->replaceMode;
     }
 
-    protected function setUpdateMode($value)
+    public function updateMode($value = null)
     {
-        $this->updateMode = $value;
+        if (is_bool($value)) {
+            $this->updateMode = $value;
+        }
+        return $this->updateMode;
     }
 
     public function setFieldDefaults()
@@ -149,7 +155,7 @@ abstract class RestObject implements IRestObject
 
     public function validateSchema($resource)
     {
-        $this->schema->updateMode = $this->updateMode;
+        $this->schema->updateMode($this->updateMode());
         $this->schema->validate($resource);
     }
 

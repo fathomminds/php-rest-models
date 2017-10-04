@@ -14,6 +14,7 @@ class IntegrationTest extends TestCase
         $model = new FooModel;
         $resource = new FooSchema;
         $resource->title = 'CREATED';
+        $resource->status = 0;
         $model->resource($resource);
 
         $model->create();
@@ -45,6 +46,24 @@ class IntegrationTest extends TestCase
         $model->one($id);
         $this->assertEquals($id, $model->resource()->_id);
         $this->assertEquals('REPLACED', $model->resource()->title);
+
+        $model = new FooModel;
+        $updateResource = new FooSchema;
+        $barSchema = new BarSchema;
+        $barSchema->flip = "flip";
+        $updateResource->_id = $id;
+        $updateResource->status = 1;
+        $updateResource->bar = [
+            $barSchema,
+        ];
+        $model->resource($updateResource);
+        $model->update();
+
+        $model = new FooModel;
+        $model->one($id);
+        $this->assertEquals($id, $model->resource()->_id);
+        $this->assertEquals(1, $model->resource()->status);
+        $this->assertEquals("flip", $model->resource()->bar[0]->flip);
 
         $model->delete();
         $this->assertTrue(empty(get_object_vars($model->resource())));

@@ -74,8 +74,8 @@ abstract class RestModel implements IRestModel
 
     public function create()
     {
-        $this->restObject->updateMode = false;
-        $this->restObject->replaceMode = false;
+        $this->restObject->updateMode(false);
+        $this->restObject->replaceMode(false);
         $this->restObject->setFieldDefaults();
         $this->validate();
         $this->restObject->post($this->resource());
@@ -84,8 +84,8 @@ abstract class RestModel implements IRestModel
 
     public function update()
     {
-        $this->restObject->updateMode = true;
-        $this->restObject->replaceMode = false;
+        $this->restObject->updateMode(true);
+        $this->restObject->replaceMode(false);
         $this->restObject->setFieldDefaults();
         $this->validate();
         $this->restObject->patch($this->restObject->getPrimaryKeyValue(), $this->resource());
@@ -94,8 +94,8 @@ abstract class RestModel implements IRestModel
 
     public function replace()
     {
-        $this->restObject->updateMode = false;
-        $this->restObject->replaceMode = true;
+        $this->restObject->updateMode(false);
+        $this->restObject->replaceMode(true);
         $this->restObject->setFieldDefaults();
         $this->validate();
         $this->restObject->put($this->restObject->getPrimaryKeyValue(), $this->resource());

@@ -56,6 +56,37 @@ class RestObjectTest extends TestCase
         }
     }
 
+    public function testPatch()
+    {
+        $id = 'ID';
+        $resource = new FooSchema;
+        $resource->_id = $id;
+        $schema = Mockery::mock(FooSchema::class);
+        $schema
+            ->shouldReceive('allowExtraneous')
+            ->andReturn(null);
+        $schema
+            ->shouldReceive('getFields')
+            ->andReturn([]);
+        $schema
+            ->shouldReceive('getUniqueFields')
+            ->andReturn([]);
+        $schema
+            ->shouldReceive('validate')
+            ->andReturn(null);
+        $database = Mockery::mock(Database::class);
+        $database
+            ->shouldReceive('patch')
+            ->andReturn($resource);
+        $object = new FooObject($resource, $schema, $database);
+        try {
+            $object = $object->patch($id, $resource);
+            $this->assertTrue(true);
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
     public function testPost()
     {
         $id = 'ID';
@@ -129,7 +160,39 @@ class RestObjectTest extends TestCase
             ->andReturn($mockResponse);
         $object = new FooObject($resource, null, $database);
         try {
-            $method = new \ReflectionMethod($object, 'setReplaceMode');
+            $method = new \ReflectionMethod($object, 'replaceMode');
+            $method->setAccessible(true);
+            $method->invoke($object, [true]);
+            $res = $object->validate();
+            $this->assertTrue(true); //Should reach this line
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testValidateUniqueFieldsUpdateMode()
+    {
+        $id = 'ID';
+        $resource = new FooSchema;
+        $resource->_id = $id;
+        $resource->title = 'TITLE';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse($resource);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(0);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new FooObject($resource, null, $database);
+        try {
+            $method = new \ReflectionMethod($object, 'updateMode');
             $method->setAccessible(true);
             $method->invoke($object, [true]);
             $res = $object->validate();

@@ -41,7 +41,6 @@ class SchemaValidatorTest extends TestCase
         try {
             $resource = new FooSchema;
             $resource->title = 'REQUIRED';
-            $fooSchema = new FooSchema;
             (new SchemaValidator)->validate($resource);
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
         } catch (RestException $ex) {
@@ -80,7 +79,6 @@ class SchemaValidatorTest extends TestCase
             $resource = new FooSchema;
             $resource->title = 'REQUIRED';
             $resource->extraneous = 'exists';
-            $fooSchema = new FooSchema;
             $schemaValidator = new SchemaValidator;
             $schemaValidator->allowExtraneous(false);
             $schemaValidator->validate($resource);
@@ -97,8 +95,23 @@ class SchemaValidatorTest extends TestCase
             $resource = new FooSchema;
             $resource->title = 'REQUIRED';
             $resource->extraneous = 'exists';
-            $fooSchema = new FooSchema;
             $schemaValidator = new SchemaValidator;
+            $schemaValidator->allowExtraneous(true);
+            $schemaValidator->validate($resource);
+            $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown
+        } catch (RestException $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testUpdateModeValidation()
+    {
+        try {
+            $resource = new FooSchema;
+            // $resource->title = 'REQUIRED'; // Skipping required field for update mode
+            $resource->extraneous = 'exists';
+            $schemaValidator = new SchemaValidator;
+            $schemaValidator->updateMode(true);
             $schemaValidator->allowExtraneous(true);
             $schemaValidator->validate($resource);
             $this->assertEquals(1, 1); //Reaching this line only if no exception is thrown

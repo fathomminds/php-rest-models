@@ -7,6 +7,15 @@ use Fathomminds\Rest\Exceptions\RestException;
 abstract class StdTypeValidator implements ITypeValidator
 {
     protected $validType;
+    private $updateMode = false;
+
+    public function updateMode($updateMode = null)
+    {
+        if (is_bool($updateMode)) {
+            $this->updateMode = $updateMode;
+        }
+        return $this->updateMode;
+    }
 
     public function validate($value)
     {
