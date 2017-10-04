@@ -1,5 +1,4 @@
-<?php
-namespace Fathomminds\Rest\Objects;
+<?php namespace Fathomminds\Rest\Objects;
 
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 use Fathomminds\Rest\Contracts\IRestObject;
@@ -17,7 +16,8 @@ abstract class RestObject implements IRestObject
     protected $database;
     protected $indexNames = [];
     protected $allowExtraneous = false;
-    public $updateMode = false;
+    private $updateMode = false;
+    private $replaceMode = false;
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -78,6 +78,18 @@ abstract class RestObject implements IRestObject
         $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
     }
 
+    public function patch($resourceId, $newResource)
+    {
+        $reflectionHelper = new ReflectionHelper;
+        $res = $this->database->patch(
+            $this->resourceName,
+            $this->primaryKey,
+            $resourceId,
+            $newResource
+        );
+        $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
+    }
+
     public function put($resourceId, $newResource)
     {
         $reflectionHelper = new ReflectionHelper;
@@ -102,9 +114,20 @@ abstract class RestObject implements IRestObject
         $this->resource = $reflectionHelper->createInstance($this->schemaClass);
     }
 
-    protected function setUpdateMode($value)
+    public function replaceMode($value = null)
     {
-        $this->updateMode = $value;
+        if (is_bool($value)) {
+            $this->replaceMode = $value;
+        }
+        return $this->replaceMode;
+    }
+
+    public function updateMode($value = null)
+    {
+        if (is_bool($value)) {
+            $this->updateMode = $value;
+        }
+        return $this->updateMode;
     }
 
     public function setFieldDefaults()
@@ -132,6 +155,7 @@ abstract class RestObject implements IRestObject
 
     public function validateSchema($resource)
     {
+        $this->schema->updateMode($this->updateMode());
         $this->schema->validate($resource);
     }
 
@@ -145,7 +169,7 @@ abstract class RestObject implements IRestObject
 
     public function toArray()
     {
-        return json_decode(json_encode($this->resource), true);
+        return $this->resource->toArray();
     }
 
     public function getPrimaryKeyValue()

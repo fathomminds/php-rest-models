@@ -76,6 +76,21 @@ class DynamoDbTest extends TestCase
         );
     }
 
+    public function testDatabasePatch()
+    {
+        $client = Mockery::mock(DynamoDbClient::class);
+        $item = new \StdClass;
+        $item->_id = 'ANYID';
+        $item->title = 'TITLE';
+        $client
+            ->shouldReceive('putItem')
+            ->andReturn('anything');
+        $database = new Database($client, 'DATABSENAME');
+        $res = $database->patch('resourcename', '_id', 'REPLACE_THIS', $item);
+        $this->assertEquals('TITLE', $res->title);
+        $this->assertEquals('REPLACE_THIS', $res->_id);
+    }
+
     public function testDatabasePut()
     {
         $client = Mockery::mock(DynamoDbClient::class);
@@ -86,9 +101,9 @@ class DynamoDbTest extends TestCase
             ->shouldReceive('putItem')
             ->andReturn('anything');
         $database = new Database($client, 'DATABSENAME');
-        $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+        $res = $database->put('resourcename', '_id', 'REPLACE_THIS', $item);
         $this->assertEquals('TITLE', $res->title);
-        $this->assertEquals('UPDATE_THIS', $res->_id);
+        $this->assertEquals('REPLACE_THIS', $res->_id);
     }
 
     public function testDatabasePutException()
@@ -107,7 +122,7 @@ class DynamoDbTest extends TestCase
             ->andThrow($ex);
         $database = new Database($client, 'DATABSENAME');
         try {
-            $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+            $res = $database->put('resourcename', '_id', 'REPLACE_THIS', $item);
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Resource does not exist', $ex->getMessage());
@@ -130,7 +145,7 @@ class DynamoDbTest extends TestCase
             ->andThrow($ex);
         $database = new Database($client, 'DATABSENAME');
         try {
-            $res = $database->put('resourcename', '_id', 'UPDATE_THIS', $item);
+            $res = $database->put('resourcename', '_id', 'REPLACE_THIS', $item);
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('SomeAwsErrorMessage', $ex->getMessage());

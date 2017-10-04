@@ -38,13 +38,13 @@ class IntegrationTest extends TestCase
         $this->assertEquals($id, $model->resource()->_id);
         $this->assertEquals('CREATED', $model->resource()->title);
 
-        $model->resource()->title = 'UPDATED';
-        $model->update();
+        $model->resource()->title = 'REPLACED';
+        $model->replace();
 
         $model = new FooModel;
         $model->one($id);
         $this->assertEquals($id, $model->resource()->_id);
-        $this->assertEquals('UPDATED', $model->resource()->title);
+        $this->assertEquals('REPLACED', $model->resource()->title);
 
         $model->delete();
         $this->assertTrue(empty(get_object_vars($model->resource())));

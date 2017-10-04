@@ -8,6 +8,42 @@ use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class ResourceTest extends TestCase
 {
+    public function testPatch()
+    {
+        $id = 'ID';
+        $resource = new FooSchema;
+        $resource->_id = $id;
+        $this->mockDatabase
+            ->shouldReceive('update')
+            ->andReturn($this->mockResponse($resource));
+        $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
+        try {
+            $ret = $rest->patch($id, $resource);
+            $this->assertTrue(true);
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testPatchException()
+    {
+        $id = 'ID';
+        $resource = new FooSchema;
+        $resource->_id = $id;
+        $resource->status = 'INTEGER';
+        $this->mockDatabase
+            ->shouldReceive('update')
+            ->andThrow(RestException::class, 'Error');
+        $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
+        try {
+            $ret = $rest->patch($id, $resource);
+            $this->fail();
+            $this->assertTrue(true);
+        } catch (\Exception $ex) {
+            $this->assertEquals('Error', $ex->getMessage());
+        }
+    }
+
     public function testPut()
     {
         $id = 'ID';

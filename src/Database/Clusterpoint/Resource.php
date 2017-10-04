@@ -61,6 +61,17 @@ class Resource implements IResource
         }
     }
 
+    public function patch($resourceId, $newResource)
+    {
+        try {
+            $res = $this->collection->update($resourceId, $newResource->toArray());
+            $this->failOnError($res);
+            return $this->toObject($res);
+        } catch (\Exception $ex) {
+            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+        }
+    }
+
     public function put($resourceId, $newResource)
     {
         try {
