@@ -169,4 +169,15 @@ class SchemaValidator
     {
         return $this->filterFields($resource, 'unique', true);
     }
+
+    public function getFieldsWithDefaults($resource)
+    {
+        $fields = [];
+        foreach ($resource->schema() as $fieldName => $params) {
+            if (array_key_exists('default', $params)) {
+                $fields[$fieldName] = $params;
+            }
+        }
+        return $fields;
+    }
 }

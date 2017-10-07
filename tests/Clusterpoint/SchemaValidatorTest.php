@@ -48,6 +48,20 @@ class SchemaValidatorTest extends TestCase
         }
     }
 
+    public function testGetFields()
+    {
+        try {
+            $foo = $this->mockModel(FooModel::class, FooObject::class);
+            $fields = (new SchemaValidator)->getFields($foo->resource());
+            $this->assertEquals(
+                array_keys($fields),
+                array_keys($foo->resource()->schema())
+            );
+        } catch (RestException $ex) {
+            $this->fail(); // Correct structure should not throw an exception
+        }
+    }
+
     public function testTypeValidatorException()
     {
         try {
