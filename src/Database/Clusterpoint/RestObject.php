@@ -35,11 +35,19 @@ class RestObject extends CoreRestObject
         }
     }
 
+    private function isModification()
+    {
+        if ($this->updateMode() || $this->replaceMode()) {
+            return true;
+        }
+        return false;
+    }
+
     private function getUniqueFieldQuery()
     {
         $uniqueFields = $this->getUniqueFields();
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
-        if ($this->updateMode() || $this->replaceMode()) {
+        if ($this->isModification()) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
