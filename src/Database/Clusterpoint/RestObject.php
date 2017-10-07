@@ -21,13 +21,7 @@ class RestObject extends CoreRestObject
 
     public function validateUniqueFields()
     {
-        $uniqueFields = $this->getUniqueFields();
-        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
-        if ($this->updateMode() || $this->replaceMode()) {
-            $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
-            $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
-        }
-        $query = $this->getUniqueFieldQuery($query, $uniqueFields);
+        $query = $this->getUniqueFieldQuery();
         $res = $query->limit(1)->get();
         if ((int)$res->hits() > 0) {
             $results = json_decode($res->rawResponse())->results;
@@ -41,8 +35,14 @@ class RestObject extends CoreRestObject
         }
     }
 
-    private function getUniqueFieldQuery($query, $uniqueFields)
+    private function getUniqueFieldQuery()
     {
+        $uniqueFields = $this->getUniqueFields();
+        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
+        if ($this->updateMode() || $this->replaceMode()) {
+            $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
+            $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
+        }
         // @codeCoverageIgnoreStart
         $query->where(function ($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
