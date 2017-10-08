@@ -144,12 +144,12 @@ class SchemaValidator
         return $errors;
     }
 
-    private function filterFields($resource, $paramKey, $paramValue)
+    private function filterFields($resource, $paramKey, $paramValue, $checkParamValue = true)
     {
         $fields = [];
         foreach ($resource->schema() as $fieldName => $params) {
-            if (isset($params[$paramKey]) && $params[$paramKey] == $paramValue) {
-                $fields[] = $fieldName;
+            if (array_key_exists($params[$paramKey]) && (!$checkParamValue || $params[$paramKey] == $paramValue)) {
+                $fields[$fieldName] = $params[$paramKey];
             }
         }
         return $fields;
@@ -162,22 +162,16 @@ class SchemaValidator
 
     public function getRequiredFields($resource)
     {
-        return $this->filterFields($resource, 'required', true);
+        return array_keys($this->filterFields($resource, 'required', true));
     }
 
     public function getUniqueFields($resource)
     {
-        return $this->filterFields($resource, 'unique', true);
+        return array_keys($this->filterFields($resource, 'unique', true));
     }
 
     public function getFieldsWithDefaults($resource)
     {
-        $fields = [];
-        foreach ($resource->schema() as $fieldName => $params) {
-            if (array_key_exists('default', $params)) {
-                $fields[$fieldName] = $params;
-            }
-        }
-        return $fields;
+        return $this->filterFields($resource, 'default', null, false);
     }
 }

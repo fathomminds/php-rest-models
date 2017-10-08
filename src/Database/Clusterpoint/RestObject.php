@@ -22,7 +22,7 @@ class RestObject extends CoreRestObject
     public function validateUniqueFields()
     {
         $query = $this->getUniqueFieldQuery();
-        $res = $query->limit(1)->get();
+        $res = $query->get();
         if ((int)$res->hits() > 0) {
             $results = json_decode($res->rawResponse())->results;
             $message = $results[0]->{$this->primaryKey} === $this->getPrimaryKeyValue() ?
@@ -35,18 +35,11 @@ class RestObject extends CoreRestObject
         }
     }
 
-    private function isModification()
-    {
-        if ($this->updateMode() || $this->replaceMode()) {
-            return true;
-        }
-        return false;
-    }
 
     private function getUniqueFieldQuery()
     {
         $uniqueFields = $this->getUniqueFields();
-        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
+        $query = $this->getClient();
         if ($this->isModification()) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
@@ -60,12 +53,20 @@ class RestObject extends CoreRestObject
             }
         });
         // @codeCoverageIgnoreEnd
-        return $query;
+        return $query->limit(1);
+    }
+
+    private function isModification()
+    {
+        if ($this->updateMode() || $this->replaceMode()) {
+            return true;
+        }
+        return false;
     }
 
     public function query()
     {
-        $query = $this->database->getClient()->database($this->database->getDatabaseName().'.'.$this->resourceName);
+        $query = $this->getClient()->database($this->getDatabaseName().'.'.$this->resourceName);
         return $query;
     }
 }
