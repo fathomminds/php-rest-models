@@ -148,11 +148,23 @@ class SchemaValidator
     {
         $fields = [];
         foreach ($resource->schema() as $fieldName => $params) {
-            if (array_key_exists($paramKey, $params) && (!$checkParamValue || $params[$paramKey] == $paramValue)) {
+            if (array_key_exists($paramKey, $params) && $this->isMatchedValue(
+                $checkParamValue,
+                $params[$paramKey],
+                $paramValue
+            )) {
                 $fields[$fieldName] = $params;
             }
         }
         return $fields;
+    }
+
+    private function isMatchedValue($checkRequired, $value, $valueToMatch)
+    {
+        if (!$checkRequired) {
+            return true;
+        }
+        return ($value == $valueToMatch);
     }
 
     public function getFields($resource)
