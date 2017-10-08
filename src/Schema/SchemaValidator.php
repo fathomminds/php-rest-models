@@ -108,7 +108,7 @@ class SchemaValidator
             return $errors;
         }
         $missingFields = array_diff($this->getRequiredFields($resource), array_keys(get_object_vars($resource)));
-        array_walk($missingFields, function ($item, $key) use (&$errors) {
+        array_walk($missingFields, function ($item) use (&$errors) {
             $errors[$item] = 'Missing required field';
         });
         return $errors;
@@ -118,7 +118,7 @@ class SchemaValidator
     {
         $errors = [];
         $extraFields = array_diff(array_keys(get_object_vars($resource)), array_keys($resource->schema()));
-        array_walk($extraFields, function ($item, $key) use (&$errors) {
+        array_walk($extraFields, function ($item) use (&$errors) {
             $errors[$item] = 'Extraneous field';
         });
         return $errors;
