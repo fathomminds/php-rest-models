@@ -26,6 +26,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 * Basic model operations with a simple API ([Model API](./documentation/api/model/index.md)):
     * Model::create()
     * Model::update()
+    * Model::replace()
     * Model::one($resourceId)
     * Model::all()
     * Model::delete()
@@ -64,7 +65,7 @@ Framework independent PHP REST models with schema validation and multiple databa
 ## Model API reference ##
 
   [Model API](./documentation/api/model/index.md)
-  
+
   [Finder API](./documentation/api/finder/index.md)
 
 ## Example application ##
