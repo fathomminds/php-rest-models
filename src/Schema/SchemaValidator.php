@@ -107,11 +107,10 @@ class SchemaValidator
         if ($this->updateMode()) {
             return $errors;
         }
-        $requiredFields = $this->getRequiredFields($resource);
-        foreach ($requiredFields as $fieldName) {
-            if (!property_exists($resource, $fieldName)) {
-                $errors[$fieldName] = 'Missing required field';
-            }
+        if (!empty($diff = array_diff($this->getRequiredFields($resource), array_keys(get_object_vars($resource))))) {
+            array_walk($diff, function ($item, $key) use (&$errors) {
+                $errors[$item] = 'Missing required field';
+            });
         }
         return $errors;
     }
