@@ -148,8 +148,8 @@ class SchemaValidator
     {
         $fields = [];
         foreach ($resource->schema() as $fieldName => $params) {
-            if (array_key_exists($params[$paramKey]) && (!$checkParamValue || $params[$paramKey] == $paramValue)) {
-                $fields[$fieldName] = $params[$paramKey];
+            if (array_key_exists($paramKey, $params) && (!$checkParamValue || $params[$paramKey] == $paramValue)) {
+                $fields[$fieldName] = $params;
             }
         }
         return $fields;
