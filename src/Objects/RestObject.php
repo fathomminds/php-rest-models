@@ -132,14 +132,11 @@ abstract class RestObject implements IRestObject
 
     public function setFieldDefaults()
     {
-        $properties = get_object_vars($this->resource);
-        foreach ($this->schema->getFields($this->resource) as $fieldName => $field) {
-            if (isset($properties[$fieldName])) {
-                continue;
-            }
-            if (!array_key_exists('default', $field)) {
-                continue;
-            }
+        $properties = array_diff_key(
+            $this->schema->getFieldsWithDefaults($this->resource),
+            get_object_vars($this->resource)
+        );
+        foreach ($properties as $fieldName => $field) {
             $this->setFieldDefaultValue($fieldName, $field['default']);
         }
     }

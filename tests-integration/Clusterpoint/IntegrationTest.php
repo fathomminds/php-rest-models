@@ -5,6 +5,7 @@ use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlopSchema;
 use Clusterpoint\Client;
 
 class IntegrationTest extends TestCase
@@ -13,8 +14,13 @@ class IntegrationTest extends TestCase
     {
         $model = new FooModel;
         $resource = new FooSchema;
+        $barSchema = new BarSchema;
+        $barSchema->flip = 'flip';
         $resource->title = 'CREATED';
         $resource->status = 0;
+        $resource->bar = [
+            $barSchema,
+        ];
         $model->resource($resource);
 
         $model->create();
@@ -50,12 +56,28 @@ class IntegrationTest extends TestCase
         $model = new FooModel;
         $updateResource = new FooSchema;
         $barSchema = new BarSchema;
-        $barSchema->flip = "flip";
+        $flopSchema = new FlopSchema;
+        $flopSchema->_id = "TESTID";
+        $flopSchema->mobile = "TESTVALUE";
+        $barSchema->flip = "flipUpdated";
+        $barSchema->flop = $flopSchema;
         $updateResource->_id = $id;
         $updateResource->status = 1;
         $updateResource->bar = [
             $barSchema,
         ];
+        $model->resource($updateResource);
+
+        try {
+            $model->update();
+            $this->fail();
+        } catch (RestException $ex) {
+            $this->assertEquals('Error: Property does not exist.', $ex->getMessage());
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+
+        unset($updateResource->bar[0]->flop);
         $model->resource($updateResource);
         $model->update();
 
@@ -63,7 +85,8 @@ class IntegrationTest extends TestCase
         $model->one($id);
         $this->assertEquals($id, $model->resource()->_id);
         $this->assertEquals(1, $model->resource()->status);
-        $this->assertEquals("flip", $model->resource()->bar[0]->flip);
+        $this->assertEquals("flipUpdated", $model->resource()->bar[0]->flip);
+        $this->assertFalse(property_exists($model->resource()->bar[0], 'flop'));
 
         $model->delete();
         $this->assertTrue(empty(get_object_vars($model->resource())));

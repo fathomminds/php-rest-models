@@ -107,23 +107,20 @@ class SchemaValidator
         if ($this->updateMode()) {
             return $errors;
         }
-        $requiredFields = $this->getRequiredFields($resource);
-        foreach ($requiredFields as $fieldName) {
-            if (!property_exists($resource, $fieldName)) {
-                $errors[$fieldName] = 'Missing required field';
-            }
-        }
+        $missingFields = array_diff($this->getRequiredFields($resource), array_keys(get_object_vars($resource)));
+        array_walk($missingFields, function ($item) use (&$errors) {
+            $errors[$item] = 'Missing required field';
+        });
         return $errors;
     }
 
     private function validateExtraneousFields($resource)
     {
         $errors = [];
-        foreach (array_keys(get_object_vars($resource)) as $fieldName) {
-            if (!isset($resource->schema()[$fieldName])) {
-                $errors[$fieldName] = 'Extraneous field';
-            }
-        }
+        $extraFields = array_diff(array_keys(get_object_vars($resource)), array_keys($resource->schema()));
+        array_walk($extraFields, function ($item) use (&$errors) {
+            $errors[$item] = 'Extraneous field';
+        });
         return $errors;
     }
 
@@ -144,15 +141,27 @@ class SchemaValidator
         return $errors;
     }
 
-    private function filterFields($resource, $paramKey, $paramValue)
+    private function filterFields($resource, $paramKey, $paramValue, $checkParamValue = true)
     {
         $fields = [];
         foreach ($resource->schema() as $fieldName => $params) {
-            if (isset($params[$paramKey]) && $params[$paramKey] == $paramValue) {
-                $fields[] = $fieldName;
+            if (array_key_exists($paramKey, $params) && $this->isMatchedValue(
+                $checkParamValue,
+                $params[$paramKey],
+                $paramValue
+            )) {
+                $fields[$fieldName] = $params;
             }
         }
         return $fields;
+    }
+
+    private function isMatchedValue($checkRequired, $value, $valueToMatch)
+    {
+        if (!$checkRequired) {
+            return true;
+        }
+        return ($value == $valueToMatch);
     }
 
     public function getFields($resource)
@@ -162,11 +171,16 @@ class SchemaValidator
 
     public function getRequiredFields($resource)
     {
-        return $this->filterFields($resource, 'required', true);
+        return array_keys($this->filterFields($resource, 'required', true));
     }
 
     public function getUniqueFields($resource)
     {
-        return $this->filterFields($resource, 'unique', true);
+        return array_keys($this->filterFields($resource, 'unique', true));
+    }
+
+    public function getFieldsWithDefaults($resource)
+    {
+        return $this->filterFields($resource, 'default', null, false);
     }
 }

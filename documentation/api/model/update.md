@@ -1,6 +1,7 @@
 ## Model::update() ##
 
 Updates the model's resource in database.
+Updates only existing properties of the resource, otherwise throws RestException.
 
 ### Parameters ###
 

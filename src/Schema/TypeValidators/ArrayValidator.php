@@ -77,4 +77,32 @@ class ArrayValidator extends StdTypeValidator
         }
         return $errors;
     }
+
+    public static function cast($value, $params = null)
+    {
+        if (!is_array($value) || !static::isValidCastParams($params)) {
+            return $value;
+        }
+        $result = [];
+        foreach ($value as $key => $value) {
+            $arrayKey = $params['key']['validator']['class']::cast($key);
+            $arrayValue = $params['item']['validator']['class']::cast($value);
+            $result[$arrayKey] = $arrayValue;
+        }
+        return $result;
+    }
+
+    private static function isValidCastParams($params)
+    {
+        if (!is_array($params)) {
+            return false;
+        }
+        if (empty($params['key']['validator'])) {
+            return false;
+        }
+        if (empty($params['item']['validator'])) {
+            return false;
+        }
+        return true;
+    }
 }
