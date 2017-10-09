@@ -35,4 +35,9 @@ abstract class StdTypeValidator implements ITypeValidator
             );
         }
     }
+
+    public static function cast($value, $params = null)
+    {
+        return $value;
+    }
 }
