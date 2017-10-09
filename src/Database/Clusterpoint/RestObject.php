@@ -15,8 +15,8 @@ class RestObject extends CoreRestObject
             $client = $this->getClient();
         }
         return (new Finder($client))
-          ->database($this->getDatabaseName())
-          ->from($this->getResourceName());
+            ->database($this->getDatabaseName())
+            ->from($this->getResourceName());
     }
 
     public function validateUniqueFields()
@@ -26,8 +26,7 @@ class RestObject extends CoreRestObject
         if ((int)$res->hits() > 0) {
             $results = json_decode($res->rawResponse())->results;
             $message = $results[0]->{$this->primaryKey} === $this->getPrimaryKeyValue() ?
-                'Primary key collision' :
-                'Unique constraint violation';
+                'Primary key collision' : 'Unique constraint violation';
             throw new RestException(
                 $message,
                 ['resourceName' => $this->resourceName, 'confilct' => $results[0]]
@@ -39,7 +38,7 @@ class RestObject extends CoreRestObject
     private function getUniqueFieldQuery()
     {
         $uniqueFields = $this->getUniqueFields();
-        $query = $this->getClient()->database($this->getDatabaseName().'.'.$this->resourceName);
+        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         if ($this->isModification()) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());

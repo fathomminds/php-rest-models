@@ -119,7 +119,7 @@ class Resource implements IResource
         } catch (DynamoDbException $ex) {
             $this->throwAwsPutError($ex);
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
         return $newResource;
     }
@@ -131,7 +131,7 @@ class Resource implements IResource
             $res = $this->client->deleteItem($query);
             return $resourceId;
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
     }
 }

@@ -18,8 +18,8 @@ class RestObject extends CoreRestObject
             $client = $this->getClient();
         }
         return (new Finder($client))
-          ->database($this->getDatabaseName())
-          ->from($this->getResourceName());
+            ->database($this->getDatabaseName())
+            ->from($this->getResourceName());
     }
 
     public function validateUniqueFields()
@@ -43,7 +43,7 @@ class RestObject extends CoreRestObject
         $indexedFields = array_intersect($uniqueFields, $indexes); //Is unique and value is set and is indexed
         sort($uniqueFields);
         sort($indexedFields);
-        return $uniqueFields===$indexedFields;
+        return $uniqueFields === $indexedFields;
     }
 
     protected function scanUniqueFields($fields)
@@ -69,7 +69,7 @@ class RestObject extends CoreRestObject
         $filter = $this->generateScanFilter($fields);
         if (property_exists($this->resource, $this->primaryKey)) {
             $marshaler = new Marshaler;
-            $filter['FilterExpression'] = '('.$filter['FilterExpression'].') AND #pk<>:pk';
+            $filter['FilterExpression'] = '(' . $filter['FilterExpression'] . ') AND #pk<>:pk';
             $filter['ExpressionAttributeNames']['#pk'] = $this->primaryKey;
             $filter['ExpressionAttributeValues'][':pk'] = $marshaler->marshalValue(
                 $this->resource->{$this->primaryKey}
@@ -93,9 +93,9 @@ class RestObject extends CoreRestObject
         ];
         foreach ($fields as $field) {
             if (property_exists($this->resource, $field)) {
-                $ret['FilterExpression'] .= '#'.$field.'=:'.$field.' OR ';
-                $ret['ExpressionAttributeNames']['#'.$field] = $field;
-                $ret['ExpressionAttributeValues'][':'.$field] = $marshaler->marshalValue(
+                $ret['FilterExpression'] .= '#' . $field . '=:' . $field . ' OR ';
+                $ret['ExpressionAttributeNames']['#' . $field] = $field;
+                $ret['ExpressionAttributeValues'][':' . $field] = $marshaler->marshalValue(
                     $this->resource->{$field}
                 );
             }
@@ -169,7 +169,7 @@ class RestObject extends CoreRestObject
     protected function generatePromise($client, $request)
     {
         $promise = new Promise(
-            function () use (&$promise, $client, $request) {
+            function() use (&$promise, $client, $request) {
                 $query = new Query($client, $request);
                 while ($res = $query->next()) {
                     if ($res['Count'] !== 0) {

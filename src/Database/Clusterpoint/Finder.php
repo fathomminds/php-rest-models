@@ -42,6 +42,9 @@ class Finder extends BaseFinder
         }
     }
 
+    /**
+     * @param \Clusterpoint\Instance\Service $collection
+     */
     protected function configQuery($collection)
     {
         $this->setLimit($collection);
@@ -61,13 +64,13 @@ class Finder extends BaseFinder
         }
         $collection = $this->client->database(
             $this->queryConfiguration->databaseName.
-            '.'.
+            '.' .
             $this->queryConfiguration->from
         );
         $this->configQuery($collection);
         $items = json_decode(json_encode($collection->get()->toArray()));
         $count = count($items);
-        for ($idx=0; $idx<$count; $idx++) {
+        for ($idx = 0; $idx < $count; $idx++) {
             $this->resultSet[] = $items[$idx];
         }
         return $this;
@@ -79,17 +82,24 @@ class Finder extends BaseFinder
         return $this;
     }
 
+    /**
+     * @param string $logical
+     * @return \Clusterpoint\Instance\Service
+     */
     protected function addWhereGroup($collection, $conditions, $logical)
     {
-      /**
-      * @codeCoverageIgnore
-      * Passing anonymous function to Clusterpoint API
-      */
-        return function ($collection) use ($conditions, $logical) {
+        /**
+         * @codeCoverageIgnore
+         * Passing anonymous function to Clusterpoint API
+         */
+        return function($collection) use ($conditions, $logical) {
             $this->parseWhere($collection, $conditions, $logical);
         };
     }
 
+    /**
+     * @param string $nextLogical
+     */
     protected function parseWhereGroup($logical, $collection, $condition, $nextLogical)
     {
         if ($logical === '||') {
