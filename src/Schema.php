@@ -54,6 +54,14 @@ abstract class Schema implements ISchema
 
     public static function cast($object, $params = null)
     {
+        if ($params === null) {
+            return self::castSchema($object);
+        }
+        return new static($object);
+    }
+
+    private static function castSchema($object)
+    {
         return new static($object);
     }
 }
