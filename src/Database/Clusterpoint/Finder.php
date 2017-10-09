@@ -98,7 +98,8 @@ class Finder extends BaseFinder
     }
 
     /**
-     * @param string $logical
+     * @param \Clusterpoint\Instance\Service $collection
+     * @param array $conditions @param string $logical
      * @return \Closure
      */
     protected function addWhereGroup($collection, $conditions, $logical)
@@ -113,6 +114,9 @@ class Finder extends BaseFinder
     }
 
     /**
+     * @param string $logical
+     * @param \Clusterpoint\Instance\Service $collection
+     * @param array $condition
      * @param string $nextLogical
      */
     protected function parseWhereGroup($logical, $collection, $condition, $nextLogical)
@@ -126,6 +130,8 @@ class Finder extends BaseFinder
     }
 
     /**
+     * @param \Clusterpoint\Instance\Service $collection
+     * @param array $conditions
      * @param string $logical
      */
     private function parseWhere($collection, $conditions, $logical)

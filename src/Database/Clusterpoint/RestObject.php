@@ -65,7 +65,7 @@ class RestObject extends CoreRestObject
 
     public function query()
     {
-        $query = $this->getClient()->database($this->getDatabaseName() . '.'.$this->resourceName);
+        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         return $query;
     }
 }
