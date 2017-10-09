@@ -4,6 +4,7 @@ Public API of the PHP REST Models:
 
 * [Model::create()](./create.md)
 * [Model::update()](./update.md)
+* [Model::replace()](./replace.md)
 * [Model::one($resourceId)](./one.md)
 * [Model::all()](./all.md)
 * [Model::delete()](./delete.md)
