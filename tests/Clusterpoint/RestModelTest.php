@@ -2,9 +2,12 @@
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlopSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
+use Fathomminds\Rest\Schema\TypeValidators\ArrayValidator;
 use Mockery;
 
 class RestModelTest extends TestCase
@@ -447,5 +450,96 @@ class RestModelTest extends TestCase
         $model = new FooModel($mockRestObject);
         $model->getDatabaseName();
         $this->assertEquals(1, 1); // Must reach this line
+    }
+
+    public function testSchemaCast()
+    {
+        $object = (object)[
+            '_id' => 'FOOID',
+            'status' => 1,
+            'bar' => [
+                (object)[
+                    '_id' => 'BARID',
+                    'flip' => 'FLIP',
+                    'flop' => (object)[
+                        '_id' => 'FLOPID',
+                        'mobile' => 'MOBILE',
+                        'addrLat' => 13,
+                        'addrLng' => 31.75,
+                        'extraneousField' => 'EXTRA',
+                    ],
+                ],
+            ],
+        ];
+        $fooSchema = new FooSchema($object);
+        $this->assertEquals(
+            'Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema',
+            get_class($fooSchema)
+        );
+        $this->assertTrue(is_string($fooSchema->_id));
+        $this->assertEquals($fooSchema->_id, 'FOOID');
+        $this->assertTrue(is_integer($fooSchema->status));
+        $this->assertEquals($fooSchema->status, 1);
+        $this->assertTrue(is_array($fooSchema->bar));
+        $this->assertEquals(
+            'Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\BarSchema',
+            get_class($fooSchema->bar[0])
+        );
+        $this->assertTrue(is_string($fooSchema->bar[0]->_id));
+        $this->assertEquals($fooSchema->bar[0]->_id, 'BARID');
+        $this->assertTrue(is_string($fooSchema->bar[0]->flip));
+        $this->assertEquals($fooSchema->bar[0]->flip, 'FLIP');
+        $this->assertEquals(
+            'Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlopSchema',
+            get_class($fooSchema->bar[0]->flop)
+        );
+        $this->assertTrue(is_string($fooSchema->bar[0]->flop->_id));
+        $this->assertEquals($fooSchema->bar[0]->flop->_id, 'FLOPID');
+        $this->assertTrue(is_string($fooSchema->bar[0]->flop->mobile));
+        $this->assertEquals($fooSchema->bar[0]->flop->mobile, 'MOBILE');
+        $this->assertTrue(is_double($fooSchema->bar[0]->flop->addrLat));
+        $this->assertEquals($fooSchema->bar[0]->flop->addrLat, 13);
+        $this->assertTrue(is_double($fooSchema->bar[0]->flop->addrLng));
+        $this->assertEquals($fooSchema->bar[0]->flop->addrLng, 31.75);
+        $this->assertTrue(property_exists($fooSchema->bar[0]->flop, 'extraneousField'));
+    }
+
+    public function testInvalidCastParams()
+    {
+        $value = null;
+        $params = null;
+        $this->assertEquals(null, ArrayValidator::cast($value, $params));
+
+        $value = ['paramsIsNotArray'];
+        $params = null;
+        $this->assertEquals('["paramsIsNotArray"]', json_encode(ArrayValidator::cast($value, $params)));
+
+        $value = ['missingParamsKey'];
+        $params = ['item' => ['validator' => 'INTEGER']];
+        $this->assertEquals('["missingParamsKey"]', json_encode(ArrayValidator::cast($value, $params)));
+
+        $value = ['missingParamsItem'];
+        $params = ['key' => ['validator' => 'INTEGER']];
+        $this->assertEquals('["missingParamsItem"]', json_encode(ArrayValidator::cast($value, $params)));
+    }
+
+    public function testSchemaCastWithParams()
+    {
+        $params = [
+            'invalid' => 'notUsed',
+        ];
+        $object = (object)[
+            '_id' => 'FOOID',
+            'status' => 1,
+        ];
+        $fooSchema = FooSchema::cast($object, $params);
+        $this->assertEquals(
+            'Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema',
+            get_class($fooSchema)
+        );
+        $this->assertTrue(is_string($fooSchema->_id));
+        $this->assertEquals($fooSchema->_id, 'FOOID');
+        $this->assertTrue(is_integer($fooSchema->status));
+        $this->assertEquals($fooSchema->status, 1);
     }
 }

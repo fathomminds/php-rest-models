@@ -9,7 +9,7 @@ use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
 class DatabaseTest extends TestCase
 {
-    public function testPut()
+    public function testPost()
     {
         $database = new Database($this->mockClient, 'DATABASENAME');
         $resource = new FooSchema;
@@ -23,7 +23,7 @@ class DatabaseTest extends TestCase
         $this->assertEquals('TITLE', $res->title);
     }
 
-    public function testPost()
+    public function testPut()
     {
         $database = new Database($this->mockClient, 'DATABASENAME');
         $resource = new FooSchema;
@@ -46,7 +46,7 @@ class DatabaseTest extends TestCase
         $resource->_id = $id;
         $resource->title = 'TITLE';
         $this->mockDatabase
-            ->shouldReceive('update')
+            ->shouldReceive('updateExisting')
             ->andReturn($this->mockResponse(['results' => [$resource]]));
         $res = $database->patch('resourceName', '_id', $id, $resource);
         $this->assertEquals('ID', $res->_id);

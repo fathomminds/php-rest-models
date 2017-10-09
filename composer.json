@@ -23,6 +23,12 @@
         }
     ],
     "minimum-stability": "dev",
+    "repositories": [
+      {
+          "type": "vcs",
+          "url": "https://github.com/fathomminds/php-client-api-v4"
+      }
+    ],
     "require": {
         "php": ">=7.0",
         "vlucas/phpdotenv": "~2.2",
@@ -31,7 +37,7 @@
     "require-dev": {
         "phpunit/phpunit": "^6.0",
         "mockery/mockery": "~0.9",
-        "clusterpoint/php-client-api-v4": "^4.0",
+        "clusterpoint/php-client-api-v4": "dev-master",
         "aws/aws-sdk-php": "^3.24"
     },
     "autoload": {

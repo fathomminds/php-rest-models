@@ -17,6 +17,7 @@ abstract class TestCase extends PHPUnitTestCase
 
     public function __construct()
     {
+        parent::__construct();
         $this->mockDatabase = Mockery::mock(Service::class);
         $this->mockClient = Mockery::mock(Client::class);
         $this->mockClient->shouldReceive('database')->andReturn($this->mockDatabase);

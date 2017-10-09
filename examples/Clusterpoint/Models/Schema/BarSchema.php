@@ -17,7 +17,6 @@ class BarSchema extends Schema
     {
         return [
             '_id' => [
-                'unique' => true,
                 'validator' => [
                     'class' => StringValidator::class,
                 ]
@@ -29,7 +28,6 @@ class BarSchema extends Schema
             ],
             'flop' => [
                 'type' => 'schema',
-                'required' => true,
                 'validator' => [
                     'class' => FlopSchema::class,
                 ],

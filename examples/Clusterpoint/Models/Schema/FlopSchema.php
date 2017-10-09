@@ -3,6 +3,7 @@ namespace Fathomminds\Rest\Examples\Clusterpoint\Models\Schema;
 
 use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
+use Fathomminds\Rest\Schema\TypeValidators\DoubleValidator;
 
 /**
  *
@@ -26,7 +27,17 @@ class FlopSchema extends Schema
                 'validator' => [
                     'class' => StringValidator::class,
                 ]
-            ]
+            ],
+            'addrLat' => [
+                'validator' => [
+                    'class' => DoubleValidator::class,
+                ]
+            ],
+            'addrLng' => [
+                'validator' => [
+                    'class' => DoubleValidator::class,
+                ]
+            ],
         ];
     }
 }
