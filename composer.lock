@@ -375,12 +375,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fathomminds/php-client-api-v4.git",
-                "reference": "653e15cae8f3c5e300a86bb36c9845b5ea00611d"
+                "reference": "bc4221de0c7904fa4159fbb4051a18e8ee3010dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fathomminds/php-client-api-v4/zipball/653e15cae8f3c5e300a86bb36c9845b5ea00611d",
-                "reference": "653e15cae8f3c5e300a86bb36c9845b5ea00611d",
+                "url": "https://api.github.com/repos/fathomminds/php-client-api-v4/zipball/bc4221de0c7904fa4159fbb4051a18e8ee3010dd",
+                "reference": "bc4221de0c7904fa4159fbb4051a18e8ee3010dd",
                 "shasum": ""
             },
             "require": {
@@ -422,7 +422,7 @@
             "support": {
                 "source": "https://github.com/fathomminds/php-client-api-v4/tree/master"
             },
-            "time": "2017-10-07T16:25:27+00:00"
+            "time": "2017-10-09T10:32:59+00:00"
         },
         {
             "name": "doctrine/instantiator",
