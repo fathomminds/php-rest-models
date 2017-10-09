@@ -100,8 +100,7 @@ class Resource implements IResource
             return;
         }
         $message = $res->error()[0]->message === 'Requested document does not exist' ?
-            'Resource does not exist' :
-            'Database operation failed';
+            'Resource does not exist' : 'Database operation failed';
         throw new RestException(
             $message,
             [
