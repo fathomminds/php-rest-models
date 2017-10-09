@@ -15,6 +15,7 @@ abstract class TestCase extends PHPUnitTestCase
 
     public function __construct()
     {
+        parent::__construct();
         $this->mockClient = Mockery::mock(DynamoDbClient::class);
     }
 

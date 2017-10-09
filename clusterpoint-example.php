@@ -20,11 +20,11 @@
 
 return [
     'default' => [
-      'host' => getenv('CLUSTERPOINT_HOST'),
-      'account_id' => getenv('CLUSTERPOINT_ACCOUNT_ID'),
-      'username' => getenv('CLUSTERPOINT_USERNAME'),
-      'password' => getenv('CLUSTERPOINT_PASSWORD'),
-      'debug' => getenv('CLUSTERPOINT_DEBUG_MODE'),
+        'host' => getenv('CLUSTERPOINT_HOST'),
+        'account_id' => getenv('CLUSTERPOINT_ACCOUNT_ID'),
+        'username' => getenv('CLUSTERPOINT_USERNAME'),
+        'password' => getenv('CLUSTERPOINT_PASSWORD'),
+        'debug' => getenv('CLUSTERPOINT_DEBUG_MODE'),
     ],
     'development' => [
         'host' => 'https://api-eu.clusterpoint.com/v4/',

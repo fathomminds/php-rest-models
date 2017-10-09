@@ -15,25 +15,18 @@ class RestObject extends CoreRestObject
             $client = $this->getClient();
         }
         return (new Finder($client))
-          ->database($this->getDatabaseName())
-          ->from($this->getResourceName());
+            ->database($this->getDatabaseName())
+            ->from($this->getResourceName());
     }
 
     public function validateUniqueFields()
     {
-        $uniqueFields = $this->getUniqueFields();
-        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
-        if ($this->updateMode() || $this->replaceMode()) {
-            $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
-            $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
-        }
-        $query = $this->getUniqueFieldQuery($query, $uniqueFields);
-        $res = $query->limit(1)->get();
+        $query = $this->getUniqueFieldQuery();
+        $res = $query->get();
         if ((int)$res->hits() > 0) {
             $results = json_decode($res->rawResponse())->results;
             $message = $results[0]->{$this->primaryKey} === $this->getPrimaryKeyValue() ?
-                'Primary key collision' :
-                'Unique constraint violation';
+                'Primary key collision' : 'Unique constraint violation';
             throw new RestException(
                 $message,
                 ['resourceName' => $this->resourceName, 'confilct' => $results[0]]
@@ -41,10 +34,17 @@ class RestObject extends CoreRestObject
         }
     }
 
-    private function getUniqueFieldQuery($query, $uniqueFields)
+
+    private function getUniqueFieldQuery()
     {
+        $uniqueFields = $this->getUniqueFields();
+        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
+        if ($this->isModification()) {
+            $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
+            $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
+        }
         // @codeCoverageIgnoreStart
-        $query->where(function ($query) use ($uniqueFields) {
+        $query->where(function($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
                 if (property_exists($this->resource, $fieldName)) {
                     $query->orWhere($fieldName, '==', $this->resource->{$fieldName});
@@ -52,12 +52,20 @@ class RestObject extends CoreRestObject
             }
         });
         // @codeCoverageIgnoreEnd
-        return $query;
+        return $query->limit(1);
+    }
+
+    private function isModification()
+    {
+        if ($this->updateMode() || $this->replaceMode()) {
+            return true;
+        }
+        return false;
     }
 
     public function query()
     {
-        $query = $this->database->getClient()->database($this->database->getDatabaseName().'.'.$this->resourceName);
+        $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         return $query;
     }
 }

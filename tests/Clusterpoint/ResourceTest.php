@@ -14,7 +14,7 @@ class ResourceTest extends TestCase
         $resource = new FooSchema;
         $resource->_id = $id;
         $this->mockDatabase
-            ->shouldReceive('update')
+            ->shouldReceive('updateExisting')
             ->andReturn($this->mockResponse($resource));
         $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
         try {
@@ -32,7 +32,7 @@ class ResourceTest extends TestCase
         $resource->_id = $id;
         $resource->status = 'INTEGER';
         $this->mockDatabase
-            ->shouldReceive('update')
+            ->shouldReceive('updateExisting')
             ->andThrow(RestException::class, 'Error');
         $rest = new Resource('dummy', '_id', $this->mockClient, 'DBNAME');
         try {
