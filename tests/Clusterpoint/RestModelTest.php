@@ -522,4 +522,24 @@ class RestModelTest extends TestCase
         $params = ['key' => ['validator' => 'INTEGER']];
         $this->assertEquals('["missingParamsItem"]', json_encode(ArrayValidator::cast($value, $params)));
     }
+
+    public function testSchemaCastWithParams()
+    {
+        $params = [
+            'invalid' => 'notUsed',
+        ];
+        $object = (object)[
+            '_id' => 'FOOID',
+            'status' => 1,
+        ];
+        $fooSchema = FooSchema::cast($object, $params);
+        $this->assertEquals(
+            'Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema',
+            get_class($fooSchema)
+        );
+        $this->assertTrue(is_string($fooSchema->_id));
+        $this->assertEquals($fooSchema->_id, 'FOOID');
+        $this->assertTrue(is_integer($fooSchema->status));
+        $this->assertEquals($fooSchema->status, 1);
+    }
 }

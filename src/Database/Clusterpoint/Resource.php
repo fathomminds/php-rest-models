@@ -57,7 +57,7 @@ class Resource implements IResource
                 $object->{$this->primaryKey};
             return $newResource;
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
     }
 
@@ -68,7 +68,7 @@ class Resource implements IResource
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
     }
 
@@ -79,7 +79,7 @@ class Resource implements IResource
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
     }
 
@@ -90,7 +90,7 @@ class Resource implements IResource
             $this->failOnError($res);
             return $this->toObject($res);
         } catch (\Exception $ex) {
-            throw new RestException($ex->getMessage(), ['result'=>empty($res)?null:$res]);
+            throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
     }
 
@@ -100,8 +100,7 @@ class Resource implements IResource
             return;
         }
         $message = $res->error()[0]->message === 'Requested document does not exist' ?
-            'Resource does not exist' :
-            'Database operation failed';
+            'Resource does not exist' : 'Database operation failed';
         throw new RestException(
             $message,
             [

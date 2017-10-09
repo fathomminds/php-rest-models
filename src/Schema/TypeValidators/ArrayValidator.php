@@ -80,7 +80,7 @@ class ArrayValidator extends StdTypeValidator
 
     public static function cast($value, $params = null)
     {
-        if (!is_array($value) || !static::isValidCastParams($params)) {
+        if (!is_array($value) || !self::isValidCastParams($params)) {
             return $value;
         }
         $result = [];
