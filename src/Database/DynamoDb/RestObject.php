@@ -139,10 +139,10 @@ class RestObject extends CoreRestObject
         $marshaler = new Marshaler;
         $query = [
             'TableName' => $this->database->getDatabaseName() . '-' . $this->resourceName,
-            'KeyConditionExpression' => '#'.$field.'=:'.$field,
+            'KeyConditionExpression' => '#' . $field . '=:' . $field,
             'IndexName' => $this->indexNames[$field],
-            'ExpressionAttributeNames' => ['#'.$field => $field],
-            'ExpressionAttributeValues' => [':'.$field =>  $marshaler->marshalValue(
+            'ExpressionAttributeNames' => ['#' . $field => $field],
+            'ExpressionAttributeValues' => [':' . $field =>  $marshaler->marshalValue(
                 $this->resource->{$field}
             )],
         ];

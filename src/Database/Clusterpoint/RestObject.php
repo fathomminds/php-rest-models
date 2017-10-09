@@ -44,7 +44,7 @@ class RestObject extends CoreRestObject
             $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
         }
         // @codeCoverageIgnoreStart
-        $query->where(function ($query) use ($uniqueFields) {
+        $query->where(function($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
                 if (property_exists($this->resource, $fieldName)) {
                     $query->orWhere($fieldName, '==', $this->resource->{$fieldName});
@@ -65,7 +65,7 @@ class RestObject extends CoreRestObject
 
     public function query()
     {
-        $query = $this->getClient()->database($this->getDatabaseName().'.'.$this->resourceName);
+        $query = $this->getClient()->database($this->getDatabaseName() . '.'.$this->resourceName);
         return $query;
     }
 }

@@ -7,6 +7,9 @@ use Clusterpoint\Client;
 
 class Finder extends BaseFinder
 {
+    /**
+     * @param \Clusterpoint\Instance\Service $collection
+     */
     protected function setLimit($collection)
     {
         if ($this->queryConfiguration->limit !== null) {
@@ -14,6 +17,9 @@ class Finder extends BaseFinder
         }
     }
 
+    /**
+     * @param \Clusterpoint\Instance\Service $collection
+     */
     protected function setOffset($collection)
     {
         if ($this->queryConfiguration->offset !== null) {
@@ -21,6 +27,9 @@ class Finder extends BaseFinder
         }
     }
 
+    /**
+     * @param \Clusterpoint\Instance\Service $collection
+     */
     protected function setOrderBy($collection)
     {
         foreach ($this->queryConfiguration->orderBy as $orderBy) {
@@ -28,6 +37,9 @@ class Finder extends BaseFinder
         }
     }
 
+    /**
+     * @param \Clusterpoint\Instance\Service $collection
+     */
     protected function setSelect($collection)
     {
         if ($this->queryConfiguration->select !== '*') {
@@ -35,6 +47,9 @@ class Finder extends BaseFinder
         }
     }
 
+    /**
+     * @param \Clusterpoint\Instance\Service $collection
+     */
     protected function setWhere($collection)
     {
         if (!empty($this->queryConfiguration->where)) {
@@ -63,7 +78,7 @@ class Finder extends BaseFinder
             );
         }
         $collection = $this->client->database(
-            $this->queryConfiguration->databaseName.
+            $this->queryConfiguration->databaseName .
             '.' .
             $this->queryConfiguration->from
         );
@@ -84,7 +99,7 @@ class Finder extends BaseFinder
 
     /**
      * @param string $logical
-     * @return \Clusterpoint\Instance\Service
+     * @return \Closure
      */
     protected function addWhereGroup($collection, $conditions, $logical)
     {
@@ -110,6 +125,9 @@ class Finder extends BaseFinder
         }
     }
 
+    /**
+     * @param string $logical
+     */
     private function parseWhere($collection, $conditions, $logical)
     {
         foreach ($conditions as $key => $condition) {
