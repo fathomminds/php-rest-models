@@ -10,6 +10,7 @@ class SchemaValidator
     protected $allowExtraneous = false;
     protected $requiredSchemaClass = null;
     private $updateMode = false;
+    private $replaceMode = false;
 
     public function __construct($requiredSchemaClass = null)
     {
@@ -22,6 +23,14 @@ class SchemaValidator
             $this->updateMode = $updateMode;
         }
         return $this->updateMode;
+    }
+
+    public function replaceMode($replaceMode = null)
+    {
+        if (is_bool($replaceMode)) {
+            $this->replaceMode = $replaceMode;
+        }
+        return $this->replaceMode;
     }
 
     public function validate($resource)
