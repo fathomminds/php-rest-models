@@ -153,6 +153,7 @@ abstract class RestObject implements IRestObject
     public function validateSchema($resource)
     {
         $this->schema->updateMode($this->updateMode());
+        $this->schema->replaceMode($this->replaceMode());
         $this->schema->validate($resource);
     }
 
