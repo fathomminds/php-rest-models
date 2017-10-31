@@ -10,6 +10,11 @@ abstract class StdTypeValidator implements ITypeValidator
     private $updateMode = false;
     private $replaceMode = false;
 
+    public static function cast($value, $params = null)
+    {
+        return $value;
+    }
+
     public function updateMode($updateMode = null)
     {
         if (is_bool($updateMode)) {
@@ -43,10 +48,5 @@ abstract class StdTypeValidator implements ITypeValidator
                 ]
             );
         }
-    }
-
-    public static function cast($value, $params = null)
-    {
-        return $value;
     }
 }

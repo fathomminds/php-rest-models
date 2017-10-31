@@ -8,6 +8,11 @@ use Fathomminds\Rest\Exceptions\RestException;
 
 abstract class Schema implements ISchema
 {
+    public static function cast($object)
+    {
+        return new static($object);
+    }
+
     public function __construct($object = null)
     {
         if ($object === null) {
@@ -54,11 +59,6 @@ abstract class Schema implements ISchema
     public function toArray()
     {
         return json_decode(json_encode($this), true);
-    }
-
-    public static function cast($object)
-    {
-        return new static($object);
     }
 
     public function setFieldDefaults()
