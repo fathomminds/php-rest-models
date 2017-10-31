@@ -35,6 +35,11 @@ class FooSchema extends Schema
             'title' => [
                 'unique' => true,
                 'required' => true,
+                'default' => function () {
+                    return (isset($this->flip) && isset($this->flip->title))
+                        ? 'Title for flip: ' . $this->flip->title
+                        : 'Title for flip: Default Title';
+                },
                 'validator' => [
                     'class' => StringValidator::class,
                     'params' => [
@@ -69,6 +74,18 @@ class FooSchema extends Schema
                         ],
                     ],
                 ],
+            ],
+            'flip' => [
+                'type' => 'schema',
+                'validator' => [
+                    'class' => FlipSchema::class,
+                ]
+            ],
+            'flip2' => [
+                'type' => 'schema',
+                'validator' => [
+                    'class' => FlipSchema::class,
+                ]
             ],
         ];
     }
