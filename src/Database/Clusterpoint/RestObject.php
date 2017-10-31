@@ -34,7 +34,6 @@ class RestObject extends CoreRestObject
         }
     }
 
-
     private function getUniqueFieldQuery()
     {
         $uniqueFields = $this->getUniqueFields();
@@ -46,13 +45,33 @@ class RestObject extends CoreRestObject
         // @codeCoverageIgnoreStart
         $query->where(function($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
-                if (property_exists($this->resource, $fieldName)) {
-                    $query->orWhere($fieldName, '==', $this->resource->{$fieldName});
+                list($propertyExists, $propertyValue) = $this->getProperty($this->resource, $fieldName);
+                if ($propertyExists) {
+                    $query->orWhere($fieldName, '==', $propertyValue);
                 }
             }
         });
         // @codeCoverageIgnoreEnd
         return $query->limit(1);
+    }
+
+    private function getProperty($resource, $fieldNameDotted)
+    {
+        $fieldNameArr = explode('.', $fieldNameDotted);
+        $fieldName = array_shift($fieldNameArr);
+        if (!property_exists($resource, $fieldName)) {
+            return [
+                false,
+                null
+            ];
+        }
+        if (count($fieldNameArr) === 0) {
+            return [
+                true,
+                $resource->{$fieldName}
+            ];
+        }
+        return $this->getProperty($resource->{$fieldName}, implode('.', $fieldNameArr));
     }
 
     private function isModification()

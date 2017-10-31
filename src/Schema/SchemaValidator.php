@@ -193,7 +193,26 @@ class SchemaValidator
 
     public function getUniqueFields($resource)
     {
-        return array_keys($this->filterFields($resource, 'unique', true));
+        return array_merge(
+            array_keys($this->filterFields($resource, 'unique', true)),
+            $this->getNestedUniqueFieldNames($resource)
+        );
+    }
+
+    public function getNestedUniqueFieldNames($resource) {
+        $result = [];
+        $schemaFields = $this->filterFields($resource, 'type', 'schema');
+        array_walk($schemaFields, function($fieldDetails, $fieldName) use (&$result, &$resource) {
+            $nestedResourceClass = $fieldDetails['validator']['class'];
+            $nestedResource = property_exists($resource, $fieldName)
+                ? $resource->{$fieldName}
+                : $nestedResourceClass::cast((object)[]);
+            $nestedUniqueFields = (new SchemaValidator($nestedResourceClass))->getUniqueFields($nestedResource);
+            array_walk($nestedUniqueFields, function($nestedFieldName) use (&$result, &$fieldName) {
+                $result[] = $fieldName . '.' . $nestedFieldName;
+            });
+        });
+        return $result;
     }
 
     public function getFieldsWithDefaults($resource)
