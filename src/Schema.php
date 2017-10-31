@@ -29,6 +29,9 @@ abstract class Schema implements ISchema
         if (!array_key_exists($name, $schema)) {
             return $value;
         }
+        if (isset($schema[$name]['type']) && $schema[$name]['type'] === 'schema') {
+            return $schema[$name]['validator']['class']::cast($value);
+        }
         $params = empty($schema[$name]['validator']['params'])
             ? null
             : $schema[$name]['validator']['params'];
@@ -53,15 +56,7 @@ abstract class Schema implements ISchema
         return json_decode(json_encode($this), true);
     }
 
-    public static function cast($object, $params = null)
-    {
-        if ($params === null) {
-            return self::castSchema($object);
-        }
-        return new static($object);
-    }
-
-    private static function castSchema($object)
+    public static function cast($object)
     {
         return new static($object);
     }
