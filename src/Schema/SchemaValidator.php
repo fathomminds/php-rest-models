@@ -199,7 +199,7 @@ class SchemaValidator
         );
     }
 
-    public function getNestedUniqueFieldNames($resource) {
+    private function getNestedUniqueFieldNames($resource) {
         $result = [];
         $schemaFields = $this->filterFields($resource, 'type', 'schema');
         array_walk($schemaFields, function($fieldDetails, $fieldName) use (&$result, &$resource) {
