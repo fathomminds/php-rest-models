@@ -8,6 +8,7 @@ abstract class StdTypeValidator implements ITypeValidator
 {
     protected $validType;
     private $updateMode = false;
+    private $replaceMode = false;
 
     public function updateMode($updateMode = null)
     {
@@ -15,6 +16,14 @@ abstract class StdTypeValidator implements ITypeValidator
             $this->updateMode = $updateMode;
         }
         return $this->updateMode;
+    }
+
+    public function replaceMode($replaceMode = null)
+    {
+        if (is_bool($replaceMode)) {
+            $this->replaceMode = $replaceMode;
+        }
+        return $this->replaceMode;
     }
 
     public function validate($value)
