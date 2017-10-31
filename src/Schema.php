@@ -2,6 +2,7 @@
 namespace Fathomminds\Rest;
 
 use Fathomminds\Rest\Contracts\ISchema;
+use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Exceptions\RestException;
 
@@ -63,5 +64,32 @@ abstract class Schema implements ISchema
     private static function castSchema($object)
     {
         return new static($object);
+    }
+
+    public function setFieldDefaults()
+    {
+        $properties = array_diff_key(
+            (new SchemaValidator(static::class))->getFieldsWithDefaults($this),
+            get_object_vars($this)
+        );
+        foreach ($properties as $fieldName => $field) {
+            $this->setFieldDefaultValue($fieldName, $field['default']);
+        }
+        return $this;
+    }
+
+    protected function setFieldDefaultValue($fieldName, $value)
+    {
+        if (gettype($value) === 'object' && is_callable($value)) {
+            $this->{$fieldName} = $value();
+            return;
+        }
+        $this->{$fieldName} = $value;
+    }
+
+    public function validate()
+    {
+        (new SchemaValidator(static::class))->validate($this);
+        return $this;
     }
 }
