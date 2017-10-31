@@ -45,8 +45,9 @@ class RestObject extends CoreRestObject
         // @codeCoverageIgnoreStart
         $query->where(function($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
-                list($propertyExists, $propertyValue) = $this->getProperty($this->resource, $fieldName);
+                list($propertyExists, $propertyValue) = $this->getProperty($fieldName);
                 if ($propertyExists) {
+                    $this->validateUniqueFieldDataType($fieldName, $propertyValue);
                     $query->orWhere($fieldName, '==', $propertyValue);
                 }
             }
@@ -55,8 +56,11 @@ class RestObject extends CoreRestObject
         return $query->limit(1);
     }
 
-    private function getProperty($resource, $fieldNameDotted)
+    private function getProperty($fieldNameDotted, $resource = null)
     {
+        if ($resource === null) {
+            $resource = $this->resource;
+        }
         $fieldNameArr = explode('.', $fieldNameDotted);
         $fieldName = array_shift($fieldNameArr);
         if (!property_exists($resource, $fieldName)) {
@@ -71,7 +75,25 @@ class RestObject extends CoreRestObject
                 $resource->{$fieldName}
             ];
         }
-        return $this->getProperty($resource->{$fieldName}, implode('.', $fieldNameArr));
+        return $this->getProperty(implode('.', $fieldNameArr), $resource->{$fieldName});
+    }
+
+    private function validateUniqueFieldDataType($fieldName, $propertyValue)
+    {
+        $dataType = gettype($propertyValue);
+        if (in_array($dataType, $this->validUniqueFieldTypes)) {
+            return;
+        }
+        throw new RestException(
+            'Data type is invalid for unique field',
+            [
+                'resourceName' => $this->resourceName,
+                'fieldName' => $fieldName,
+                'data' => $propertyValue,
+                'dataType' => $dataType,
+                'validDataTypes' => $this->validUniqueFieldTypes
+            ]
+        );
     }
 
     private function isModification()
