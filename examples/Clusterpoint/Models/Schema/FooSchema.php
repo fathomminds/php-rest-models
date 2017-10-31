@@ -81,10 +81,16 @@ class FooSchema extends Schema
                     'class' => FlipSchema::class,
                 ]
             ],
-            'flip2' => [
+            'boo' => [
                 'type' => 'schema',
+                'default' => function() {
+                    return new BooSchema(BooSchema::cast((object)[
+                        'title' => 'test',
+                        'email' => 'test@test.hu'
+                    ]));
+                },
                 'validator' => [
-                    'class' => FlipSchema::class,
+                    'class' => BooSchema::class,
                 ]
             ],
         ];
