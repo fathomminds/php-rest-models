@@ -63,14 +63,37 @@ abstract class Schema implements ISchema
 
     public function setFieldDefaults()
     {
+        $schemaValidator = new SchemaValidator(static::class);
+        $schemaFields = $schemaValidator->getSchemaFieldsWithDetails($this);
+        $defaultFields = $schemaValidator->getFieldsWithDefaults($this);
+        $this->setNestedFieldDefaults($schemaFields);
+        $this->setRemainingFieldDefaults($defaultFields);
+        return $this;
+    }
+
+    protected function setNestedFieldDefaults($schemaFields)
+    {
+        foreach ($schemaFields as $schemaFieldName => $schemaFieldDetails) {
+            $propertyExists = property_exists($this, $schemaFieldName);
+            if (isset($schemaFieldDetails['default']) && !$propertyExists) {
+                $this->setFieldDefaultValue($schemaFieldName, $schemaFieldDetails['default']);
+                $propertyExists = true;
+            }
+            if ($propertyExists) {
+                $this->{$schemaFieldName}->setFieldDefaults();
+            }
+        }
+    }
+
+    protected function setRemainingFieldDefaults($defaultFields)
+    {
         $properties = array_diff_key(
-            (new SchemaValidator(static::class))->getFieldsWithDefaults($this),
+            $defaultFields,
             get_object_vars($this)
         );
         foreach ($properties as $fieldName => $field) {
             $this->setFieldDefaultValue($fieldName, $field['default']);
         }
-        return $this;
     }
 
     protected function setFieldDefaultValue($fieldName, $value)
