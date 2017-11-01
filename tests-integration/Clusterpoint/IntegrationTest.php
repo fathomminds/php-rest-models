@@ -23,12 +23,7 @@ class IntegrationTest extends TestCase
         ];
         $model->resource($resource);
 
-        try {
-            $model->create();
-        } catch (RestException $ex) {
-            print_r($ex->getDetails());
-            $this->assertEquals(1, 2);
-        }
+        $model->create();
 
         $id = $model->resource()->_id;
         $this->assertTrue(!empty($id));
