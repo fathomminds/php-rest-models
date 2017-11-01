@@ -8,6 +8,9 @@ use Fathomminds\Rest\Exceptions\RestException;
 
 abstract class Schema implements ISchema
 {
+    const REPLACE_MODE = 'replace';
+    const UPDATE_MODE = 'update';
+
     public static function cast($object)
     {
         return new static($object);
@@ -105,9 +108,22 @@ abstract class Schema implements ISchema
         $this->{$fieldName} = $value;
     }
 
-    public function validate()
+    public function validate($mode = null)
     {
-        (new SchemaValidator(static::class))->validate($this);
+        $schemaValidator = new SchemaValidator(static::class);
+        switch ($mode) {
+            case self::REPLACE_MODE:
+                $schemaValidator->replaceMode(true);
+                $schemaValidator->updateMode(false);
+                break;
+            case self::UPDATE_MODE:
+                $schemaValidator->replaceMode(false);
+                $schemaValidator->updateMode(true);
+                break;
+            default:
+                break;
+        }
+        $schemaValidator->validate($this);
         return $this;
     }
 }
