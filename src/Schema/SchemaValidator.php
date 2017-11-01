@@ -10,6 +10,7 @@ class SchemaValidator
     protected $allowExtraneous = false;
     protected $requiredSchemaClass = null;
     private $updateMode = false;
+    private $replaceMode = false;
 
     public function __construct($requiredSchemaClass = null)
     {
@@ -22,6 +23,14 @@ class SchemaValidator
             $this->updateMode = $updateMode;
         }
         return $this->updateMode;
+    }
+
+    public function replaceMode($replaceMode = null)
+    {
+        if (is_bool($replaceMode)) {
+            $this->replaceMode = $replaceMode;
+        }
+        return $this->replaceMode;
     }
 
     public function validate($resource)
@@ -131,7 +140,9 @@ class SchemaValidator
         foreach ($resource->schema() as $fieldName => $rules) {
             if (property_exists($resource, $fieldName)) {
                 try {
-                    $validatorFactory->create($rules, $this->updateMode())->validate($resource->{$fieldName});
+                    $validatorFactory
+                        ->create($rules, $this->updateMode(), $this->replaceMode())
+                        ->validate($resource->{$fieldName});
                 } catch (RestException $ex) {
                     $errors[$fieldName]['error'] = $ex->getMessage();
                     $errors[$fieldName]['details'] = $ex->getDetails();
@@ -176,7 +187,31 @@ class SchemaValidator
 
     public function getUniqueFields($resource)
     {
-        return array_keys($this->filterFields($resource, 'unique', true));
+        return array_merge(
+            array_keys($this->filterFields($resource, 'unique', true)),
+            $this->getNestedUniqueFieldNames($resource)
+        );
+    }
+
+    public function getSchemaFieldsWithDetails($resource)
+    {
+        return $this->filterFields($resource, 'type', 'schema');
+    }
+
+    private function getNestedUniqueFieldNames($resource) {
+        $result = [];
+        $schemaFields = $this->getSchemaFieldsWithDetails($resource);
+        array_walk($schemaFields, function($fieldDetails, $fieldName) use (&$result, &$resource) {
+            $nestedResourceClass = $fieldDetails['validator']['class'];
+            $nestedResource = property_exists($resource, $fieldName)
+                ? $resource->{$fieldName}
+                : $nestedResourceClass::cast((object)[]);
+            $nestedUniqueFields = (new SchemaValidator($nestedResourceClass))->getUniqueFields($nestedResource);
+            array_walk($nestedUniqueFields, function($nestedFieldName) use (&$result, &$fieldName) {
+                $result[] = $fieldName . '.' . $nestedFieldName;
+            });
+        });
+        return $result;
     }
 
     public function getFieldsWithDefaults($resource)

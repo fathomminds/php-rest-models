@@ -1,6 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlipSchema;
 use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
@@ -138,12 +139,86 @@ class RestObjectTest extends TestCase
         }
     }
 
+    public function testGetProperty()
+    {
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $resource = FooSchema::cast((object)[
+            '_id' => 'ID',
+            'title' => 'TITLE',
+            'flip' => (object)[
+                'name' => 'Flip Name',
+                'email' => 'flip@flip.hu',
+            ],
+        ]);
+        $object = new FooObject($resource, null, $database);
+
+        $method = new \ReflectionMethod(get_class($object), 'getProperty');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($object, ['flip.name']);
+        $this->assertEquals([true, 'Flip Name'], $result);
+
+        $result = $method->invokeArgs($object, ['_id']);
+        $this->assertEquals([true, 'ID'], $result);
+
+        $result = $method->invokeArgs($object, ['flip.email']);
+        $this->assertEquals([true, 'flip@flip.hu'], $result);
+
+        $result = $method->invokeArgs($object, ['flip.nonExistingField']);
+        $this->assertEquals([false, null], $result);
+    }
+
+    public function testInvalidUniqueFieldDataType()
+    {
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $resource = FooSchema::cast((object)[
+            '_id' => 'ID',
+            'title' => 'Default Title',
+            'flip' => (object)[
+                'name' => 'Flip Name',
+                'email' => (object)[
+                    'testProperty' => 'testPropertyValue'
+                ],
+            ],
+        ]);
+        $object = new FooObject($resource, null, $database);
+
+        $method = new \ReflectionMethod(get_class($object), 'validateUniqueFieldDataType');
+        $method->setAccessible(true);
+
+        $method->invokeArgs($object, ['title', $resource->title]);
+        $this->assertEquals('No exception happened', 'No exception happened'); // Must reach this line
+
+        try {
+            $method->invokeArgs($object, ['flip.email', $resource->flip->email]);
+            $this->assertEquals('RestException was expected', 'No exception happened'); // Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Data type is invalid for unique field', $ex->getMessage());
+            $this->assertEquals([
+                'resourceName' => 'foo',
+                'fieldName' => 'flip.email',
+                'data' => (object)[
+                    'testProperty' => 'testPropertyValue'
+                ],
+                'dataType' => 'object',
+                'validDataTypes' => [
+                    'boolean',
+                    'integer',
+                    'double',
+                    'string',
+                    'NULL'
+                ]
+            ], $ex->getDetails());
+        }
+    }
+
     public function testValidateUniqueFieldsReplaceMode()
     {
         $id = 'ID';
         $resource = new FooSchema;
         $resource->_id = $id;
         $resource->title = 'TITLE';
+
         $database = new Database($this->mockClient, 'DatabaseName');
         $this->mockDatabase
             ->shouldReceive('where')

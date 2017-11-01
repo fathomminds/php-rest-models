@@ -24,6 +24,7 @@ class IntegrationTest extends TestCase
         $model->resource($resource);
 
         $model->create();
+
         $id = $model->resource()->_id;
         $this->assertTrue(!empty($id));
 

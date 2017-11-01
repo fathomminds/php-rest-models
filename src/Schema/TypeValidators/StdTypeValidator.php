@@ -8,6 +8,12 @@ abstract class StdTypeValidator implements ITypeValidator
 {
     protected $validType;
     private $updateMode = false;
+    private $replaceMode = false;
+
+    public static function cast($value, $params = null)
+    {
+        return $value;
+    }
 
     public function updateMode($updateMode = null)
     {
@@ -15,6 +21,14 @@ abstract class StdTypeValidator implements ITypeValidator
             $this->updateMode = $updateMode;
         }
         return $this->updateMode;
+    }
+
+    public function replaceMode($replaceMode = null)
+    {
+        if (is_bool($replaceMode)) {
+            $this->replaceMode = $replaceMode;
+        }
+        return $this->replaceMode;
     }
 
     public function validate($value)
@@ -34,10 +48,5 @@ abstract class StdTypeValidator implements ITypeValidator
                 ]
             );
         }
-    }
-
-    public static function cast($value, $params = null)
-    {
-        return $value;
     }
 }

@@ -7,6 +7,9 @@ use Fathomminds\Rest\Database\Clusterpoint\Database;
 
 abstract class RestObject implements IRestObject
 {
+    private $updateMode = false;
+    private $replaceMode = false;
+
     protected $resourceName;
     protected $primaryKey;
     protected $resource;
@@ -16,8 +19,13 @@ abstract class RestObject implements IRestObject
     protected $database;
     protected $indexNames = [];
     protected $allowExtraneous = false;
-    private $updateMode = false;
-    private $replaceMode = false;
+    protected $validUniqueFieldTypes = [
+        'boolean',
+        'integer',
+        'double',
+        'string',
+        'NULL'
+    ];
 
     public function __construct($resource = null, $schema = null, $database = null)
     {
@@ -153,6 +161,7 @@ abstract class RestObject implements IRestObject
     public function validateSchema($resource)
     {
         $this->schema->updateMode($this->updateMode());
+        $this->schema->replaceMode($this->replaceMode());
         $this->schema->validate($resource);
     }
 
@@ -188,6 +197,8 @@ abstract class RestObject implements IRestObject
     {
         return $this->database->getClient();
     }
+
+    abstract public function find();
 
     abstract public function query();
 }

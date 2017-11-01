@@ -9,6 +9,7 @@ use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\FooObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\FooModel;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Helpers\ReflectionHelper;
+use MongoDB\Driver\Exception\SSLConnectionException;
 
 class SchemaValidatorTest extends TestCase
 {
@@ -132,5 +133,20 @@ class SchemaValidatorTest extends TestCase
         } catch (RestException $ex) {
             $this->fail();
         }
+    }
+
+    public function testUniqueFields()
+    {
+        $schemaValidator = new SchemaValidator(FooSchema::class);
+        $schema = FooSchema::cast((object)[
+            '_id' => 'ID',
+            'title' => 'TITLE',
+            'flip' => (object)[
+                'name' => 'Flip Name',
+                'email' => null,
+            ],
+        ]);
+        $uniqueFields = $schemaValidator->getUniqueFields($schema);
+        $this->assertEquals(['_id', 'title', 'flip.email', 'boo.email'], $uniqueFields);
     }
 }
