@@ -141,14 +141,8 @@ class SchemaValidator
             if (property_exists($resource, $fieldName)) {
                 try {
                     $validatorFactory
-                        ->create(
-                            $rules,
-                            $this->updateMode(),
-                            $this->replaceMode()
-                        )
-                        ->validate(
-                            $resource->{$fieldName}
-                        );
+                        ->create($rules, $this->updateMode(), $this->replaceMode())
+                        ->validate($resource->{$fieldName});
                 } catch (RestException $ex) {
                     $errors[$fieldName]['error'] = $ex->getMessage();
                     $errors[$fieldName]['details'] = $ex->getDetails();
