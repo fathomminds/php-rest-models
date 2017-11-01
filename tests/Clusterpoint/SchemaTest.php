@@ -75,4 +75,64 @@ class SchemaTest extends TestCase
             $this->assertEquals('No exception was expected', 'Exception happened'); // Should not reach this line
         }
     }
+
+    public function testValidateInReplaceModeOk()
+    {
+        try {
+            $schema = FooSchema::cast((object)[
+                '_id' => 'ID',
+                'flip' => (object)[
+                    'email' => 'flip@flip.hu',
+                ],
+            ]);
+            $schema->setFieldDefaults();
+            $schema->validate(FooSchema::REPLACE_MODE);
+            $this->assertEquals('Validation was successful', 'Validation was successful');
+        } catch (\Exception $ex) {
+            $this->assertEquals('No exception was expected', 'Exception happened'); // Should not reach this line
+        }
+    }
+
+    public function testValidateInReplaceModeFail()
+    {
+        $expectedExceptionMsg = 'Invalid structure';
+        $expectedExceptionDtls = [
+            'schema' => 'Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema',
+            'errors' => [
+                'title' => 'Missing required field'
+            ]
+        ];
+        try {
+            $schema = FooSchema::cast((object)[
+                '_id' => 'ID',
+                'flip' => (object)[
+                    'email' => 'flip@flip.hu',
+                ],
+            ]);
+            $schema->validate(FooSchema::REPLACE_MODE);
+            $this->assertEquals('Exception was expected', 'No exception happened');
+        } catch (RestException $ex) {
+            $this->assertEquals($expectedExceptionMsg, $ex->getMessage());
+            $this->assertEquals($expectedExceptionDtls, $ex->getDetails());
+        } catch (\Exception $ex) {
+            $this->assertEquals('RestException was expected', 'Exception happened'); // Should not reach this line
+        }
+    }
+
+    public function testValidateInUpdateModeOk()
+    {
+        try {
+            $schema = FooSchema::cast((object)[
+                '_id' => 'ID',
+                'flip' => (object)[
+                    'email' => 'flip@flip.hu',
+                ],
+            ]);
+            // $schema->setFieldDefaults(); // Should skip required filed check in update mode
+            $schema->validate(FooSchema::UPDATE_MODE);
+            $this->assertEquals('Validation was successful', 'Validation was successful');
+        } catch (\Exception $ex) {
+            $this->assertEquals('No exception was expected', 'Exception happened'); // Should not reach this line
+        }
+    }
 }
