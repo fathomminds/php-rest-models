@@ -36,7 +36,7 @@ class SchemaValidator
     public function validate($resource)
     {
         $this->validateResourceType($resource);
-        $this->validateSchemaDefinition(get_class($resource), $resource->schema());
+        $this->validateCircularDependency(get_class($resource), $resource->schema());
         $extraneousCheck = [];
         if (!$this->allowExtraneous) {
             $extraneousCheck = $this->validateExtraneousFields($resource);
@@ -53,6 +53,34 @@ class SchemaValidator
                     'schema' => get_class($resource),
                     'errors' => $errors,
                 ]
+            );
+        }
+    }
+
+    private function validateCircularDependency($schemaName, $schemaDefinition, $schemaChain = [])
+    {
+        $schemaChain[] = $schemaName;
+        foreach ($schemaDefinition as $field => $fieldDetails)
+        {
+            if (!isset($fieldDetails['type']) || $fieldDetails['type'] !== 'schema') {
+                continue;
+            }
+            $nestedSchemaName = $fieldDetails['validator']['class'];
+            $nestedSchemaDefinition = ($nestedSchemaName::cast((object)[]))->schema();
+            if (in_array($nestedSchemaName, $schemaChain)) {
+                $schemaChain[] = $nestedSchemaName;
+                throw new RestException(
+                    'Circular dependency found in schema definition',
+                    [
+                        'schema' => array_shift($schemaChain),
+                        'chain' => $schemaChain,
+                    ]
+                );
+            }
+            $this->validateCircularDependency(
+                $nestedSchemaName,
+                $nestedSchemaDefinition,
+                $schemaChain
             );
         }
     }
@@ -109,52 +137,6 @@ class SchemaValidator
                 ]
             );
         }
-    }
-
-    private function validateSchemaDefinition($schemaName, $schemaDefinition, $schemaChain = [])
-    {
-        $schemaChain[] = $schemaName;
-        foreach ($schemaDefinition as $field => $fieldDetails)
-        {
-            if (!isset($fieldDetails['type']) || $fieldDetails['type'] !== 'schema') {
-                continue;
-            }
-            list($nestedSchemaName, $nestedSchemaDefinition) = $this->getNestedSchema($schemaName, $field, $fieldDetails);
-            if (in_array($nestedSchemaName, $schemaChain)) {
-                $schemaChain[] = $nestedSchemaName;
-                throw new RestException(
-                    'Circular dependency found in schema definition',
-                    [
-                        'schema' => array_shift($schemaChain),
-                        'chain' => $schemaChain,
-                    ]
-                );
-            }
-            $this->validateSchemaDefinition(
-                $nestedSchemaName,
-                $nestedSchemaDefinition,
-                $schemaChain
-            );
-        }
-    }
-
-    private function getNestedSchema($schemaName, $field, $fieldDetails)
-    {
-        $validatorClass = (isset($fieldDetails['validator']['class']))
-            ? $fieldDetails['validator']['class']
-            : null;
-        if ($validatorClass === null ) {
-            throw new RestException(
-                'Missing validator class for schema field',
-                [
-                    'schema' => $schemaName,
-                    'field' => $field,
-                ]
-            );
-        }
-        $nestedSchema = $validatorClass::cast((object)[]);
-        $this->objectHasSchemaMethod($nestedSchema);
-        return [$validatorClass, $nestedSchema->schema()];
     }
 
     private function validateRequiredFields($resource)
