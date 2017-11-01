@@ -66,7 +66,10 @@ class FooSchema extends Schema
                 ],
             ],
             'bar' => [
-                'type' => BarSchema::class,
+                'type' => 'schema',
+                'validator' => [
+                    'class' => BarSchema::class,
+                ],
             ],
         ];
     }

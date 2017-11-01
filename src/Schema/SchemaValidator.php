@@ -36,6 +36,7 @@ class SchemaValidator
     public function validate($resource)
     {
         $this->validateResourceType($resource);
+        $this->validateCircularDependency(get_class($resource), $resource->schema());
         $extraneousCheck = [];
         if (!$this->allowExtraneous) {
             $extraneousCheck = $this->validateExtraneousFields($resource);
@@ -52,6 +53,34 @@ class SchemaValidator
                     'schema' => get_class($resource),
                     'errors' => $errors,
                 ]
+            );
+        }
+    }
+
+    private function validateCircularDependency($schemaName, $schemaDefinition, $schemaChain = [])
+    {
+        $schemaChain[] = $schemaName;
+        foreach ($schemaDefinition as $field => $fieldDetails)
+        {
+            if (!isset($fieldDetails['type']) || $fieldDetails['type'] !== 'schema') {
+                continue;
+            }
+            $nestedSchemaName = $fieldDetails['validator']['class'];
+            $nestedSchemaDefinition = ($nestedSchemaName::cast((object)[]))->schema();
+            if (in_array($nestedSchemaName, $schemaChain)) {
+                $schemaChain[] = $nestedSchemaName;
+                throw new RestException(
+                    'Circular dependency found in schema definition',
+                    [
+                        'schema' => array_shift($schemaChain),
+                        'chain' => $schemaChain,
+                    ]
+                );
+            }
+            $this->validateCircularDependency(
+                $nestedSchemaName,
+                $nestedSchemaDefinition,
+                $schemaChain
             );
         }
     }
@@ -157,10 +186,10 @@ class SchemaValidator
         $fields = [];
         foreach ($resource->schema() as $fieldName => $params) {
             if (array_key_exists($paramKey, $params) && $this->isMatchedValue(
-                $checkParamValue,
-                $params[$paramKey],
-                $paramValue
-            )) {
+                    $checkParamValue,
+                    $params[$paramKey],
+                    $paramValue
+                )) {
                 $fields[$fieldName] = $params;
             }
         }

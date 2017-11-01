@@ -1,6 +1,11 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FruitSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\InvalidNestedSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\InvalidSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\SeedSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\TreeSchema;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FooSchema;
 
@@ -110,7 +115,7 @@ class SchemaTest extends TestCase
                 ],
             ]);
             $schema->validate(FooSchema::REPLACE_MODE);
-            $this->assertEquals('Exception was expected', 'No exception happened');
+            $this->assertEquals('Exception was expected', 'No exception happened'); // Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals($expectedExceptionMsg, $ex->getMessage());
             $this->assertEquals($expectedExceptionDtls, $ex->getDetails());
@@ -133,6 +138,26 @@ class SchemaTest extends TestCase
             $this->assertEquals('Validation was successful', 'Validation was successful');
         } catch (\Exception $ex) {
             $this->assertEquals('No exception was expected', 'Exception happened'); // Should not reach this line
+        }
+    }
+
+    public function testCircularDependency()
+    {
+        try {
+            TreeSchema::cast((object)[])->validate();
+            $this->assertEquals('Exception was expected', 'No exception happened'); // Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Circular dependency found in schema definition', $ex->getMessage());
+            $this->assertEquals([
+                'schema' => TreeSchema::class,
+                'chain' => [
+                    FruitSchema::class,
+                    SeedSchema::class,
+                    TreeSchema::class,
+                ],
+            ], $ex->getDetails());
+        } catch (\Exception $ex) {
+            $this->assertEquals('RestException was expected', 'Exception happened'); // Should not reach this line
         }
     }
 }
