@@ -6,17 +6,19 @@ use Fathomminds\Rest\Schema\SchemaValidator;
 
 class ValidatorFactory
 {
-    public function create($rules, $updateMode)
+    public function create($rules, $updateMode, $replaceMode)
     {
         $validatorClass = $this->getValidatorClass($rules);
         $params = $this->getValidatorParameters($rules);
         if (isset($rules['type']) && $rules['type'] === 'schema') {
             $validator = new SchemaValidator($rules['validator']['class']);
             $validator->updateMode($updateMode);
+            $validator->replaceMode($replaceMode);
             return $validator;
         }
         $validator = $validatorClass->newInstanceArgs(empty($params) ? [] : [$params]);
         $validator->updateMode($updateMode);
+        $validator->replaceMode($replaceMode);
         return $validator;
     }
 
@@ -40,3 +42,4 @@ class ValidatorFactory
         return $parameters;
     }
 }
+
