@@ -112,10 +112,21 @@ class RestModelTest extends TestCase
         $dbResult = [
             'results' => []
         ];
+        $mockResponse = $this->mockResponse($dbResult);
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
         $this->mockDatabase
             ->shouldReceive('get')
             ->once()
-            ->andReturn($this->mockResponse($dbResult));
+            ->andReturn($mockResponse);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->once()
+            ->andReturn('0'); //Clusterpoint returns number as string
         $model = $this->mockModel(FooModel::class, FooObject::class);
         $this->expectException(RestException::class);
         $list = $model->create();

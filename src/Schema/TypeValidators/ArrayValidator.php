@@ -14,9 +14,9 @@ class ArrayValidator extends StdTypeValidator
     public function __construct($params = [])
     {
         $this->keyRules = isset($params['key']) ? $params['key'] : null;
-        $this->keyValidator = (new ValidatorFactory())->create($this->keyRules, false);
+        $this->keyValidator = (new ValidatorFactory())->create($this->keyRules, false, false);
         $this->itemRules = isset($params['item']) ? $params['item'] : null;
-        $this->itemValidator = (new ValidatorFactory())->create($this->itemRules, false);
+        $this->itemValidator = (new ValidatorFactory())->create($this->itemRules, false, false);
     }
 
     public function validate($value)
@@ -43,6 +43,7 @@ class ArrayValidator extends StdTypeValidator
     {
         $errors = [];
         $this->keyValidator->updateMode($this->updateMode());
+        $this->keyValidator->replaceMode($this->replaceMode());
         foreach (array_keys($value) as $key) {
             try {
                 $this->keyValidator->validate($key);
@@ -61,6 +62,7 @@ class ArrayValidator extends StdTypeValidator
     {
         $errors = [];
         $this->itemValidator->updateMode($this->updateMode());
+        $this->itemValidator->replaceMode($this->replaceMode());
         foreach ($value as $key => $item) {
             try {
                 $this->itemValidator->validate($item);
