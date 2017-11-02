@@ -13,6 +13,7 @@ class ArrayValidator extends StdTypeValidator
 
     public function __construct($params = [])
     {
+        parent::__construct($params);
         $this->keyRules = isset($params['key']) ? $params['key'] : null;
         $this->keyValidator = (new ValidatorFactory())->create($this->keyRules, false, false);
         $this->itemRules = isset($params['item']) ? $params['item'] : null;
@@ -23,19 +24,21 @@ class ArrayValidator extends StdTypeValidator
     {
         $details = [];
         $this->validateType($value);
-        $details['keyErrors'] = $this->validateKeys($value);
-        if (empty($details['keyErrors'])) {
-            unset($details['keyErrors']);
-        }
-        $details['itemErrors'] = $this->validateItems($value);
-        if (empty($details['itemErrors'])) {
-            unset($details['itemErrors']);
-        }
-        if (!empty($details)) {
-            throw new RestException(
-                'Array validation failed',
-                $details
-            );
+        if ($value !== null) {
+            $details['keyErrors'] = $this->validateKeys($value);
+            if (empty($details['keyErrors'])) {
+                unset($details['keyErrors']);
+            }
+            $details['itemErrors'] = $this->validateItems($value);
+            if (empty($details['itemErrors'])) {
+                unset($details['itemErrors']);
+            }
+            if (!empty($details)) {
+                throw new RestException(
+                    'Array validation failed',
+                    $details
+                );
+            }
         }
     }
 
