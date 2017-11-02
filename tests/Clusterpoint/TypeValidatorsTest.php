@@ -1,6 +1,8 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Fathomminds\Rest\Schema\TypeValidators\BooleanValidator;
+use Fathomminds\Rest\Schema\TypeValidators\EnumValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Schema\TypeValidators\AnyValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ArrayValidator;
@@ -90,6 +92,53 @@ class TypeValidatorsTest extends TestCase
         }
     }
 
+    public function testArrayValidatorIfNullableOk()
+    {
+        $params = [
+            'nullable' => true,
+            'key' => [
+                'validator' => [
+                    'class' => StringValidator::class,
+                ],
+            ],
+            'item' => [
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+        ];
+        $validator = new ArrayValidator($params);
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Array validator should accept `null` value');
+        }
+    }
+
+    public function testArrayValidatorIfNullableFail()
+    {
+        $params = [
+            'key' => [
+                'validator' => [
+                    'class' => StringValidator::class,
+                ],
+            ],
+            'item' => [
+                'validator' => [
+                    'class' => StringValidator::class,
+                ]
+            ],
+        ];
+        $validator = new ArrayValidator($params);
+        try {
+            $validator->validate(null);
+            $this->fail('Array validator should accept not `null` value');
+        } catch (RestException $ex) {
+            $this->assertEquals(1, 1);
+        }
+    }
+
     public function testArrayValidatorIncorrectItemType()
     {
         $params = [
@@ -135,6 +184,26 @@ class TypeValidatorsTest extends TestCase
         }
     }
 
+    public function testFloatOrNullValidator()
+    {
+        $validator = new DoubleValidator([
+            'nullable' => true,
+        ]);
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 1); //Should always reach this line
+        } catch (RestException $ex) {
+            $this->fail();
+        }
+        $validator = new DoubleValidator();
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 0); //Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Type mismatch', $ex->getMessage());
+        }
+    }
+
     public function testNumberTypeValidator()
     {
         $params = [
@@ -153,6 +222,27 @@ class TypeValidatorsTest extends TestCase
             $this->assertEquals(1, 0); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Maximum value error', $ex->getMessage());
+        }
+    }
+
+    public function testNumberTypeOrNullValidator()
+    {
+        $params = [
+            'nullable' => true,
+        ];
+        $validator = new IntegerValidator($params);
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Should accept `null` value');
+        }
+        $validator = new IntegerValidator();
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 0); // Should not reach this line
+        } catch (RestException $ex) {
+            $this->assertEquals('Type mismatch', $ex->getMessage());
         }
     }
 
@@ -175,15 +265,36 @@ class TypeValidatorsTest extends TestCase
 
     public function testStringValidatorMaximumLength()
     {
-        $params = [
-            'maxLength'=>1,
-        ];
-        $validator = new StringValidator($params);
+        $validator = new StringValidator([
+            'nullable' => true,
+            'maxLength' => 1,
+        ]);
         try {
-            $validator->validate('AB');
-            $this->assertEquals(1, 0); //Should not reach this line
+            $validator->validate(null);
+            $this->assertEquals(1, 1);
         } catch (RestException $ex) {
-            $this->assertEquals('Maximum length error', $ex->getMessage());
+            $this->fail('Should accept `null` value');
+        }
+        try {
+            $validator->validate('1');
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Should accept `null` value');
+        }
+        try {
+            $validator->validate('11');
+            $this->fail('Should not accept `11` string value');
+        } catch (RestException $ex) {
+            $this->assertEquals(1, 1);
+        }
+        $validator = new StringValidator([
+            'maxLength' => 1,
+        ]);
+        try {
+            $validator->validate(null);
+            $this->fail('Should not accept `null` value');
+        } catch (RestException $ex) {
+            $this->assertEquals(1, 1);
         }
     }
 
@@ -257,6 +368,126 @@ class TypeValidatorsTest extends TestCase
             $this->assertEquals(1, 0); // Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Invalid structure', $ex->getMessage());
+        }
+    }
+
+    public function testBooleanValidator()
+    {
+        $validator = new BooleanValidator();
+        try {
+            $validator->validate(true);
+            $validator->validate(false);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail(['Should accept bool values']);
+        }
+        try {
+            $validator->validate('true');
+            $this->fail(['Should not accept `true` string value']);
+        } catch (RestException $ex) {
+            $this->assertEquals('Type mismatch', $ex->getMessage());
+        }
+        try {
+            $validator->validate(null);
+            $this->fail(['Should not accept `true` string value']);
+        } catch (RestException $ex) {
+            $this->assertEquals('Type mismatch', $ex->getMessage());
+        }
+        try {
+            $validator->validate(0);
+            $this->fail(['Should not accept `0` int value']);
+        } catch (RestException $ex) {
+            $this->assertEquals('Type mismatch', $ex->getMessage());
+        }
+        try {
+            $validator->validate(0);
+            $this->fail(['Should not accept `1` int value']);
+        } catch (RestException $ex) {
+            $this->assertEquals('Type mismatch', $ex->getMessage());
+        }
+        $validator = new BooleanValidator([
+            'nullable' => true,
+        ]);
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail(['Should accept `null` values']);
+        }
+    }
+
+    public function testEnumValidator()
+    {
+        $validator = new EnumValidator();
+        try {
+            $validator->validate(true);
+            $this->fail('Should not except any value');
+        } catch (RestException $ex) {
+            $this->assertEquals('Value is not in valid value list', $ex->getMessage());
+        }
+        try {
+            $validator->validate(null);
+            $this->fail('Should not except any value');
+        } catch (RestException $ex) {
+            $this->assertEquals('Value is not in valid value list', $ex->getMessage());
+        }
+        $validator = new EnumValidator([
+            'nullable' => true,
+        ]);
+        try {
+            $validator->validate(true);
+            $this->fail('Should not except `true` boolean value');
+        } catch (RestException $ex) {
+            $this->assertEquals('Value is not in valid value list', $ex->getMessage());
+        }
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Should except `null` value');
+        }
+        $validator = new EnumValidator([
+            'validValues' => [0, 10, 15, 20],
+        ]);
+        try {
+            $validator->validate(3);
+            $this->fail('Should not except `3` int value');
+        } catch (RestException $ex) {
+            $this->assertEquals('Value is not in valid value list', $ex->getMessage());
+        }
+        try {
+            $validator->validate(null);
+            $this->fail('Should not accept `null` value');
+        } catch (RestException $ex) {
+            $this->assertEquals('Value is not in valid value list', $ex->getMessage());
+        }
+        try {
+            $validator->validate(10);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Should accept `10` int value');
+        }
+        $validator = new EnumValidator([
+            'nullable' => true,
+            'validValues' => [0, 10, 15, 20],
+        ]);
+        try {
+            $validator->validate(3);
+            $this->fail('Should not except `3` int value');
+        } catch (RestException $ex) {
+            $this->assertEquals('Value is not in valid value list', $ex->getMessage());
+        }
+        try {
+            $validator->validate(null);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Should accept `null` value');
+        }
+        try {
+            $validator->validate(10);
+            $this->assertEquals(1, 1);
+        } catch (RestException $ex) {
+            $this->fail('Should accept `10` int value');
         }
     }
 }
