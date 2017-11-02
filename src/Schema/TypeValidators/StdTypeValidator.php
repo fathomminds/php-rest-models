@@ -10,6 +10,15 @@ abstract class StdTypeValidator implements ITypeValidator
     private $updateMode = false;
     private $replaceMode = false;
 
+    protected $nullable = false;
+
+    public function __construct($params = [])
+    {
+        if (isset($params['nullable']) && is_bool($params['nullable'])) {
+            $this->nullable = $params['nullable'];
+        }
+    }
+
     public static function cast($value, $params = null)
     {
         return $value;
@@ -39,7 +48,7 @@ abstract class StdTypeValidator implements ITypeValidator
     protected function validateType($value)
     {
         $currentType = gettype($value);
-        if ($currentType !== $this->validType) {
+        if ($currentType !== $this->validType && ($value !== null || !$this->nullable)) {
             throw new RestException(
                 'Type mismatch',
                 [
