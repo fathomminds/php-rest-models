@@ -10,6 +10,7 @@ class NumberTypeValidator extends StdTypeValidator
 
     public function __construct($params = [])
     {
+        parent::__construct($params);
         $this->min = isset($params['min']) ? $params['min'] : null;
         $this->max = isset($params['max']) ? $params['max'] : null;
     }
@@ -17,8 +18,10 @@ class NumberTypeValidator extends StdTypeValidator
     public function validate($value)
     {
         $this->validateType($value);
-        $this->validateMin($value);
-        $this->validateMax($value);
+        if ($value !== null) {
+            $this->validateMin($value);
+            $this->validateMax($value);
+        }
     }
 
     private function validateMin($value)

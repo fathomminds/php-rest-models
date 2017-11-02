@@ -10,13 +10,16 @@ class StringValidator extends StdTypeValidator
 
     public function __construct($params = [])
     {
+        parent::__construct($params);
         $this->maxLength = isset($params['maxLength']) ? $params['maxLength'] : 0;
     }
 
     public function validate($value)
     {
         $this->validateType($value);
-        $this->validateLength($value);
+        if ($value !== null) {
+            $this->validateLength($value);
+        }
     }
 
     public function validateLength($value)
