@@ -86,7 +86,6 @@ abstract class RestModel implements IRestModel
     {
         $this->restObject->updateMode(true);
         $this->restObject->replaceMode(false);
-        $this->restObject->setFieldDefaults();
         $this->validate();
         $this->restObject->patch($this->restObject->getPrimaryKeyValue(), $this->resource());
         return $this;
