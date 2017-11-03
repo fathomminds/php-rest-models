@@ -16,7 +16,32 @@ abstract class Schema implements ISchema
         return new static($object);
     }
 
-    public function __construct($object = null)
+    public static function castWithoutExtraneous($object)
+    {
+        if (gettype($object) !== 'object') {
+            throw new RestException('Schema castWithoutExtraneous method expects object as parameter', [
+                'parameter' => $object,
+            ]);
+        }
+        return new static($object, ['withoutExtraneous' => true]);
+    }
+
+    public static function castByMap($object, $map)
+    {
+        if (gettype($object) !== 'object') {
+            throw new RestException('Schema castByMap method expects object as first parameter', [
+                'parameter' => $object,
+            ]);
+        }
+        if (!is_array($map)) {
+            throw new RestException('Schema castByMap method expects array as second parameter', [
+                'parameter' => $map,
+            ]);
+        }
+        return new static($object, ['map' => $map]);
+    }
+
+    public function __construct($object = null, $params = [])
     {
         if ($object === null) {
             return;
@@ -26,13 +51,108 @@ abstract class Schema implements ISchema
                 'parameter' => $object,
             ]);
         }
-        $schema = $this->schema();
+        $this->castProperties($object, $this->schema(), $params);
+    }
+
+    private function castProperties($object, $schema, $params)
+    {
+        if (isset($params['withoutExtraneous'])) {
+            $this->castPropertiesWithoutExtraneous($object, $schema);
+            return;
+        }
+        if (isset($params['map'])) {
+            $this->castPropertiesByMap($schema, $object, $params['map']);
+            return;
+        }
+        $this->castPropertiesDefault($object, $schema);
+    }
+
+    private function castPropertiesWithoutExtraneous($object, $schema)
+    {
         foreach (get_object_vars($object) as $name => $value) {
-            $this->{$name} = $this->castProperty($schema, $name, $value);
+            list($propertyExists, $propertyValue) = $this->castPropertyWithoutExtraneous($schema, $name, $value);
+            if ($propertyExists) {
+                $this->{$name} = $propertyValue;
+            }
         }
     }
 
-    private function castProperty($schema, $name, $value)
+    private function castPropertyWithoutExtraneous($schema, $name, $value)
+    {
+        if (!array_key_exists($name, $schema)) {
+            return [false, null];
+        }
+        if (isset($schema[$name]['type']) && $schema[$name]['type'] === 'schema') {
+            return [true, $schema[$name]['validator']['class']::castWithoutExtraneous($value)];
+        }
+        $params = empty($schema[$name]['validator']['params'])
+            ? null
+            : $schema[$name]['validator']['params'];
+        return [true, $schema[$name]['validator']['class']::cast($value, $params)];
+    }
+
+    private function castPropertiesByMap($schema, $object, $map)
+    {
+        $mappedObject = new \StdClass();
+        foreach ($map as $targetFieldName => $sourceFieldName) {
+            list($propertyExists, $propertyValue) = $this->getPropertyValue($object, $sourceFieldName);
+            if ($propertyExists) {
+                $mappedObject = $this->setPropertyValue(
+                    $mappedObject,
+                    $targetFieldName,
+                    $propertyValue
+                );
+            }
+        }
+        $this->castPropertiesWithoutExtraneous($mappedObject, $schema);
+    }
+
+    private function setPropertyValue($mappedObject, $targetFieldName, $propertyValue)
+    {
+        $fieldNameArr = explode('.', $targetFieldName);
+        $fieldName = array_shift($fieldNameArr);
+        if (count($fieldNameArr) !== 0) {
+            if (!property_exists($mappedObject, $fieldName)) {
+                $mappedObject->{$fieldName} = new \StdClass();
+            }
+            $mappedObject->{$fieldName} = $this->setPropertyValue(
+                $mappedObject->{$fieldName},
+                implode('.', $fieldNameArr),
+                $propertyValue
+            );
+            return $mappedObject;
+        }
+        $mappedObject->{$fieldName} = $propertyValue;
+        return $mappedObject;
+    }
+
+    private function getPropertyValue($object, $sourceFieldName)
+    {
+        $fieldNameArr = explode('.', $sourceFieldName);
+        $fieldName = array_shift($fieldNameArr);
+        if (!property_exists($object, $fieldName)) {
+            return [
+                false,
+                null
+            ];
+        }
+        if (count($fieldNameArr) === 0) {
+            return [
+                true,
+                json_decode(json_encode($object->{$fieldName}))
+            ];
+        }
+        return $this->getPropertyValue($object->{$fieldName}, implode('.', $fieldNameArr));
+    }
+
+    private function castPropertiesDefault($object, $schema)
+    {
+        foreach (get_object_vars($object) as $name => $value) {
+            $this->{$name} = $this->castPropertyDefault($schema, $name, $value);
+        }
+    }
+
+    private function castPropertyDefault($schema, $name, $value)
     {
         if (!array_key_exists($name, $schema)) {
             return $value;
