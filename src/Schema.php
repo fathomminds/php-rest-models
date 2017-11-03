@@ -2,6 +2,7 @@
 namespace Fathomminds\Rest;
 
 use Fathomminds\Rest\Contracts\ISchema;
+use Fathomminds\Rest\Helpers\ObjectMapper;
 use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Exceptions\RestException;
@@ -11,37 +12,18 @@ abstract class Schema implements ISchema
     const REPLACE_MODE = 'replace';
     const UPDATE_MODE = 'update';
 
-    public static function cast($object)
+    public static function cast($object, $skipExtraneous = false)
     {
-        return new static($object);
+        return new static($object, $skipExtraneous);
     }
 
-    public static function castWithoutExtraneous($object)
+    public static function map($object, $map, $skipExtraneous = false)
     {
-        if (gettype($object) !== 'object') {
-            throw new RestException('Schema castWithoutExtraneous method expects object as parameter', [
-                'parameter' => $object,
-            ]);
-        }
-        return new static($object, ['withoutExtraneous' => true]);
+        $mappedObject = ObjectMapper::map($object, $map);
+        return new static($mappedObject, $skipExtraneous);
     }
 
-    public static function castByMap($object, $map)
-    {
-        if (gettype($object) !== 'object') {
-            throw new RestException('Schema castByMap method expects object as first parameter', [
-                'parameter' => $object,
-            ]);
-        }
-        if (!is_array($map)) {
-            throw new RestException('Schema castByMap method expects array as second parameter', [
-                'parameter' => $map,
-            ]);
-        }
-        return new static($object, ['map' => $map]);
-    }
-
-    public function __construct($object = null, $params = [])
+    public function __construct($object = null, $skipExtraneous = false)
     {
         if ($object === null) {
             return;
@@ -51,20 +33,14 @@ abstract class Schema implements ISchema
                 'parameter' => $object,
             ]);
         }
-        $this->castProperties($object, $this->schema(), $params);
-    }
-
-    private function castProperties($object, $schema, $params)
-    {
-        if (isset($params['withoutExtraneous'])) {
-            $this->castPropertiesWithoutExtraneous($object, $schema);
+        if (!is_bool($skipExtraneous)) {
+            $skipExtraneous = false;
+        }
+        if ($skipExtraneous) {
+            $this->castPropertiesWithoutExtraneous($object, $this->schema());
             return;
         }
-        if (isset($params['map'])) {
-            $this->castPropertiesByMap($schema, $object, $params['map']);
-            return;
-        }
-        $this->castPropertiesDefault($object, $schema);
+        $this->castProperties($object, $this->schema());
     }
 
     private function castPropertiesWithoutExtraneous($object, $schema)
@@ -83,7 +59,7 @@ abstract class Schema implements ISchema
             return [false, null];
         }
         if (isset($schema[$name]['type']) && $schema[$name]['type'] === 'schema') {
-            return [true, $schema[$name]['validator']['class']::castWithoutExtraneous($value)];
+            return [true, $schema[$name]['validator']['class']::cast($value, true)];
         }
         $params = empty($schema[$name]['validator']['params'])
             ? null
@@ -91,68 +67,14 @@ abstract class Schema implements ISchema
         return [true, $schema[$name]['validator']['class']::cast($value, $params)];
     }
 
-    private function castPropertiesByMap($schema, $object, $map)
-    {
-        $mappedObject = new \StdClass();
-        foreach ($map as $targetFieldName => $sourceFieldName) {
-            list($propertyExists, $propertyValue) = $this->getPropertyValue($object, $sourceFieldName);
-            if ($propertyExists) {
-                $mappedObject = $this->setPropertyValue(
-                    $mappedObject,
-                    $targetFieldName,
-                    $propertyValue
-                );
-            }
-        }
-        $this->castPropertiesWithoutExtraneous($mappedObject, $schema);
-    }
-
-    private function setPropertyValue($mappedObject, $targetFieldName, $propertyValue)
-    {
-        $fieldNameArr = explode('.', $targetFieldName);
-        $fieldName = array_shift($fieldNameArr);
-        if (count($fieldNameArr) !== 0) {
-            if (!property_exists($mappedObject, $fieldName)) {
-                $mappedObject->{$fieldName} = new \StdClass();
-            }
-            $mappedObject->{$fieldName} = $this->setPropertyValue(
-                $mappedObject->{$fieldName},
-                implode('.', $fieldNameArr),
-                $propertyValue
-            );
-            return $mappedObject;
-        }
-        $mappedObject->{$fieldName} = $propertyValue;
-        return $mappedObject;
-    }
-
-    private function getPropertyValue($object, $sourceFieldName)
-    {
-        $fieldNameArr = explode('.', $sourceFieldName);
-        $fieldName = array_shift($fieldNameArr);
-        if (!property_exists($object, $fieldName)) {
-            return [
-                false,
-                null
-            ];
-        }
-        if (count($fieldNameArr) === 0) {
-            return [
-                true,
-                json_decode(json_encode($object->{$fieldName}))
-            ];
-        }
-        return $this->getPropertyValue($object->{$fieldName}, implode('.', $fieldNameArr));
-    }
-
-    private function castPropertiesDefault($object, $schema)
+    private function castProperties($object, $schema)
     {
         foreach (get_object_vars($object) as $name => $value) {
-            $this->{$name} = $this->castPropertyDefault($schema, $name, $value);
+            $this->{$name} = $this->castProperty($schema, $name, $value);
         }
     }
 
-    private function castPropertyDefault($schema, $name, $value)
+    private function castProperty($schema, $name, $value)
     {
         if (!array_key_exists($name, $schema)) {
             return $value;
