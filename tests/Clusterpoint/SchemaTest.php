@@ -249,4 +249,28 @@ class SchemaTest extends TestCase
             );
         }
     }
+
+    public function testRemoveExtraneous()
+    {
+        $expectedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+            ],
+            'c' => 'string',
+        ]);
+        $castedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+                'x' => null,
+            ],
+            'c' => 'string',
+            'd' => 'string2'
+        ]);
+        $castedSchema->removeExtraneous();
+        $this->assertEquals($expectedSchema, $castedSchema);
+    }
 }

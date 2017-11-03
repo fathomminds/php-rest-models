@@ -168,4 +168,18 @@ abstract class Schema implements ISchema
         $schemaValidator->validate($this);
         return $this;
     }
+
+    public function removeExtraneous()
+    {
+        $schema = $this->schema();
+        foreach (get_object_vars($this) as $name => $value) {
+            if (!array_key_exists($name, $schema)) {
+                unset($this->{$name});
+                continue;
+            }
+            if (isset($schema[$name]['type']) && $schema[$name]['type'] === 'schema') {
+                $this->{$name}->removeExtraneous();
+            }
+        }
+    }
 }
