@@ -1,6 +1,7 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\CastExample\ZSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FruitSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\InvalidNestedSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\InvalidSchema;
@@ -159,5 +160,117 @@ class SchemaTest extends TestCase
         } catch (\Exception $ex) {
             $this->assertEquals('RestException was expected', 'Exception happened'); // Should not reach this line
         }
+    }
+
+    public function testCastByMap()
+    {
+        $expectedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => null,
+                'e' => 12,
+            ],
+        ]);
+        $castedSchema = ZSchema::map(
+            (object)[
+                'a' => (object)[
+                    'e' => 12,
+                    'h' => '34',
+
+                ],
+                'b' => (object)[
+                    'g' => (object)[
+                        'i' => 12,
+                        'j' => null,
+                        'x' => null,
+                    ],
+                ],
+                'f' => (object)[
+                    'k' => 354.125,
+                ],
+            ],
+            [
+                'a' => 'a.e',
+                'b.d' => 'b.g.j',
+                'b.e' => 'b.g.i',
+                'c' => 'f.g',
+                'd' => 'f.k',
+            ],
+            true
+        );
+        $this->assertEquals($expectedSchema, $castedSchema);
+    }
+
+    public function testWithoutExtraneous()
+    {
+        $expectedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+            ],
+            'c' => 'string',
+        ]);
+        $castedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+                'x' => null,
+            ],
+            'c' => 'string',
+            'd' => 'string2'
+        ], true);
+        $this->assertEquals($expectedSchema, $castedSchema);
+    }
+
+    public function testWithoutByMapNonObject()
+    {
+        try {
+            ZSchema::map(null, []);
+            $this->fail('Should not accept input parameter `object`');
+        } catch (\Exception $ex) {
+            $this->assertEquals(
+                'ObjectMapper map method expects object as first parameter',
+                $ex->getMessage()
+            );
+        }
+    }
+
+    public function testWithoutByMapNonArray()
+    {
+        try {
+            ZSchema::map((object)[], null);
+            $this->fail('Should not accept input parameter `map`');
+        } catch (\Exception $ex) {
+            $this->assertEquals(
+                'ObjectMapper map method expects array as second parameter',
+                $ex->getMessage()
+            );
+        }
+    }
+
+    public function testRemoveExtraneous()
+    {
+        $expectedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+            ],
+            'c' => 'string',
+        ]);
+        $castedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+                'x' => null,
+            ],
+            'c' => 'string',
+            'd' => 'string2'
+        ]);
+        $castedSchema->removeExtraneous();
+        $this->assertEquals($expectedSchema, $castedSchema);
     }
 }
