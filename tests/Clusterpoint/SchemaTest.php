@@ -171,7 +171,7 @@ class SchemaTest extends TestCase
                 'e' => 12,
             ],
         ]);
-        $castedSchema = ZSchema::castByMap(
+        $castedSchema = ZSchema::map(
             (object)[
                 'a' => (object)[
                     'e' => 12,
@@ -195,7 +195,8 @@ class SchemaTest extends TestCase
                 'b.e' => 'b.g.i',
                 'c' => 'f.g',
                 'd' => 'f.k',
-            ]
+            ],
+            true
         );
         $this->assertEquals($expectedSchema, $castedSchema);
     }
@@ -210,42 +211,27 @@ class SchemaTest extends TestCase
             ],
             'c' => 'string',
         ]);
-        $castedSchema = ZSchema::castWithoutExtraneous(
-            (object)[
-                'a' => 12,
-                'b' => (object)[
-                    'd' => 12,
-                    'e' => null,
-                    'x' => null,
-                ],
-                'c' => 'string',
-                'd' => 'string2'
-            ]
-        );
+        $castedSchema = ZSchema::cast((object)[
+            'a' => 12,
+            'b' => (object)[
+                'd' => 12,
+                'e' => null,
+                'x' => null,
+            ],
+            'c' => 'string',
+            'd' => 'string2'
+        ], true);
         $this->assertEquals($expectedSchema, $castedSchema);
-    }
-
-    public function testWithoutExtraneousNonObject()
-    {
-        try {
-            ZSchema::castWithoutExtraneous(null);
-            $this->fail('Should not accept input parameter `object`');
-        } catch (\Exception $ex) {
-            $this->assertEquals(
-                'Schema castWithoutExtraneous method expects object as parameter',
-                $ex->getMessage()
-            );
-        }
     }
 
     public function testWithoutByMapNonObject()
     {
         try {
-            ZSchema::castByMap(null, []);
+            ZSchema::map(null, []);
             $this->fail('Should not accept input parameter `object`');
         } catch (\Exception $ex) {
             $this->assertEquals(
-                'Schema castByMap method expects object as first parameter',
+                'ObjectMapper map method expects object as first parameter',
                 $ex->getMessage()
             );
         }
@@ -254,11 +240,11 @@ class SchemaTest extends TestCase
     public function testWithoutByMapNonArray()
     {
         try {
-            ZSchema::castByMap((object)[], null);
+            ZSchema::map((object)[], null);
             $this->fail('Should not accept input parameter `map`');
         } catch (\Exception $ex) {
             $this->assertEquals(
-                'Schema castByMap method expects array as second parameter',
+                'ObjectMapper map method expects array as second parameter',
                 $ex->getMessage()
             );
         }
