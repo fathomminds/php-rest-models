@@ -2,6 +2,7 @@
 namespace Fathomminds\Rest;
 
 use Fathomminds\Rest\Contracts\ISchema;
+use Fathomminds\Rest\Helpers\ObjectMapper;
 use Fathomminds\Rest\Schema\SchemaValidator;
 use Fathomminds\Rest\Schema\TypeValidators\ValidatorFactory;
 use Fathomminds\Rest\Exceptions\RestException;
@@ -11,12 +12,18 @@ abstract class Schema implements ISchema
     const REPLACE_MODE = 'replace';
     const UPDATE_MODE = 'update';
 
-    public static function cast($object)
+    public static function cast($object, $skipExtraneous = false)
     {
-        return new static($object);
+        return new static($object, $skipExtraneous);
     }
 
-    public function __construct($object = null)
+    public static function map($object, $map, $skipExtraneous = false)
+    {
+        $mappedObject = ObjectMapper::map($object, $map);
+        return new static($mappedObject, $skipExtraneous);
+    }
+
+    public function __construct($object = null, $skipExtraneous = false)
     {
         if ($object === null) {
             return;
@@ -26,7 +33,42 @@ abstract class Schema implements ISchema
                 'parameter' => $object,
             ]);
         }
-        $schema = $this->schema();
+        if (!is_bool($skipExtraneous)) {
+            $skipExtraneous = false;
+        }
+        if ($skipExtraneous) {
+            $this->castPropertiesWithoutExtraneous($object, $this->schema());
+            return;
+        }
+        $this->castProperties($object, $this->schema());
+    }
+
+    private function castPropertiesWithoutExtraneous($object, $schema)
+    {
+        foreach (get_object_vars($object) as $name => $value) {
+            list($propertyExists, $propertyValue) = $this->castPropertyWithoutExtraneous($schema, $name, $value);
+            if ($propertyExists) {
+                $this->{$name} = $propertyValue;
+            }
+        }
+    }
+
+    private function castPropertyWithoutExtraneous($schema, $name, $value)
+    {
+        if (!array_key_exists($name, $schema)) {
+            return [false, null];
+        }
+        if (isset($schema[$name]['type']) && $schema[$name]['type'] === 'schema') {
+            return [true, $schema[$name]['validator']['class']::cast($value, true)];
+        }
+        $params = empty($schema[$name]['validator']['params'])
+            ? null
+            : $schema[$name]['validator']['params'];
+        return [true, $schema[$name]['validator']['class']::cast($value, $params)];
+    }
+
+    private function castProperties($object, $schema)
+    {
         foreach (get_object_vars($object) as $name => $value) {
             $this->{$name} = $this->castProperty($schema, $name, $value);
         }
@@ -125,5 +167,19 @@ abstract class Schema implements ISchema
         }
         $schemaValidator->validate($this);
         return $this;
+    }
+
+    public function removeExtraneous()
+    {
+        $schema = $this->schema();
+        foreach (get_object_vars($this) as $name => $value) {
+            if (!array_key_exists($name, $schema)) {
+                unset($this->{$name});
+                continue;
+            }
+            if (isset($schema[$name]['type']) && $schema[$name]['type'] === 'schema') {
+                $this->{$name}->removeExtraneous();
+            }
+        }
     }
 }
