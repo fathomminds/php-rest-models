@@ -64,9 +64,13 @@ class Resource implements IResource
     public function patch($resourceId, $newResource)
     {
         try {
+            if (isset($newResource->{$this->primaryKey})) {
+                unset($newResource->{$this->primaryKey});
+            }
             $res = $this->collection->updateExisting($resourceId, $newResource->toArray());
             $this->failOnError($res);
-            return $this->toObject($res);
+            $newResource->{$this->primaryKey} = $resourceId;
+            return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
@@ -75,9 +79,13 @@ class Resource implements IResource
     public function put($resourceId, $newResource)
     {
         try {
+            if (isset($newResource->{$this->primaryKey})) {
+                unset($newResource->{$this->primaryKey});
+            }
             $res = $this->collection->replace($resourceId, $newResource);
             $this->failOnError($res);
-            return $this->toObject($res);
+            $newResource->{$this->primaryKey} = $resourceId;
+            return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), ['result'=>empty($res) ? null : $res]);
         }
