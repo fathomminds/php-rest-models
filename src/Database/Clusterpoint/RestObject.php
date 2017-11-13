@@ -40,7 +40,7 @@ class RestObject extends CoreRestObject
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         if ($this->isModification()) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
-            $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue());
+            $query->where($this->primaryKey, '!=', $this->getPrimaryKeyValue(), false);
         }
         // @codeCoverageIgnoreStart
         $query->where(function($query) use ($uniqueFields) {
@@ -48,7 +48,7 @@ class RestObject extends CoreRestObject
                 list($propertyExists, $propertyValue) = $this->getProperty($fieldName);
                 if ($propertyExists) {
                     $this->validateUniqueFieldDataType($fieldName, $propertyValue);
-                    $query->orWhere($fieldName, '==', $propertyValue);
+                    $query->orWhere($fieldName, '==', $propertyValue, false);
                 }
             }
         });

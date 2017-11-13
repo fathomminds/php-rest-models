@@ -146,7 +146,7 @@ class Finder extends BaseFinder
                     break;
                 default:
                     list($fieldName, $operator, $value) = $condition;
-                    $collection->where($fieldName, $operator, $value, $logical);
+                    $collection->where($fieldName, $operator, $value, $logical, false);
             }
         }
     }
