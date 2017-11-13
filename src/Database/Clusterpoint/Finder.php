@@ -122,10 +122,10 @@ class Finder extends BaseFinder
     protected function parseWhereGroup($logical, $collection, $condition, $nextLogical)
     {
         if ($logical === '||') {
-            $collection->orWhere($this->addWhereGroup($collection, $condition, $nextLogical));
+            $collection->orWhere($this->addWhereGroup($collection, $condition, $nextLogical, false));
         }
         if ($logical === '&&') {
-            $collection->where($this->addWhereGroup($collection, $condition, $nextLogical));
+            $collection->where($this->addWhereGroup($collection, $condition, $nextLogical, false));
         }
     }
 
@@ -146,7 +146,7 @@ class Finder extends BaseFinder
                     break;
                 default:
                     list($fieldName, $operator, $value) = $condition;
-                    $collection->where($fieldName, $operator, $value, $logical);
+                    $collection->where($fieldName, $operator, $value, $logical, false);
             }
         }
     }
