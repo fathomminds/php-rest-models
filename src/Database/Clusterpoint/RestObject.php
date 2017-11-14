@@ -48,7 +48,7 @@ class RestObject extends CoreRestObject
 
     private function skipUniqueFieldsValidationModification($uniqueFields)
     {
-        $filteredUniqueKeys = array_diff($uniqueFields, $this->primaryKey);
+        $filteredUniqueKeys = array_diff($uniqueFields, [$this->primaryKey]);
         if (count($filteredUniqueKeys) > 0) {
             return false;
         }
