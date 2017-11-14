@@ -21,7 +21,11 @@ class RestObject extends CoreRestObject
 
     public function validateUniqueFields()
     {
-        $query = $this->getUniqueFieldQuery();
+        $uniqueFields = $this->getUniqueFields();
+        if ($this->skipUniqueFieldsValidation($uniqueFields, $this->isModification())) {
+            return;
+        }
+        $query = $this->getUniqueFieldQuery($uniqueFields);
         $res = $query->get();
         if ((int)$res->hits() > 0) {
             $results = json_decode($res->rawResponse())->results;
@@ -34,9 +38,36 @@ class RestObject extends CoreRestObject
         }
     }
 
-    private function getUniqueFieldQuery()
+    private function skipUniqueFieldsValidation($uniqueFields, $isModification)
     {
-        $uniqueFields = $this->getUniqueFields();
+        if ($isModification) {
+            return $this->skipUniqueFieldsValidationModification($uniqueFields);
+        }
+        return $this->skipUniqueFieldsValidationCreation($uniqueFields);
+    }
+
+    private function skipUniqueFieldsValidationModification($uniqueFields)
+    {
+        $filteredUniqueKeys = array_diff($uniqueFields, $this->primaryKey);
+        if (count($filteredUniqueKeys) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private function skipUniqueFieldsValidationCreation($uniqueFields)
+    {
+        $onlyOneUF = count($uniqueFields) === 1;
+        $PKinUniqueFields = in_array($this->primaryKey, $uniqueFields);
+        $PKnotSet = !property_exists($this->resource(), $this->primaryKey);
+        if ($onlyOneUF && $PKinUniqueFields && $PKnotSet) {
+            return true;
+        }
+        return false;
+    }
+
+    private function getUniqueFieldQuery($uniqueFields)
+    {
         $query = $this->getClient()->database($this->getDatabaseName() . '.' . $this->resourceName);
         if ($this->isModification()) {
             $uniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
