@@ -77,7 +77,7 @@ class RestObject extends CoreRestObject
         $query->where(function($query) use ($uniqueFields) {
             foreach ($uniqueFields as $fieldName) {
                 list($propertyExists, $propertyValue) = $this->getProperty($fieldName);
-                if ($propertyExists) {
+                if ($propertyExists && $propertyValue !== null) {
                     $this->validateUniqueFieldDataType($fieldName, $propertyValue);
                     $query->orWhere($fieldName, '==', $propertyValue, false);
                 }
