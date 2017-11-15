@@ -1,7 +1,9 @@
 <?php
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\OnePKObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlipSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\OnePKSchema;
 use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
@@ -299,6 +301,62 @@ class RestObjectTest extends TestCase
             $this->fail(); //Should not reach this line
         } catch (RestException $ex) {
             $this->assertEquals('Primary key collision', $ex->getMessage());
+        }
+    }
+
+    public function testUniqueFieldsSkipValidationModification()
+    {
+        $resource = new OnePKSchema();
+        $resource->_id = '_ID';
+        $resource->value = 'TITLE';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse($resource);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(0);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new OnePKObject($resource, null, $database);
+        $object->updateMode(true);
+        try {
+            $object->validate();
+            $this->assertTrue(true); //Should reach this line
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testUniqueFieldsSkipValidationCreation()
+    {
+        $resource = new OnePKSchema();
+        $resource->value = 'TITLE';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse($resource);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(0);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new OnePKObject($resource, null, $database);
+        try {
+            $object->validate();
+            $this->assertTrue(true); //Should reach this line
+        } catch (\Exception $ex) {
+            $this->fail();
         }
     }
 
