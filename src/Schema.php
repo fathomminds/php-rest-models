@@ -64,7 +64,7 @@ abstract class Schema implements ISchema
         $params = empty($schema[$name]['validator']['params'])
             ? null
             : $schema[$name]['validator']['params'];
-        return [true, $schema[$name]['validator']['class']::cast($value, $params)];
+        return [true, $schema[$name]['validator']['class']::cast($value, $params, true)];
     }
 
     private function castProperties($object, $schema)
