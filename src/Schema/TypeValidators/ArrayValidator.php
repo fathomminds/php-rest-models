@@ -83,18 +83,36 @@ class ArrayValidator extends StdTypeValidator
         return $errors;
     }
 
-    public static function cast($value, $params = null)
+    public static function cast($value, $params = null, $skipExtraneous = false)
     {
         if (!is_array($value) || !self::isValidCastParams($params)) {
             return $value;
         }
         $result = [];
         foreach ($value as $key => $value) {
-            $arrayKey = $params['key']['validator']['class']::cast($key);
-            $arrayValue = $params['item']['validator']['class']::cast($value);
+            $arrayKey = static::castKey($key, $params, $skipExtraneous);
+            $arrayValue = static::castItem($value, $params, $skipExtraneous);
             $result[$arrayKey] = $arrayValue;
         }
         return $result;
+    }
+
+    private static function castKey($key, $params, $skipExtraneous)
+    {
+        return static::castProperty('key', $key, $params, $skipExtraneous);
+    }
+
+    private static function castItem($value, $params, $skipExtraneous)
+    {
+        return static::castProperty('item', $value, $params, $skipExtraneous);
+    }
+
+    private static function castProperty($propertyType, $propertyValue, $params, $skipExtraneous)
+    {
+        if (isset($params[$propertyType]['type']) && $params[$propertyType]['type'] === 'schema') {
+            return $params[$propertyType]['validator']['class']::cast($propertyValue, $skipExtraneous);
+        }
+        return $params[$propertyType]['validator']['class']::cast($propertyValue, $params, $skipExtraneous);
     }
 
     private static function isValidCastParams($params)
