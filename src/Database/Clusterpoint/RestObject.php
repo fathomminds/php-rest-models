@@ -62,7 +62,7 @@ class RestObject extends CoreRestObject
     private function skipUniqueFieldsValidationCreation($uniqueFields)
     {
         $resource = $this->resource();
-        $PKisInUniqueFields = array_key_exists($this->primaryKey, $uniqueFields);
+        $PKisInUniqueFields = in_array($this->primaryKey, $uniqueFields);
         $PKisSet = (property_exists($resource, $this->primaryKey) && $resource->{$this->primaryKey} !== null);
         if ($PKisInUniqueFields && $PKisSet) {
             return false;
