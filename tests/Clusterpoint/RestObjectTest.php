@@ -2,8 +2,10 @@
 namespace Fathomminds\Rest\Tests\Clusterpoint;
 
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\OnePKObject;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Objects\OneUniqueFieldObject;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\FlipSchema;
 use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\OnePKSchema;
+use Fathomminds\Rest\Examples\Clusterpoint\Models\Schema\OneUniqueFieldSchema;
 use Mockery;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Database\Clusterpoint\Database;
@@ -352,6 +354,61 @@ class RestObjectTest extends TestCase
             ->shouldReceive('get')
             ->andReturn($mockResponse);
         $object = new OnePKObject($resource, null, $database);
+        try {
+            $object->validate();
+            $this->assertTrue(true); //Should reach this line
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testUniqueFieldsValidationIfPKisSet()
+    {
+        $resource = new OneUniqueFieldSchema();
+        $resource->_id = 'NEW ID';
+        $resource->nonUniqueValue = 'NUV';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse($resource);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(0);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new OneUniqueFieldObject($resource, null, $database);
+        try {
+            $object->validate();
+            $this->assertTrue(true); //Should reach this line
+        } catch (\Exception $ex) {
+            $this->fail();
+        }
+    }
+
+    public function testUniqueFieldsValidationIfUniqueFieldIsSet()
+    {
+        $resource = new OneUniqueFieldSchema();
+        $resource->uniqueValue = 'NUV';
+        $database = new Database($this->mockClient, 'DatabaseName');
+        $this->mockDatabase
+            ->shouldReceive('where')
+            ->andReturn($this->mockDatabase);
+        $this->mockDatabase
+            ->shouldReceive('limit')
+            ->andReturn($this->mockDatabase);
+        $mockResponse = $this->mockResponse($resource);
+        $mockResponse
+            ->shouldReceive('hits')
+            ->andReturn(0);
+        $this->mockDatabase
+            ->shouldReceive('get')
+            ->andReturn($mockResponse);
+        $object = new OneUniqueFieldObject($resource, null, $database);
         try {
             $object->validate();
             $this->assertTrue(true); //Should reach this line
