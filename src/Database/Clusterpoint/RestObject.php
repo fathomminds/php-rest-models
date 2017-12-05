@@ -48,22 +48,33 @@ class RestObject extends CoreRestObject
 
     private function skipUniqueFieldsValidationModification($uniqueFields)
     {
-        $filteredUniqueKeys = array_diff($uniqueFields, [$this->primaryKey]);
-        if (count($filteredUniqueKeys) > 0) {
-            return false;
+        $resource = $this->resource();
+        $filteredUniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
+        foreach ($filteredUniqueFields as $uniqueField) {
+            $UFisSet = (property_exists($resource, $uniqueField) && $resource->{$uniqueField} !== null);
+            if ($UFisSet) {
+                return false;
+            }
         }
         return true;
     }
 
     private function skipUniqueFieldsValidationCreation($uniqueFields)
     {
-        $onlyOneUF = count($uniqueFields) === 1;
-        $PKinUniqueFields = in_array($this->primaryKey, $uniqueFields);
-        $PKnotSet = !property_exists($this->resource(), $this->primaryKey);
-        if ($onlyOneUF && $PKinUniqueFields && $PKnotSet) {
-            return true;
+        $resource = $this->resource();
+        $PKisInUniqueFields = in_array($this->primaryKey, $uniqueFields);
+        $PKisSet = (property_exists($resource, $this->primaryKey) && $resource->{$this->primaryKey} !== null);
+        if ($PKisInUniqueFields && $PKisSet) {
+            return false;
         }
-        return false;
+        $filteredUniqueFields = array_diff($uniqueFields, [$this->primaryKey]);
+        foreach ($filteredUniqueFields as $uniqueField) {
+            $UFisSet = (property_exists($resource, $uniqueField) && $resource->{$uniqueField} !== null);
+            if ($UFisSet) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private function getUniqueFieldQuery($uniqueFields)
