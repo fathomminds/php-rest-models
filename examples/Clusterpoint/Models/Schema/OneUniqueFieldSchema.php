@@ -5,7 +5,7 @@ use Fathomminds\Rest\Schema;
 use Fathomminds\Rest\Schema\TypeValidators\StringValidator;
 
 /**
- * Class OnePk
+ * Class OneUniqueFieldSchema
  * @package Fathomminds\Rest\Examples\Clusterpoint\Models\Schema
  *
  * @property string _id
