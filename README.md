@@ -4,6 +4,10 @@
 
 Framework independent PHP REST models with schema validation and multiple database engine support.
 
+> IMPORTANT!
+>
+> Clusterpoint support is discontinued. Currently only the MongoDB support is actively developed and supported. DynamoDB and Clusterpoint codes are deprecated and will be removed.
+
 ## Database engines supported ##
 
 * [Clusterpoint](https://www.clusterpoint.com)
@@ -38,7 +42,8 @@ Framework independent PHP REST models with schema validation and multiple databa
 * IDE autocompletion friendly
     * Schema rules and property hints for IDEs in single file
 * Filtering and pagination ([Finder API](./documentation/api/finder/index.md))
-    * Clusterpoint
+    * MongoDB
+    * ~~Clusterpoint~~
     * ~~DynamoDb~~
     * Finder::database($databaseName)
     * Finder::select($fieldNamesArray)
@@ -51,7 +56,8 @@ Framework independent PHP REST models with schema validation and multiple databa
     * Finder::first()
     * Finder::all()
 * Custom queries
-    * Clusterpoint
+    * MongoDb
+    * ~~Clusterpoint~~
     * ~~DynamoDb~~
 * Easily customizable model behaviour
     * add any business logic
@@ -76,8 +82,9 @@ Framework independent PHP REST models with schema validation and multiple databa
 
 * PHP 7+
 * Composer
-* Use with Clusterpoint: [Clusterpoint V4 PHP client](https://github.com/clusterpoint/php-client-api)
-* Use with DynamoDB: [AWS SDK for PHP](https://github.com/aws/aws-sdk-php)
+* ~~Use with Clusterpoint: [Clusterpoint V4 PHP client](https://github.com/clusterpoint/php-client-api)~~
+* ~~Use with DynamoDB: [AWS SDK for PHP](https://github.com/aws/aws-sdk-php)~~
+* Use with MongoDB: [PHP MongoDB driver](https://docs.mongodb.com/ecosystem/drivers/php/)
 * For generating code coverage report: [Xdebug PHP extension](https://xdebug.org)
 
 ## Install ##
@@ -86,16 +93,18 @@ Framework independent PHP REST models with schema validation and multiple databa
 
 You must install the Database Engine specific packages in your project. (Left out from dependencies intentionally to allow installing only the required one.)
 
-If you use Clusterpoint: `composer require clusterpoint/php-client-api-v4`
+~~If you use Clusterpoint: `composer require clusterpoint/php-client-api-v4`~~
 
-If you use DynamoDb: `composer require aws/aws-sdk-php`
+~~If you use DynamoDb: `composer require aws/aws-sdk-php`~~
 
-You can use both, in such case you need to install both DB package.
+If you use MongoDB: `composer require mongodb/mongodb`
+
 
 ## Configuration ##
 
-* Use with Clusterpoint: [Clusterpoint configuration](./documentation/clusterpoint-config.md)
-* Use with DynamoDB: [DynamoDb configuration](./documentation/dynamodb-config.md)
+* ~~Use with Clusterpoint: [Clusterpoint configuration](./documentation/clusterpoint-config.md)~~
+* ~~Use with DynamoDB: [DynamoDb configuration](./documentation/dynamodb-config.md)~~
+* Use with MongoDB: [MongoDB configuration](./documentation/mongodb-config.md)
 
 ## Contribution ##
 
