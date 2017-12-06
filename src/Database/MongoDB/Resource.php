@@ -18,26 +18,11 @@ class Resource implements IResource
         $this->resourceName = $resourceName;
         $this->primaryKey = $primaryKey;
         $this->client = $client === null ?
-            new Client($this->getUri(), $this->getUriOptions(), $this->getDriverOptions()) :
+            new Client(Database::getUri(), Database::getUriOptions(), Database::getDriverOptions()) :
             $client;
         $this->databaseName = $databaseName === null ? getenv('MONGODB_DATABASE') : $databaseName;
         $mongodb = $this->client->selectDatabase($this->databaseName);
         $this->collection = $mongodb->selectCollection($this->resourceName);
-    }
-
-    protected function getUri() {
-        return 'mongodb://' .
-        getenv('MONGODB_USERNAME') . ':' .
-        getenv('MONGODB_PASSWORD') . '@' .
-        getenv('MONGODB_HOST');
-    }
-
-    protected function getUriOptions() {
-        return [];
-    }
-
-    protected function getDriverOptions() {
-        return [];
     }
 
     public function get($resourceId = null)

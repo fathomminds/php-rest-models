@@ -7,113 +7,148 @@ use MongoDB\Client;
 
 class Finder extends BaseFinder
 {
-    protected function setLimit($collection)
+    private $filter;
+    private $options;
+    private $operatorMap = [
+        'AND' => '$and',
+        '&&' => '$and',
+        'OR' => '$or',
+        '||' => '$or',
+        '==' => '$eq',
+        '!=' => '$ne',
+        '<' => '$lt',
+        '>' => '$gt',
+        '<=' => '$lte',
+        '>=' => '$gte',
+    ];
+    public function __construct($client)
     {
-        if ($this->queryConfiguration->limit !== null) {
-            $collection->limit($this->queryConfiguration->limit);
-        }
+        parent::__construct($client);
+        $this->options = new FinderOptions;
     }
 
-    protected function setOffset($collection)
+    protected function setLimit()
     {
-        if ($this->queryConfiguration->offset !== null) {
-            $collection->offset($this->queryConfiguration->offset);
-        }
+        $this->options->limit = $this->queryConfiguration->limit;
     }
 
-    protected function setOrderBy($collection)
+    protected function setOffset()
+    {
+        $this->options->skip = $this->queryConfiguration->offset;
+    }
+
+    protected function setOrderBy()
     {
         foreach ($this->queryConfiguration->orderBy as $orderBy) {
-            $collection->orderBy(key($orderBy), current($orderBy));
+            $mongoSort = 1;
+            switch (strtoupper(current($orderBy))) {
+                case 'ASC':
+                    $mongoSort = 1;
+                    break;
+                case 'DESC':
+                    $mongoSort = -1;
+                    break;
+                default:
+                    continue;
+            }
+            $this->options->sort[key($orderBy)] = $mongoSort;
         }
     }
 
-    protected function setSelect($collection)
+    protected function setSelect()
     {
-        if ($this->queryConfiguration->select !== '*') {
-            $collection->select($this->queryConfiguration->select);
+        if ($this->queryConfiguration->select !== '*' && is_array($this->queryConfiguration->select)) {
+            /** @noinspection PhpWrongForeachArgumentTypeInspection */
+            foreach ($this->queryConfiguration->select as $include) {
+                $this->options->projection[$include] = 1;
+            }
         }
     }
 
-    protected function setWhere($collection)
+    protected function setWhere()
     {
         if (!empty($this->queryConfiguration->where)) {
-            $this->parseWhere($collection, $this->queryConfiguration->where, $this->mainLogical);
+            $this->filter = $this->parseWhere($this->queryConfiguration->where, $this->mainLogical);
+            return;
         }
+        $this->filter = [];
     }
 
-    protected function configQuery($collection)
+    protected function parseWhere($conditions, $logical)
     {
-        $this->setLimit($collection);
-        $this->setOffset($collection);
-        $this->setOrderBy($collection);
-        $this->setSelect($collection);
-        $this->setWhere($collection);
+        $subGroup = [];
+        foreach ($conditions as $key => $condition) {
+            switch (strtoupper($key)) {
+                case 'AND':
+                    $subGroup[] = $this->parseWhere($condition, 'AND');
+                    break;
+                case 'OR':
+                    $subGroup[] = $this->parseWhere($condition, 'OR');
+                    break;
+                default:
+                    list($fieldName, $operator, $value) = $condition;
+                    $subGroup[] = [$fieldName => [$this->mapOperator($operator) => $value]];
+            }
+        }
+        $currentGroup[$this->mapOperator($logical)] = $subGroup;
+        return $currentGroup;
+    }
+
+    protected function parseWhereGroup($condition, $logical) {
+
+    }
+
+    protected function mapOperator($in)
+    {
+        if (!array_key_exists($in, $this->operatorMap)) {
+            throw new RestException(
+                'Invalid operator',
+                [$in]
+            );
+        }
+        return $this->operatorMap[$in];
+    }
+
+    protected function configQuery()
+    {
+        $this->setLimit();
+        $this->setOffset();
+        $this->setOrderBy();
+        $this->setSelect();
+        $this->setWhere();
     }
 
     public function get()
     {
         if (!($this->client instanceof Client)) {
             throw new RestException(
-                'Clusterpoint Finder can be used with Clusterpoint Client only',
+                'MongoDB Finder can be used with MongoDB Client only',
                 ['type' => get_class($this->client)]
             );
         }
-        $collection = $this->client->database(
-            $this->queryConfiguration->databaseName .
-            '.' .
-            $this->queryConfiguration->from
+        $collection = $this->client
+                ->selectDatabase($this->queryConfiguration->databaseName)
+                ->selectCollection($this->queryConfiguration->from);
+        $this->configQuery();
+        $items = json_decode(
+            json_encode(
+                $collection->find(
+                    $this->filter,
+                    json_decode(json_encode($this->options), true)
+                )->toArray()
+            )
         );
-        $this->configQuery($collection);
-        $items = json_decode(json_encode($collection->get()->toArray()));
-        $count = count($items);
-        for ($idx = 0; $idx < $count; $idx++) {
-            $this->resultSet[] = $items[$idx];
+        if (empty($items)) {
+            $this->resultSet = [];
+            return $this;
         }
+        $this->resultSet = $items;
         return $this;
     }
 
     protected function createClient()
     {
-        $this->client = new Client;
+        $this->client = new Client(Database::getUri(), Database::getUriOptions(), Database::getDriverOptions());
         return $this;
-    }
-
-    protected function addWhereGroup($collection, $conditions, $logical)
-    {
-        /**
-         * @codeCoverageIgnore
-         * Passing anonymous function to Clusterpoint API
-         */
-        return function($collection) use ($conditions, $logical) {
-            $this->parseWhere($collection, $conditions, $logical);
-        };
-    }
-
-    protected function parseWhereGroup($logical, $collection, $condition, $nextLogical)
-    {
-        if ($logical === '||') {
-            $collection->orWhere($this->addWhereGroup($collection, $condition, $nextLogical));
-        }
-        if ($logical === '&&') {
-            $collection->where($this->addWhereGroup($collection, $condition, $nextLogical));
-        }
-    }
-
-    private function parseWhere($collection, $conditions, $logical)
-    {
-        foreach ($conditions as $key => $condition) {
-            switch (strtoupper($key)) {
-                case 'AND':
-                    $this->parseWhereGroup($logical, $collection, $condition, '&&');
-                    break;
-                case 'OR':
-                    $this->parseWhereGroup($logical, $collection, $condition, '||');
-                    break;
-                default:
-                    list($fieldName, $operator, $value) = $condition;
-                    $collection->where($fieldName, $operator, $value, $logical, false);
-            }
-        }
     }
 }

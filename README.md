@@ -10,8 +10,9 @@ Framework independent PHP REST models with schema validation and multiple databa
 
 ## Database engines supported ##
 
-* [Clusterpoint](https://www.clusterpoint.com)
-* [DynamoDB](https://aws.amazon.com/dynamodb)
+* [MongoDB](https://www.mongodb.com)
+* ~~[Clusterpoint](https://www.clusterpoint.com)~~
+* ~~[DynamoDB](https://aws.amazon.com/dynamodb)~~
 
 ## Usage ##
 

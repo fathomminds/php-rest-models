@@ -1,3 +1,7 @@
+## MongoDB PHP documentation ##
+
+* [PHP Library](https://docs.mongodb.com/php-library/current/)
+
 ## MongoDB configuration ##
 
 Create the following environment variables in your .env file:

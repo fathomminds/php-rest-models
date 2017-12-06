@@ -19,23 +19,23 @@ class Database implements IDatabase
     public function __construct(Client $client = null, $databaseName = null)
     {
         $this->client = $client === null ?
-            new Client($this->getUri(), $this->getUriOptions(), $this->getDriverOptions()) :
+            new Client(self::getUri(), self::getUriOptions(), self::getDriverOptions()) :
             $client;
         $this->databaseName = $databaseName === null ? getenv('MONGODB_DATABASE') : $databaseName;
     }
 
-    protected function getUri() {
+    public static function getUri() {
         return 'mongodb://' .
             getenv('MONGODB_USERNAME') . ':' .
             getenv('MONGODB_PASSWORD') . '@' .
             getenv('MONGODB_HOST');
     }
 
-    protected function getUriOptions() {
+    public static function getUriOptions() {
         return [];
     }
 
-    protected function getDriverOptions() {
+    public static function getDriverOptions() {
         return [];
     }
 
