@@ -33,3 +33,8 @@ build:
         memcached: false
         neo4j: false
         rabbitmq: false
+        variables:
+            MONGODB_HOST: 'localhost:27017'
+            MONGODB_DATABASE: 'foo'
+            MONGODB_USERNAME: 'bar'
+            MONGODB_PASSWORD: 'foobar'

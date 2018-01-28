@@ -10,6 +10,7 @@
          syntaxCheck="false"
          bootstrap="./bootstrap.php">
     <testsuites>
+        <!--
         <testsuite name="DynamoDb Test Suite">
             <directory suffix="Test.php">./tests/DynamoDb</directory>
         </testsuite>
@@ -18,6 +19,10 @@
         </testsuite>
         <testsuite name="Querybuilder Test Suite">
             <directory suffix="Test.php">./tests/QueryBuilder</directory>
+        </testsuite>
+        -->
+        <testsuite name="MongoDB Test Suite">
+            <directory suffix="Test.php">./tests/MongoDB</directory>
         </testsuite>
     </testsuites>
     <filter>

@@ -3,8 +3,8 @@ namespace Fathomminds\Rest;
 
 use Fathomminds\Rest\Helpers\ReflectionHelper;
 use Fathomminds\Rest\Exceptions\RestException;
-use Fathomminds\Rest\Objects\RestObject;
 use Fathomminds\Rest\Contracts\IRestModel;
+use Fathomminds\Rest\Contracts\IFinder;
 
 abstract class RestModel implements IRestModel
 {
@@ -46,6 +46,10 @@ abstract class RestModel implements IRestModel
         return $this->restObject->query();
     }
 
+    /**
+     * @param null $client
+     * @return IFinder
+     */
     public function find($client = null)
     {
         return $this->restObject->find($client);

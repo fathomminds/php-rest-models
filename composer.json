@@ -9,10 +9,15 @@
       "lumen",
       "clusterpoint",
       "AWS",
-      "DynamoDB"
+      "DynamoDB",
+      "MongoDB"
     ],
     "license": "MIT",
     "authors": [
+        {
+          "name": "Péter Petrás",
+          "email": "peter.petras@fathomminds.com"
+        },
         {
             "name": "Csaba Petrás",
             "email": "csaba.petras@fathomminds.com"
@@ -38,7 +43,8 @@
         "phpunit/phpunit": "^6.0",
         "mockery/mockery": "~0.9",
         "clusterpoint/php-client-api-v4": "dev-master",
-        "aws/aws-sdk-php": "^3.24"
+        "aws/aws-sdk-php": "^3.24",
+        "mongodb/mongodb": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
