@@ -1,6 +1,11 @@
 <?php
 namespace Fathomminds\Rest\Database;
 
+/**
+ * @property array|string $select
+ */
+
+
 class FinderQueryConfiguration
 {
     public $databaseName;
