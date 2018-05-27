@@ -4,6 +4,8 @@ namespace Fathomminds\Rest\Database\MongoDB;
 use MongoDB\Client;
 use Fathomminds\Rest\Exceptions\RestException;
 use Fathomminds\Rest\Contracts\IResource;
+use Fathomminds\Rest\Helpers\ReflectionHelper;
+use Fathomminds\Rest\Schema\TypeValidators\MongoIdValidator;
 
 class Resource implements IResource
 {
@@ -13,9 +15,13 @@ class Resource implements IResource
     protected $resourceName;
     protected $primaryKey;
 
-    public function __construct($resourceName, $primaryKey, Client $client = null, $databaseName = null)
+    protected $schema;
+
+    public function __construct($resourceName, $schemaClass, $primaryKey, Client $client = null, $databaseName = null)
     {
+        $reflectionHelper = new ReflectionHelper;
         $this->resourceName = $resourceName;
+        $this->schema = $reflectionHelper->createInstance($schemaClass)->schema();
         $this->primaryKey = $primaryKey;
         $this->client = $client === null ?
             new Client(Database::getUri(), Database::getUriOptions(), Database::getDriverOptions()) :
@@ -35,21 +41,43 @@ class Resource implements IResource
 
     protected function getOne($resourceId)
     {
-        $res = $this->collection->findOne([$this->primaryKey => $resourceId]);
-        return json_decode(json_encode($res));
+        $mongoIdCast = new MongoIdCast();
+        $res = $this->collection->findOne([
+            $this->primaryKey => $mongoIdCast->castSingleValueToMongoId(
+                $this->primaryKey,
+                $resourceId,
+                $this->schema
+            )
+        ]);
+        $bsonSerialize = new BSONSerialize();
+        return $bsonSerialize->serializeObject($res);
     }
 
     protected function getAll()
     {
-        $res = $this->collection->find();
-        return json_decode(json_encode($res->toArray()));
+        $bsonSerialize = new BSONSerialize();
+        $res = iterator_to_array($this->collection->find());
+        foreach ($res as $resIdx => $resItem) {
+            $res[$resIdx] = $bsonSerialize->serializeObject($resItem, $this->schema);
+        }
+        return $res;
     }
 
     public function post($newResource)
     {
         try {
-            $res = $this->collection->insertOne($newResource);
+            $mongoIdCast = new MongoIdCast();
+            $res = $this->collection->insertOne(
+                $mongoIdCast->castToMongoId(
+                    $newResource,
+                    $this->schema
+                )
+            );
             $newResource->{$this->primaryKey} = $res->getInsertedId();
+            $newResource = $mongoIdCast->castToString(
+                $newResource,
+                $this->schema
+            );
             return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), []);
@@ -62,11 +90,25 @@ class Resource implements IResource
             if (isset($newResource->{$this->primaryKey})) {
                 unset($newResource->{$this->primaryKey});
             }
+            $mongoIdCast = new MongoIdCast();
+            $mogoUpdateSerialize = new MongoUpdateSerialize();
             $this->collection->updateOne(
-                [$this->primaryKey => $resourceId],
-                ['$set' => get_object_vars($newResource)]
+                [$this->primaryKey => $mongoIdCast->castSingleValueToMongoId(
+                    $this->primaryKey,
+                    $resourceId,
+                    $this->schema
+                )],
+                ['$set' => get_object_vars(
+                    $mogoUpdateSerialize->serialize(
+                        $mongoIdCast->castToMongoId($newResource, $this->schema)
+                    )
+                )]
             );
             $newResource->{$this->primaryKey} = $resourceId;
+            $newResource = $mongoIdCast->castToString(
+                $newResource,
+                $this->schema
+            );
             return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), []);
@@ -79,11 +121,20 @@ class Resource implements IResource
             if (isset($newResource->{$this->primaryKey})) {
                 unset($newResource->{$this->primaryKey});
             }
+            $mongoIdCast = new MongoIdCast();
             $this->collection->replaceOne(
-                [$this->primaryKey => $resourceId],
-                $newResource
+                [$this->primaryKey => $mongoIdCast->castSingleValueToMongoId(
+                    $this->primaryKey,
+                    $resourceId,
+                    $this->schema
+                )],
+                $mongoIdCast->castToMongoId($newResource, $this->schema)
             );
             $newResource->{$this->primaryKey} = $resourceId;
+            $newResource = $mongoIdCast->castToString(
+                $newResource,
+                $this->schema
+            );
             return $newResource;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), []);
@@ -93,7 +144,12 @@ class Resource implements IResource
     public function delete($resourceId)
     {
         try {
-            $this->collection->deleteOne([$this->primaryKey => $resourceId]);
+            $mongoIdCast = new MongoIdCast();
+            $this->collection->deleteOne([$this->primaryKey => $mongoIdCast->castSingleValueToMongoId(
+                $this->primaryKey,
+                $resourceId,
+                $this->schema
+            )]);
             return null;
         } catch (\Exception $ex) {
             throw new RestException($ex->getMessage(), []);
