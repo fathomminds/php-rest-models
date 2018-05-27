@@ -24,6 +24,8 @@ abstract class Finder implements IFinder
         '>=',
     ];
 
+    protected $map = [];
+
     abstract protected function createClient();
     abstract public function get();
 
@@ -115,5 +117,11 @@ abstract class Finder implements IFinder
     public function all()
     {
         return $this->resultSet;
+    }
+
+    public function map($map)
+    {
+        $this->map = $map;
+        return $this;
     }
 }
