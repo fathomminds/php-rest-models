@@ -28,7 +28,8 @@ class Database implements IDatabase
         return 'mongodb://' .
             getenv('MONGODB_USERNAME') . ':' .
             getenv('MONGODB_PASSWORD') . '@' .
-            getenv('MONGODB_HOST');
+            getenv('MONGODB_HOST') . '/' .
+            getenv('MONGODB_AUTH_DATABASE');
     }
 
     public static function getUriOptions() {
@@ -39,50 +40,55 @@ class Database implements IDatabase
         return [];
     }
 
-    public function get($resourceName, $primaryKey, $resourceId = null)
+    public function get($resourceName, $schema, $primaryKey, $resourceId = null)
     {
         return (new Resource(
             $resourceName,
+            $schema,
             $primaryKey,
             $this->client,
             $this->databaseName
         ))->get($resourceId);
     }
 
-    public function post($resourceName, $primaryKey, $newResource)
+    public function post($resourceName, $schema, $primaryKey, $newResource)
     {
         return (new Resource(
             $resourceName,
+            $schema,
             $primaryKey,
             $this->client,
             $this->databaseName
         ))->post($newResource);
     }
 
-    public function patch($resourceName, $primaryKey, $resourceId, $newResource)
+    public function patch($resourceName, $schema, $primaryKey, $resourceId, $newResource)
     {
         return (new Resource(
             $resourceName,
+            $schema,
             $primaryKey,
             $this->client,
             $this->databaseName
         ))->patch($resourceId, $newResource);
     }
 
-    public function put($resourceName, $primaryKey, $resourceId, $newResource)
+    public function put($resourceName, $schema, $primaryKey, $resourceId, $newResource)
     {
         return (new Resource(
             $resourceName,
+            $schema,
             $primaryKey,
             $this->client,
             $this->databaseName
         ))->put($resourceId, $newResource);
     }
 
-    public function delete($resourceName, $primaryKey, $resourceId)
+    public function delete($resourceName, $schema, $primaryKey, $resourceId)
     {
         return (new Resource(
             $resourceName,
+            $schema,
             $primaryKey,
             $this->client,
             $this->databaseName
