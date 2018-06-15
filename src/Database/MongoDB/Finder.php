@@ -87,6 +87,19 @@ class Finder extends BaseFinder
                     break;
                 default:
                     list($fieldName, $operator, $value) = $condition;
+                    if (array_key_exists($fieldName, $this->map)) {
+                        try {
+                            $value = $this->map[$fieldName]($value);
+                        } catch (\Exception $ex) {
+                            throw new RestException(
+                                "Failed to map property",
+                                [
+                                    'propertyName' => $fieldName,
+                                    'propertyValue' => $value
+                                ]
+                            );
+                        }
+                    }
                     $subGroup[] = [$fieldName => [$this->mapOperator($operator) => $value]];
             }
         }
@@ -127,8 +140,8 @@ class Finder extends BaseFinder
             );
         }
         $collection = $this->client
-                ->selectDatabase($this->queryConfiguration->databaseName)
-                ->selectCollection($this->queryConfiguration->from);
+            ->selectDatabase($this->queryConfiguration->databaseName)
+            ->selectCollection($this->queryConfiguration->from);
         $this->configQuery();
         $items = json_decode(
             json_encode(

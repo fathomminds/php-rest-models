@@ -38,3 +38,4 @@ build:
             MONGODB_DATABASE: 'foo'
             MONGODB_USERNAME: 'bar'
             MONGODB_PASSWORD: 'foobar'
+            MONGODB_AUTH_DATABASE: 'foo'

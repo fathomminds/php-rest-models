@@ -67,14 +67,14 @@ abstract class RestObject implements IRestObject
     {
         $reflectionHelper = new ReflectionHelper;
         if ($resourceId === null) {
-            $rawResources = $this->database->get($this->resourceName, $this->primaryKey);
+            $rawResources = $this->database->get($this->resourceName, $this->schemaClass, $this->primaryKey);
             $resources = [];
             foreach ($rawResources as $rawResource) {
                 $resources[] = $reflectionHelper->createInstance($this->schemaClass, [$rawResource]);
             }
             return $resources;
         }
-        $res = $this->database->get($this->resourceName, $this->primaryKey, $resourceId);
+        $res = $this->database->get($this->resourceName, $this->schemaClass, $this->primaryKey, $resourceId);
         $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
         return $this->resource;
     }
@@ -82,7 +82,7 @@ abstract class RestObject implements IRestObject
     public function post($newResource)
     {
         $reflectionHelper = new ReflectionHelper;
-        $res = $this->database->post($this->resourceName, $this->primaryKey, $newResource);
+        $res = $this->database->post($this->resourceName, $this->schemaClass, $this->primaryKey, $newResource);
         $this->resource = $reflectionHelper->createInstance($this->schemaClass, [$res]);
     }
 
@@ -91,6 +91,7 @@ abstract class RestObject implements IRestObject
         $reflectionHelper = new ReflectionHelper;
         $res = $this->database->patch(
             $this->resourceName,
+            $this->schemaClass,
             $this->primaryKey,
             $resourceId,
             $newResource
@@ -103,6 +104,7 @@ abstract class RestObject implements IRestObject
         $reflectionHelper = new ReflectionHelper;
         $res = $this->database->put(
             $this->resourceName,
+            $this->schemaClass,
             $this->primaryKey,
             $resourceId,
             $newResource
@@ -112,7 +114,7 @@ abstract class RestObject implements IRestObject
 
     public function delete($resourceId)
     {
-        $this->database->delete($this->resourceName, $this->primaryKey, $resourceId);
+        $this->database->delete($this->resourceName, $this->schemaClass, $this->primaryKey, $resourceId);
         $this->reset();
     }
 

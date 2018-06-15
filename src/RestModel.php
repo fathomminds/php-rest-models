@@ -58,7 +58,7 @@ abstract class RestModel implements IRestModel
     public function one($resourceId)
     {
         $this->restObject->get($resourceId);
-        if ($this->restObject->getPrimaryKeyValue() !== $resourceId) {
+        if ($this->restObject->getPrimaryKeyValue() != $resourceId) {
             throw new RestException(
                 'Resource does not exist',
                 [
